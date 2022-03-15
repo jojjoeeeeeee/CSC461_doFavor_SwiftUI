@@ -1,7 +1,7 @@
 # CSC461_doFavor_SwiftUI
 **SWU CSC461 Mobile Application Development Project "doFavor" frontend**
 
-_Final project COSCI Computer For Communicaton 2021 doFavor Application (API repository)_
+_Final project COSCI Computer For Communicaton 2021 doFavor Application (SwiftUI repository)_
 
 **Member :**
 |Name|Student Id|
