@@ -1,12 +1,22 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '12.0'
+# platform :ios, '13.0'
 
 target 'doFavor' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
   # Pods for doFavor
-  pod 'Alamofire', '~> 5.5'
+  pod 'Alamofire'
   pod 'Kingfisher', '~> 7.0'
 
+  # Add the Firebase pod for Google Analytics
+  pod 'Firebase/Analytics'
+
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
+
+  pod 'Realm'
+  pod 'RealmSwift'
+  
+  pod 'MessageKit'
 end
