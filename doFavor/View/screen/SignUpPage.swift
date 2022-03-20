@@ -63,7 +63,6 @@ struct SignUpPage: View{
     }
     
     var body: some View{
-        NavigationView{
             ZStack{
                 Image("App-BG")
                     .resizable()
@@ -104,10 +103,9 @@ struct SignUpPage: View{
                     
                     Spacer()
                 }.frame(width: 293)
-                    .padding(.top, 90)
+                    .padding(130)
 
-            }
-        }.edgesIgnoringSafeArea(.all)
+        }.edgesIgnoringSafeArea(.bottom)
             .navigationBarTitle("Sign Up",displayMode: .inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
