@@ -9,6 +9,11 @@ import SwiftUI
 
 @main
 struct doFavorApp: App {
+    
+    init() {
+        AppUtils.saveDeviceUUIDToken(token: UIDevice.current.identifierForVendor!.uuidString)
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

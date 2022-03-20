@@ -16,41 +16,76 @@ struct SignUpPage: View{
     @State var password: String = ""
     @State var CFpassword: String = ""
     @State var onSubmit: Bool = false
+    @State var errMsg: String = ""
     
     @Environment(\.presentationMode) var presentationMode
     
-    func validateTextfield() {
-        if email.matchRegex(for : "^[A-Z0-9a-z._%+-]+@g.swu.ac.th$") {
-            print("Match")
-            
-            //navigate
-            onSubmit.toggle()
+    private func fetchRegister() {
+        var model = RequestUserModel()
+        var name = RequestNameModel()
+        
+        name.firstname = firstname
+        name.lastname = lastname
+        
+        model.username = buasri
+        model.name = name
+        model.email = email
+        model.profile_pic = ""
+        model.password = password
+        model.device_id = AppUtils.getDeviceUUIDToken()
+        
+        print(model)
+        SignUpViewModel().registerUser(reqObj: model) { result in
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                //navigate
+                onSubmit.toggle()
+            case .failure(let error):
+                switch error{
+                case .BackEndError(let msg):
+                    errMsg = msg
+                case .Non200StatusCodeError(let val):
+                    print("Error Code: \(val.status) - \(val.message)")
+                case .UnParsableError:
+                    print("Error \(error)")
+                }
+            }
+        }
+    }
+    
+    private func validateTextfield() {
+        if buasri == "" {
+            errMsg = "buasri id must not be empty."
+        }
+        else if firstname == "" {
+            errMsg = "firstname must not be empty."
+        }
+        else if firstname.count > 128 {
+            errMsg = "firstname must less than 128 characters."
+        }
+        else if lastname == "" {
+            errMsg = "lastname must not be empty."
+        }
+        else if lastname.count > 128 {
+            errMsg = "lastname must less than 128 characters."
+        }
+        else if email == "" {
+            errMsg = "email must not be empty."
+        }
+        else if !email.matchRegex(for : "^[A-Z0-9a-z._%+-]+@g.swu.ac.th$") {
+            errMsg = "please use gswu email."
+        }
+        else if password.count < 6 || password.count > 32 || CFpassword.count < 6 || CFpassword.count > 32 {
+            errMsg = "password must have 6 - 32 characters."
+        }
+        else if password != CFpassword {
+            errMsg = "password does not match."
         }
         else {
-            print("Please use gswu email")
+            fetchRegister()
         }
-//        if buasri == "" {
-//
-//        }
-//        else if firstname == "" {
-//
-//        }
-//        else if lastname == "" {
-//
-//        }
-//        else if email == "" {
-//
-//        }
-//        else if password == "" {
-//
-//        }
-//        else if CFpassword == "" {
-//
-//        }
-//        else if password != CFpassword {
-//
-//        }
-        
+       
     }
 
     var backbtn: some View{
@@ -88,6 +123,10 @@ struct SignUpPage: View{
                     SecureField("Confirm Password",text: $CFpassword)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
                     
+                    Text(errMsg)
+                        .foregroundColor(Color.darkred)
+                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                        .background(Color.clear)
                     
                     Text("Submit")
                         .foregroundColor(Color.white)
@@ -97,9 +136,10 @@ struct SignUpPage: View{
                         .cornerRadius(15)
                         .padding(.top, 21)
                         .onTapGesture { validateTextfield() }
-                    NavigationLink(destination: HomePage(),isActive: $onSubmit){
+                    NavigationLink(destination: ContentView(),isActive: $onSubmit){
                             EmptyView()
                     }
+                
                     
                     Spacer()
                 }.frame(width: 293)
@@ -124,3 +164,9 @@ struct SignUpPage: View{
     }
 }
 
+
+struct Previews_SignUpPage_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+    }
+}
