@@ -37,7 +37,7 @@ struct ContentView: View {
                     TextField("Buasri ID",text: $username)
                         .textFieldStyle(doFavTextFieldStyle(icon: "person.fill",color: Color.darkred))
                         .frame(width: 293)
-                    SecureField("Password",text: $password)
+                    TextField("Password",text: $password)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill",color: Color.grey))
                         .frame(width: 293)
                         .padding(.bottom, 12)
@@ -56,8 +56,8 @@ struct ContentView: View {
                         Text("Sign up")
                             .foregroundColor(Color.darkred)
                             .frame(width: 140, height: 41, alignment: .center)
-                            .font(Font.custom("SukhumvitSet-Bold", size: 15))
                             .background(Color.clear)
+                            .font(Font.custom("SukhumvitSet-Bold", size: 15))
                             .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.darkred, lineWidth: 2))
                     }
 

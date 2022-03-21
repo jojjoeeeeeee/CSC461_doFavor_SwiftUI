@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C8BEAFA27E9029D007E2F49 /* SignUpVerify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8BEAF927E9029D007E2F49 /* SignUpVerify.swift */; };
 		34EF1FB63A4884B39FB2655A /* Pods_doFavor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347E5189532FE774161D6794 /* Pods_doFavor.framework */; };
 		8416920227E6A8CE00CBFF7B /* SignUpPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841691FB27E6A8CE00CBFF7B /* SignUpPage.swift */; };
 		8416920327E6A8CE00CBFF7B /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841691FC27E6A8CE00CBFF7B /* HomePage.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C8BEAF927E9029D007E2F49 /* SignUpVerify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpVerify.swift; sourceTree = "<group>"; };
 		347E5189532FE774161D6794 /* Pods_doFavor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_doFavor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		841691FB27E6A8CE00CBFF7B /* SignUpPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpPage.swift; sourceTree = "<group>"; };
 		841691FC27E6A8CE00CBFF7B /* HomePage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
@@ -61,12 +63,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		841691FA27E6A8CE00CBFF7B /* screen */ = {
+		2C8BEAF827E9028F007E2F49 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
 				841691FB27E6A8CE00CBFF7B /* SignUpPage.swift */,
-				841691FC27E6A8CE00CBFF7B /* HomePage.swift */,
 				841691FD27E6A8CE00CBFF7B /* ContentView.swift */,
+				2C8BEAF927E9029D007E2F49 /* SignUpVerify.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		841691FA27E6A8CE00CBFF7B /* screen */ = {
+			isa = PBXGroup;
+			children = (
+				2C8BEAF827E9028F007E2F49 /* Auth */,
+				841691FC27E6A8CE00CBFF7B /* HomePage.swift */,
 			);
 			path = screen;
 			sourceTree = "<group>";
@@ -316,6 +327,7 @@
 				8416920227E6A8CE00CBFF7B /* SignUpPage.swift in Sources */,
 				8416920627E6A8CE00CBFF7B /* CustomTextFieldStyles.swift in Sources */,
 				8416920327E6A8CE00CBFF7B /* HomePage.swift in Sources */,
+				2C8BEAFA27E9029D007E2F49 /* SignUpVerify.swift in Sources */,
 				8416920A27E7E08600CBFF7B /* SignUpViewModel.swift in Sources */,
 				8416920C27E7E81400CBFF7B /* doFavorError.swift in Sources */,
 				8416920827E7DFEE00CBFF7B /* UserModel.swift in Sources */,
