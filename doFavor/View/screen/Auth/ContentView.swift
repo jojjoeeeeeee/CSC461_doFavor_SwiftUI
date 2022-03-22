@@ -37,7 +37,7 @@ struct ContentView: View {
                     TextField("Buasri ID",text: $username)
                         .textFieldStyle(doFavTextFieldStyle(icon: "person.fill",color: Color.darkred))
                         .frame(width: 293)
-                    TextField("Password",text: $password)
+                    SecureField("Password",text: $password)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill",color: Color.grey))
                         .frame(width: 293)
                         .padding(.bottom, 12)
@@ -67,7 +67,7 @@ struct ContentView: View {
         }.edgesIgnoringSafeArea(.all)
         
 
-    }
+        }
     }
 }
 

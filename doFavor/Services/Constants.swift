@@ -15,6 +15,15 @@ struct Constants {
     static let AUTH_LOGIN = "/auth/login"
     static let AUTH_VERIFY = "/auth/verify"
     static let AUTH_VERIFY_RESEND = "/auth/verify/resend"
+    
+    struct AppConstants {
+        static let CUR_USR_TOKEN = "UserAuthToken"
+        static let CUR_USR_ID = "UserId"
+        static let CUR_USR_USERNAME = "UserUsername"
+        static let CUR_USR_EMAIL = "UserEmail"
+        static let CUR_USR_PROFILE = "UserProfile"
+        static let CUR_USR_NAME = "UserName"
+    }
 }
 
 //struct Colors{

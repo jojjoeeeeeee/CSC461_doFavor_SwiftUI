@@ -6,6 +6,19 @@
 //
 
 import Foundation
+//MARK: TextLimit Binding
+class TextBindingManager: ObservableObject {
+    
+    let characterLimit: Int
+    
+    init(limit: Int = 1) {
+        characterLimit = limit
+    }
+    
+    @Published var text = ""
+    
+}
+
 //MARK: String Class Extension Helper
 
 extension String {

@@ -21,6 +21,12 @@ struct RequestNameModel: Encodable {
     var lastname: String?
 }
 
+struct RequestOtpModel: Encodable {
+    var email: String?
+    var otp: String?
+    var device_id: String?
+}
+
 struct ResponseUserModel: Codable {
     let result: String
     let message: String
@@ -39,4 +45,12 @@ struct UserModel: Codable {
 struct NameModel: Codable {
     var firstname: String?
     var lastname: String?
+}
+
+
+class UserObservedModel: ObservableObject {
+    @Published var username: String?
+    @Published var email: String?
+    @Published var profile_pic: String?
+    @Published var name: NameModel?
 }
