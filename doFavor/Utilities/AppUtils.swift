@@ -44,7 +44,7 @@ struct AppUtils {
     }
     
     static func saveUsrProfile(profile:String) {
-        UserDefaults.standard.setValue(profile, forKeyPath: Constants.AppConstants.CUR_USR_PROFILE)
+        UserDefaults.standard.setValue(Constants.ENDPOINT+profile, forKeyPath: Constants.AppConstants.CUR_USR_PROFILE)
     }
     
     static func getUsrProfile() -> String? {

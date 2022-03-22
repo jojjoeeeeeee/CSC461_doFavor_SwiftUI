@@ -52,17 +52,16 @@ struct SignUpVerify: View {
         print(model)
         
         AuthViewModel().verifyUser(reqObj: model) { result in
+            isLoading.toggle()
             switch result {
             case .success(let response):
                 print("Success",response)
-                isLoading.toggle()
                 AppUtils.saveUsrProfile(profile: response.profile_pic ?? "")
                 AppUtils.saveUsrUsername(username: response.username ?? "")
                 AppUtils.saveUsrEmail(email: response.email ?? "")
                 AppUtils.saveUsrName(firstname: response.name?.firstname ?? "", lastname: response.name?.lastname ?? "")
                 doFavorApp(rootView: .MainAppView)
             case .failure(let error):
-                isLoading.toggle()
                 switch error{
                 case .BackEndError(let msg):
                     errMsg = msg

@@ -11,6 +11,7 @@ import SwiftUI
 struct Constants {
     static let BASE_URL = "https://swuhelp.herokuapp.com/api"
 //    static let BASE_URL = "http://192.168.1.36:8080/api"
+    static let ENDPOINT = "https://swuhelp.herokuapp.com/"
     static let AUTH_REGISTER = "/auth/register"
     static let AUTH_LOGIN = "/auth/login"
     static let AUTH_VERIFY = "/auth/verify"

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import Focuser
 
 struct ContentView: View {
     @State var username: String = ""
@@ -18,6 +18,8 @@ struct ContentView: View {
     @State var isLoading: Bool = false
     @State var isError: Bool = false
     
+    @FocusStateLegacy var focusedField: SignInFormFields?
+    
     private func fetchLogin() {
         var model = RequestLoginUserModel()
         
@@ -28,10 +30,10 @@ struct ContentView: View {
         print(model)
         
         AuthViewModel().loginUser(reqObj: model) { result in
+            isLoading.toggle()
             switch result {
             case .success(let response):
                 print("Success",response)
-                isLoading.toggle()
                 AppUtils.saveUsrEmail(email: response.email ?? "")
                 if let state = response.state {
                     if state == "none" {
@@ -50,7 +52,6 @@ struct ContentView: View {
                 }
                 
             case .failure(let error):
-                isLoading.toggle()
                 switch error{
                 case .BackEndError(let msg):
                     errMsg = msg
@@ -103,10 +104,12 @@ struct ContentView: View {
                     TextField("Buasri ID",text: $username)
                         .textFieldStyle(doFavTextFieldStyle(icon: "person.fill",color: Color.darkred))
                         .frame(width: 293)
+                        .focusedLegacy($focusedField, equals: .buasri)
                     SecureField("Password",text: $password)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill",color: Color.grey))
                         .frame(width: 293)
                         .padding(.bottom, 12)
+                        .focusedLegacy($focusedField, equals: .pwd)
                     
                     Text(errMsg)
                         .foregroundColor(Color.darkred)

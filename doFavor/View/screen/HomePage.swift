@@ -102,6 +102,7 @@ struct Card: View{
     var color: Color
 
     var body: some View{
+        
         if #available(iOS 15.0, *) {
             VStack{
                 NavigationLink(destination: {}){

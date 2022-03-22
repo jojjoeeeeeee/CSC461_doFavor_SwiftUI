@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Focuser
 
 struct SignUpPage: View{
     @State var buasri: String = ""
@@ -18,6 +19,7 @@ struct SignUpPage: View{
     @State var errMsg: String = "error"
     @State var isLoading: Bool = false
     @State var isError: Bool = false
+    @FocusStateLegacy var focusedField: SignUpFormFields?
     
     
     @Environment(\.presentationMode) var presentationMode
@@ -39,14 +41,13 @@ struct SignUpPage: View{
         print(model)
         
         AuthViewModel().registerUser(reqObj: model) { result in
+            isLoading.toggle()
             switch result {
             case .success(let response):
                 print("Success",response)
-                isLoading.toggle()
                 AppUtils.saveUsrEmail(email: response.email ?? "")
                 onSubmit.toggle()
             case .failure(let error):
-                isLoading.toggle()
                 switch error{
                 case .BackEndError(let msg):
                     errMsg = msg
@@ -117,23 +118,29 @@ struct SignUpPage: View{
                 VStack(alignment: .center, spacing: 12){
                     TextField("Buasri ID",text: $buasri)
                         .textFieldStyle(doFavTextFieldStyle(icon: "person.fill", color: Color.darkred))
+                        .focusedLegacy($focusedField, equals: .buasri)
                     HStack(alignment: .center, spacing: 5){
                         TextField("Firstname",text: $firstname)
                             .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
+                            .focusedLegacy($focusedField, equals: .fname)
 //                        Spacer()
                         TextField("Lastname",text: $lastname)
                             .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
+                            .focusedLegacy($focusedField, equals: .lname)
                     }
                     
                     TextField("G-SWU E-mail",text: $email)
                         .textFieldStyle(doFavTextFieldStyle(icon: "envelope.fill", color: Color.darkred))
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
+                        .focusedLegacy($focusedField, equals: .email)
                     
                     SecureField("Password",text: $password)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
+                        .focusedLegacy($focusedField, equals: .pwd)
                     SecureField("Confirm Password",text: $CFpassword)
                         .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
+                        .focusedLegacy($focusedField, equals: .cfpwd)
                     
                     Text(errMsg)
                          .foregroundColor(Color.darkred)
