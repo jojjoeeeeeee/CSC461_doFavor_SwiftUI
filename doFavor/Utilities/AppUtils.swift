@@ -27,14 +27,6 @@ struct AppUtils {
         return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_TOKEN) as? String
     }
     
-    static func saveUsrId(id:String) {
-        UserDefaults.standard.setValue(id, forKey: Constants.AppConstants.CUR_USR_ID)
-    }
-    
-    static func getUsrId() -> String? {
-        return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_ID) as? String
-    }
-    
     static func saveUsrUsername(username:String) {
         UserDefaults.standard.setValue(username, forKeyPath: Constants.AppConstants.CUR_USR_USERNAME)
     }
@@ -65,5 +57,14 @@ struct AppUtils {
     
     static func getUsrName() -> String? {
         return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_NAME) as? String
+    }
+    
+    static func eraseAllUsrData() {
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_TOKEN)
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_EMAIL)
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_NAME)
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_PROFILE)
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_USERNAME)
+        
     }
 }

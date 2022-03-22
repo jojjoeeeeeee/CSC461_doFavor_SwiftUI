@@ -15,13 +15,15 @@ struct SignUpPage: View{
     @State var password: String = ""
     @State var CFpassword: String = ""
     @State var onSubmit: Bool = false
-    @State var errMsg: String = ""
+    @State var errMsg: String = "error"
+    @State var isLoading: Bool = false
+    @State var isError: Bool = false
     
     
     @Environment(\.presentationMode) var presentationMode
     
     private func fetchRegister() {
-        var model = RequestUserModel()
+        var model = RequestRegisterUserModel()
         var name = RequestNameModel()
 
         name.firstname = firstname.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace}
@@ -36,16 +38,19 @@ struct SignUpPage: View{
 
         print(model)
         
-        SignUpViewModel().registerUser(reqObj: model) { result in
+        AuthViewModel().registerUser(reqObj: model) { result in
             switch result {
             case .success(let response):
                 print("Success",response)
+                isLoading.toggle()
                 AppUtils.saveUsrEmail(email: response.email ?? "")
                 onSubmit.toggle()
             case .failure(let error):
+                isLoading.toggle()
                 switch error{
                 case .BackEndError(let msg):
                     errMsg = msg
+                    isError = true
                 case .Non200StatusCodeError(let val):
                     print("Error Code: \(val.status) - \(val.message)")
                 case .UnParsableError:
@@ -57,22 +62,23 @@ struct SignUpPage: View{
 
     private func validateTextfield() {
         
-        if buasri == "" {
+        isError = true
+        if buasri.isEmpty {
             errMsg = "buasri id must not be empty."
         }
-        else if firstname == "" {
+        else if firstname.isEmpty {
             errMsg = "firstname must not be empty."
         }
         else if firstname.count > 128 {
             errMsg = "firstname must less than 128 characters."
         }
-        else if lastname == "" {
+        else if lastname.isEmpty {
             errMsg = "lastname must not be empty."
         }
         else if lastname.count > 128 {
             errMsg = "lastname must less than 128 characters."
         }
-        else if email == "" {
+        else if email.isEmpty {
             errMsg = "email must not be empty."
         }
         else if !email.matchRegex(for : "^[A-Z0-9a-z._%+-]+@g.swu.ac.th$") {
@@ -85,6 +91,8 @@ struct SignUpPage: View{
             errMsg = "password does not match."
         }
         else {
+            isError.toggle()
+            isLoading.toggle()
             fetchRegister()
         }
     }
@@ -101,6 +109,7 @@ struct SignUpPage: View{
     var body: some View{
 //        NavigationView{
             ZStack{
+                
                 Image("App-BG")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -130,6 +139,7 @@ struct SignUpPage: View{
                          .foregroundColor(Color.darkred)
                          .font(Font.custom("SukhumvitSet-Bold", size: 15))
                          .background(Color.clear)
+                         .opacity(isError ? 1 : 0)
 
                      Text("Submit")
                          .foregroundColor(Color.white)
@@ -142,10 +152,15 @@ struct SignUpPage: View{
                     NavigationLink(destination: SignUpVerify(),isActive: $onSubmit){
                              EmptyView()
                      }
+                    
+                    
 
                     Spacer()
                 }.frame(width: 293)
                     .padding(.top, 130)
+                
+                Color.black.ignoresSafeArea().opacity(isLoading ? 0.7 : 0)
+                doFavorActivityIndicator().opacity(isLoading ? 1 : 0)
 //                    .background(.green)
             }
             .edgesIgnoringSafeArea(.all)
@@ -162,6 +177,7 @@ struct SignUpPage: View{
                 }
 
             })
+
 //            .background(.red)
 
     }

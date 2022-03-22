@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RequestUserModel: Encodable {
+struct RequestRegisterUserModel: Encodable {
     var username: String?
     var password: String?
     var email: String?
@@ -15,6 +15,13 @@ struct RequestUserModel: Encodable {
     var profile_pic: String?
     var device_id: String?
 }
+
+struct RequestLoginUserModel: Encodable {
+    var username: String?
+    var password: String?
+    var device_id: String?
+}
+
 
 struct RequestNameModel: Encodable {
     var firstname: String?

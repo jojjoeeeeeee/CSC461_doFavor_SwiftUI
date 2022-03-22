@@ -18,7 +18,6 @@ struct Constants {
     
     struct AppConstants {
         static let CUR_USR_TOKEN = "UserAuthToken"
-        static let CUR_USR_ID = "UserId"
         static let CUR_USR_USERNAME = "UserUsername"
         static let CUR_USR_EMAIL = "UserEmail"
         static let CUR_USR_PROFILE = "UserProfile"
