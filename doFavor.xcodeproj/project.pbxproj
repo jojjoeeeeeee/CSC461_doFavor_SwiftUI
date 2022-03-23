@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CC1594527EBDA2500ED73F3 /* GiverMainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1594427EBDA2500ED73F3 /* GiverMainPage.swift */; };
 		2CC24FF327EB9BC5009D9C4C /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC24FF227EB9BC5009D9C4C /* HomePage.swift */; };
 		2CC24FF527EB9BCD009D9C4C /* HomePushPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC24FF427EB9BCD009D9C4C /* HomePushPage.swift */; };
 		34EF1FB63A4884B39FB2655A /* Pods_doFavor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347E5189532FE774161D6794 /* Pods_doFavor.framework */; };
@@ -36,6 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2CC1594427EBDA2500ED73F3 /* GiverMainPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GiverMainPage.swift; sourceTree = "<group>"; };
 		2CC24FF227EB9BC5009D9C4C /* HomePage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
 		2CC24FF427EB9BCD009D9C4C /* HomePushPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePushPage.swift; sourceTree = "<group>"; };
 		347E5189532FE774161D6794 /* Pods_doFavor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_doFavor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,9 +91,18 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
+		2CC1594327EBDA2500ED73F3 /* Giver */ = {
+			isa = PBXGroup;
+			children = (
+				2CC1594427EBDA2500ED73F3 /* GiverMainPage.swift */,
+			);
+			path = Giver;
+			sourceTree = "<group>";
+		};
 		841691FA27E6A8CE00CBFF7B /* screen */ = {
 			isa = PBXGroup;
 			children = (
+				2CC1594327EBDA2500ED73F3 /* Giver */,
 				2C8BEAF827E9028F007E2F49 /* Auth */,
 				2CC24FF227EB9BC5009D9C4C /* HomePage.swift */,
 				2CC24FF427EB9BCD009D9C4C /* HomePushPage.swift */,
@@ -365,6 +376,7 @@
 				847900D927EBBF9800D245EB /* Background.swift in Sources */,
 				8416920E27E7EABE00CBFF7B /* AppUtils.swift in Sources */,
 				2CC24FF327EB9BC5009D9C4C /* HomePage.swift in Sources */,
+				2CC1594527EBDA2500ED73F3 /* GiverMainPage.swift in Sources */,
 				8416920527E6A8CE00CBFF7B /* CustomNavBarStyle.swift in Sources */,
 				84C8CE9827E165990051D01F /* Constants.swift in Sources */,
 				8416920227E6A8CE00CBFF7B /* SignUpPage.swift in Sources */,

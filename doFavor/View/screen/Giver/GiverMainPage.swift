@@ -10,6 +10,7 @@ import SwiftUI
 struct GiverMainPage: View {
     var body: some View {
         Text("Giver Page!!!")
+        TabBar()
     }
 }
 
