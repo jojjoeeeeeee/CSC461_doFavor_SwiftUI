@@ -66,6 +66,7 @@ struct AuthViewModel {
                 
                 if data.result == "OK" {
                     let userdata:UserModel = data.data
+                    AppUtils.saveUsrAuthToken(token: response.response?.allHeaderFields["Authorization"].debugDescription ?? "")
                     completion(.success(userdata))
                 }
                 else if data.result == "nOK" {

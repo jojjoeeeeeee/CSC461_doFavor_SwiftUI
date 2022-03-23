@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct doFavorActivityIndicator: View {
+struct doFavorActivityIndicatorView<Content>: View where Content: View {
+    var isLoading: Bool
+    var isPage: Bool
+    var content: () -> Content
     @State private var fillPoint:Double = 0.0
     @State private var rotationDegree:Double = 0
     
@@ -16,23 +19,62 @@ struct doFavorActivityIndicator: View {
     }
     
     var body: some View {
-        
-        Ring(fillPoint: fillPoint)
-            .stroke(Color.darkred, lineWidth: 10)
-            .frame(width: 100, height: 100)
-            .rotationEffect(.degrees(rotationDegree))
-            .onAppear() {
-                DispatchQueue.main.async {
-                    withAnimation (self.animation){
-                        rotationDegree = 360
-                        self.fillPoint = 1
+        if isPage {
+            GeometryReader { geometry in
+                ZStack(alignment: .center) {
+                    self.content()
+                      .disabled(self.isLoading)
+                      .blur(radius: self.isLoading ? 2 : 0)
+                    VStack {
+                        Ring(fillPoint: fillPoint)
+                            .stroke(Color.darkred, lineWidth: 10)
+                            .frame(width: 100, height: 100)
+                            .rotationEffect(.degrees(rotationDegree))
+                            .onAppear() {
+                                DispatchQueue.main.async {
+                                    withAnimation (self.animation){
+                                        rotationDegree = 360
+                                        self.fillPoint = 1
+                                    }
+                                }
+                            }
+                        
                     }
+                    .frame(width: UIScreen.main.bounds.width,
+                           height: UIScreen.main.bounds.height)
+                    .background(Color.black.opacity(self.isLoading ? 0.1 : 0))
+                    .ignoresSafeArea()
+                    .opacity(self.isLoading ? 1 : 0)
                 }
             }
-
+        }
+        else {
+            GeometryReader { geometry in
+                ZStack(alignment: .center) {
+                    self.content()
+                        .disabled(self.isLoading)
+                    VStack {
+                        Ring(fillPoint: fillPoint)
+                            .stroke(Color.darkred, lineWidth: 10)
+                            .frame(width: 50, height: 50)
+                            .rotationEffect(.degrees(rotationDegree))
+                            .onAppear() {
+                                DispatchQueue.main.async {
+                                    withAnimation (self.animation){
+                                        rotationDegree = 360
+                                        self.fillPoint = 1
+                                    }
+                                }
+                            }
+                    }
+//                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .opacity(self.isLoading ? 1 : 0)
+                }
+            }
+            
+        }
     }
 }
-
 
 struct Ring: Shape {
     var fillPoint: Double
@@ -62,11 +104,5 @@ struct Ring: Shape {
                     endAngle: .degrees(end),
                     clockwise: false)
         return path
-    }
-}
-
-struct doFavorActivityIndicator_Previews: PreviewProvider {
-    static var previews: some View {
-        doFavorActivityIndicator()
     }
 }

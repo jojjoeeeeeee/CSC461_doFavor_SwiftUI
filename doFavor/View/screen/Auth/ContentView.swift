@@ -82,77 +82,81 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView{
-            ZStack{
-                Image("App-BG")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: UIScreen.main.bounds.width)
-                
-                //            ScrollView(.vertical, showsIndicators: false, content: {
-                VStack(alignment: .center, spacing: 12){
-                    // App Logo Image
-                    Image("App-Logo")
-                        .resizable()
-                        .frame(width: 190, height: 190)
-                        .clipShape(Circle())
-                        .aspectRatio(contentMode: .fit)
-                        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-                    //                        .padding(.bottom, 12)
-                    
-                    //  Text Fields
-                    TextField("Buasri ID",text: $username)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "person.fill",color: Color.darkred))
-                        .frame(width: 293)
-                        .focusedLegacy($focusedField, equals: .buasri)
-                    SecureField("Password",text: $password)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill",color: Color.grey))
-                        .frame(width: 293)
-                        .padding(.bottom, 12)
-                        .focusedLegacy($focusedField, equals: .pwd)
-                    
-                    Text(errMsg)
-                        .foregroundColor(Color.darkred)
-                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                        .background(Color.clear)
-                        .opacity(isError ? 1 : 0)
-                    
-                    // Buttons
-                    
-                    Text("Sign in")
-                        .foregroundColor(.white)
-                        .frame(width: 140, height: 41, alignment: .center)
-                        .background(Color.darkred)
-                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                        .cornerRadius(15)
-                        .onTapGesture { validateTextfield()}
-                    NavigationLink(destination: SignUpVerify(),isActive: $onSubmit){
-                        EmptyView()
-                    }
-                    
-                    NavigationLink(destination: SignUpPage()){
-                        Text("Sign up")
-                            .foregroundColor(Color.darkred)
-                            .frame(width: 140, height: 41, alignment: .center)
-                            .background(Color.clear)
-                            .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                            .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.darkred, lineWidth: 2))
-                    }
-                    
-                    
-                }
-                Color.black.ignoresSafeArea().opacity(isLoading ? 0.7 : 0)
-                doFavorActivityIndicator().opacity(isLoading ? 1 : 0)
-//                .frame(width: UIScreen.main.bounds.width*0.8)
-                
-                
+        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: true) {
+          GeometryReader { geometry in
+              NavigationView{
+                  ZStack{
+                      Image("App-BG")
+                          .resizable()
+                          .aspectRatio(contentMode: .fill)
+                          .frame(width: UIScreen.main.bounds.width)
+                      
+                      //            ScrollView(.vertical, showsIndicators: false, content: {
+                      VStack(alignment: .center, spacing: 12){
+                          // App Logo Image
+                          Image("App-Logo")
+                              .resizable()
+                              .frame(width: 190, height: 190)
+                              .clipShape(Circle())
+                              .aspectRatio(contentMode: .fit)
+                              .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
+                          //                        .padding(.bottom, 12)
+                          
+                          //  Text Fields
+                          TextField("Buasri ID",text: $username)
+                              .textFieldStyle(doFavTextFieldStyle(icon: "person.fill",color: Color.darkred))
+                              .frame(width: 293)
+                              .focusedLegacy($focusedField, equals: .buasri)
+                          SecureField("Password",text: $password)
+                              .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill",color: Color.grey))
+                              .frame(width: 293)
+                              .padding(.bottom, 12)
+                              .focusedLegacy($focusedField, equals: .pwd)
+                          
+                          Text(errMsg)
+                              .foregroundColor(Color.darkred)
+                              .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                              .background(Color.clear)
+                              .opacity(isError ? 1 : 0)
+                          
+                          // Buttons
+                          
+                          Text("Sign in")
+                              .foregroundColor(.white)
+                              .frame(width: 140, height: 41, alignment: .center)
+                              .background(Color.darkred)
+                              .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                              .cornerRadius(15)
+                              .onTapGesture { validateTextfield()}
+                          NavigationLink(destination: SignUpVerify(),isActive: $onSubmit){
+                              EmptyView()
+                          }
+                          
+                          NavigationLink(destination: SignUpPage()){
+                              Text("Sign up")
+                                  .foregroundColor(Color.darkred)
+                                  .frame(width: 140, height: 41, alignment: .center)
+                                  .background(Color.clear)
+                                  .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                                  .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.darkred, lineWidth: 2))
+                          }
+                          
+                          
+                      }
+      //                .frame(width: UIScreen.main.bounds.width*0.8)
+                      
+                      
 
-                //            }).background(.red)
-                
-            }.edgesIgnoringSafeArea(.all)
-            
-            
+                      //            }).background(.red)
+                      
+                  }.edgesIgnoringSafeArea(.all)
+                  
+                  
+              }
+              .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+          }
         }
+        
     }
 }
 

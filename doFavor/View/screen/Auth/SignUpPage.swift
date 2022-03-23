@@ -17,7 +17,7 @@ struct SignUpPage: View{
     @State var CFpassword: String = ""
     @State var onSubmit: Bool = false
     @State var errMsg: String = "error"
-    @State var isLoading: Bool = false
+    @State var isLoading: Bool = true
     @State var isError: Bool = false
     @FocusStateLegacy var focusedField: SignUpFormFields?
     
@@ -109,81 +109,86 @@ struct SignUpPage: View{
     
     var body: some View{
 //        NavigationView{
-            ZStack{
-                
-                Image("App-BG")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: UIScreen.main.bounds.width)
-                VStack(alignment: .center, spacing: 12){
-                    TextField("Buasri ID",text: $buasri)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "person.fill", color: Color.darkred))
-                        .focusedLegacy($focusedField, equals: .buasri)
-                    HStack(alignment: .center, spacing: 5){
-                        TextField("Firstname",text: $firstname)
-                            .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
-                            .focusedLegacy($focusedField, equals: .fname)
-//                        Spacer()
-                        TextField("Lastname",text: $lastname)
-                            .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
-                            .focusedLegacy($focusedField, equals: .lname)
-                    }
-                    
-                    TextField("G-SWU E-mail",text: $email)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "envelope.fill", color: Color.darkred))
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .focusedLegacy($focusedField, equals: .email)
-                    
-                    SecureField("Password",text: $password)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
-                        .focusedLegacy($focusedField, equals: .pwd)
-                    SecureField("Confirm Password",text: $CFpassword)
-                        .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
-                        .focusedLegacy($focusedField, equals: .cfpwd)
-                    
-                    Text(errMsg)
-                         .foregroundColor(Color.darkred)
-                         .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                         .background(Color.clear)
-                         .opacity(isError ? 1 : 0)
+        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: true) {
+          GeometryReader { geometry in
+              ZStack{
+                  
+                  Image("App-BG")
+                      .resizable()
+                      .aspectRatio(contentMode: .fill)
+                      .frame(width: UIScreen.main.bounds.width)
+                  VStack(alignment: .center, spacing: 12){
+                      TextField("Buasri ID",text: $buasri)
+                          .textFieldStyle(doFavTextFieldStyle(icon: "person.fill", color: Color.darkred))
+                          .focusedLegacy($focusedField, equals: .buasri)
+                      HStack(alignment: .center, spacing: 5){
+                          TextField("Firstname",text: $firstname)
+                              .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
+                              .focusedLegacy($focusedField, equals: .fname)
+  //                        Spacer()
+                          TextField("Lastname",text: $lastname)
+                              .textFieldStyle(doFavTextFieldStyle(icon: "", color: Color.clear))
+                              .focusedLegacy($focusedField, equals: .lname)
+                      }
+                      
+                      TextField("G-SWU E-mail",text: $email)
+                          .textFieldStyle(doFavTextFieldStyle(icon: "envelope.fill", color: Color.darkred))
+                          .textContentType(.emailAddress)
+                          .keyboardType(.emailAddress)
+                          .focusedLegacy($focusedField, equals: .email)
+                      
+                      SecureField("Password",text: $password)
+                          .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
+                          .focusedLegacy($focusedField, equals: .pwd)
+                      SecureField("Confirm Password",text: $CFpassword)
+                          .textFieldStyle(doFavTextFieldStyle(icon: "lock.fill", color: Color.grey))
+                          .focusedLegacy($focusedField, equals: .cfpwd)
+                      
+                      Text(errMsg)
+                           .foregroundColor(Color.darkred)
+                           .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                           .background(Color.clear)
+                           .opacity(isError ? 1 : 0)
 
-                     Text("Submit")
-                         .foregroundColor(Color.white)
-                        .frame(width: 140, height: 41, alignment: .center)
-                        .background(Color.darkred)
-                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                         .cornerRadius(15)
-                         .padding(.top, 21)
-                         .onTapGesture { validateTextfield() }
-                    NavigationLink(destination: SignUpVerify(),isActive: $onSubmit){
-                             EmptyView()
-                     }
-                    
-                    
+                       Text("Submit")
+                           .foregroundColor(Color.white)
+                          .frame(width: 140, height: 41, alignment: .center)
+                          .background(Color.darkred)
+                          .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                           .cornerRadius(15)
+                           .padding(.top, 21)
+                           .onTapGesture { validateTextfield() }
+                      NavigationLink(destination: SignUpVerify(),isActive: $onSubmit){
+                               EmptyView()
+                       }
+                      
+                      
 
-                    Spacer()
-                }.frame(width: 293)
-                    .padding(.top, 130)
-                
-                Color.black.ignoresSafeArea().opacity(isLoading ? 0.7 : 0)
-                doFavorActivityIndicator().opacity(isLoading ? 1 : 0)
-//                    .background(.green)
-            }
-            .edgesIgnoringSafeArea(.all)
-            .navigationBarTitle("Sign Up",displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading:
-                Button(action:{
-                self.presentationMode.wrappedValue.dismiss()
-            }){
-                HStack{
-                    Image(systemName:"arrow.left")
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(Color.darkred)
-                }
+                      Spacer()
+                  }.frame(width: 293)
+                      .padding(.top, 130)
+                  
+  //                    .background(.green)
+              }
+              .edgesIgnoringSafeArea(.all)
+              .navigationBarTitle("Sign Up",displayMode: .inline)
+              .navigationBarBackButtonHidden(true)
+              .navigationBarItems(leading:
+                  Button(action:{
+                  self.presentationMode.wrappedValue.dismiss()
+              }){
+                  HStack{
+                      Image(systemName:"arrow.left")
+                          .font(.system(size: 20, weight: .regular))
+                          .foregroundColor(Color.darkred)
+                  }
 
-            })
+              })
+              .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+              
+          }
+          
+        }
 
 //            .background(.red)
 

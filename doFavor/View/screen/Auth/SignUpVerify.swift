@@ -91,122 +91,124 @@ struct SignUpVerify: View {
     
     var body: some View {
         //        NavigationView{
-        ZStack{
-            Image("App-BG")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width)
-            
-            VStack(alignment: .center, spacing: 30){
-                Text("Verification Code")
-                    .font(Font.custom("SukhumvitSet-Bold", size: 20))
-                
-                
-                HStack(alignment: .center, spacing: 5){
-                    TextField("",text: $vfc1.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc1.text) { val in
-                            vfc1.text = String(val.suffix(vfc1.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc2
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc1)
-                    TextField("",text: $vfc2.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc2.text) { val in
-                            vfc2.text = String(val.suffix(vfc2.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc3
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc2)
-                    TextField("",text: $vfc3.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc3.text) { val in
-                            vfc3.text = String(val.suffix(vfc3.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc4
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc3)
-                    TextField("",text: $vfc4.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc4.text) { val in
-                            vfc4.text = String(val.suffix(vfc4.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc5
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc4)
-                    TextField("",text: $vfc5.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc5.text) { val in
-                            vfc5.text = String(val.suffix(vfc5.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc6
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc5)
-                    TextField("",text: $vfc6.text)
-                        .textFieldStyle(verifyTF())
-                        .onChange(of: vfc6.text) { val in
-                            vfc6.text = String(val.suffix(vfc6.characterLimit))
-                            if val != "" {
-                                focusedField = VerifyCodeFormFields.vfc1
-                            }
-                        }
-                        .focusedLegacy($focusedField, equals: .vfc6)
-                }
-                Text(errMsg)
-                    .foregroundColor(Color.darkred)
-                    .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                    .background(Color.clear)
-                    .opacity(isError ? 1 : 0)
-                
-                Text(verbatim:"โปรดกรอกรหัสยืนยันที่ได้รับทางอีเมล์ \(email) โปรดตรวจสอบกล่องข้อความ/อีเมลขยะ")
-                    .font(Font.custom("SukhumvitSet-Medium", size: 14))
-                    .textContentType(.none)
-                    .multilineTextAlignment(.center)
-                
-                //                            NavigationLink(destination: {}){
-                //                                    Text("ยืนยัน")
-                //                                        .foregroundColor(Color.white)
-                //                                        .frame(width: 140, height: 41, alignment: .center)
-                //                                        .background(Color.darkred)
-                //                                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                //                                        .cornerRadius(15)
-                ////                                        .padding(.top, 21)
-                //                            }
-                
-                Text("ยืนยัน")
-                    .foregroundColor(Color.white)
-                    .frame(width: 140, height: 41, alignment: .center)
-                    .background(Color.darkred)
-                    .font(Font.custom("SukhumvitSet-Bold", size: 15))
-                    .cornerRadius(15)
-                    .onTapGesture { validateTextfield() }
-                //                            Spacer()
-            }
-            .frame(width: UIScreen.main.bounds.width*0.8)
-            
-            Color.black.ignoresSafeArea().opacity(isLoading ? 0.7 : 0)
-            doFavorActivityIndicator().opacity(isLoading ? 1 : 0)
+        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: false) {
+          GeometryReader { geometry in
+              ZStack{
+                  Image("App-BG")
+                      .resizable()
+                      .aspectRatio(contentMode: .fill)
+                      .frame(width: UIScreen.main.bounds.width)
+                  
+                  VStack(alignment: .center, spacing: 30){
+                      Text("Verification Code")
+                          .font(Font.custom("SukhumvitSet-Bold", size: 20))
+                      
+                      
+                      HStack(alignment: .center, spacing: 5){
+                          TextField("",text: $vfc1.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc1.text) { val in
+                                  vfc1.text = String(val.suffix(vfc1.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc2
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc1)
+                          TextField("",text: $vfc2.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc2.text) { val in
+                                  vfc2.text = String(val.suffix(vfc2.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc3
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc2)
+                          TextField("",text: $vfc3.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc3.text) { val in
+                                  vfc3.text = String(val.suffix(vfc3.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc4
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc3)
+                          TextField("",text: $vfc4.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc4.text) { val in
+                                  vfc4.text = String(val.suffix(vfc4.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc5
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc4)
+                          TextField("",text: $vfc5.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc5.text) { val in
+                                  vfc5.text = String(val.suffix(vfc5.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc6
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc5)
+                          TextField("",text: $vfc6.text)
+                              .textFieldStyle(verifyTF())
+                              .onChange(of: vfc6.text) { val in
+                                  vfc6.text = String(val.suffix(vfc6.characterLimit))
+                                  if val != "" {
+                                      focusedField = VerifyCodeFormFields.vfc1
+                                  }
+                              }
+                              .focusedLegacy($focusedField, equals: .vfc6)
+                      }
+                      Text(errMsg)
+                          .foregroundColor(Color.darkred)
+                          .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                          .background(Color.clear)
+                          .opacity(isError ? 1 : 0)
+                      
+                      Text(verbatim:"โปรดกรอกรหัสยืนยันที่ได้รับทางอีเมล์ \(email) โปรดตรวจสอบกล่องข้อความ/อีเมลขยะ")
+                          .font(Font.custom("SukhumvitSet-Medium", size: 14))
+                          .textContentType(.none)
+                          .multilineTextAlignment(.center)
+                      
+                      //                            NavigationLink(destination: {}){
+                      //                                    Text("ยืนยัน")
+                      //                                        .foregroundColor(Color.white)
+                      //                                        .frame(width: 140, height: 41, alignment: .center)
+                      //                                        .background(Color.darkred)
+                      //                                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                      //                                        .cornerRadius(15)
+                      ////                                        .padding(.top, 21)
+                      //                            }
+                      
+                      Text("ยืนยัน")
+                          .foregroundColor(Color.white)
+                          .frame(width: 140, height: 41, alignment: .center)
+                          .background(Color.darkred)
+                          .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                          .cornerRadius(15)
+                          .onTapGesture { validateTextfield() }
+                      //                            Spacer()
+                  }
+                  .frame(width: UIScreen.main.bounds.width*0.8)
+                  
+              }
+              .edgesIgnoringSafeArea(.top)
+              .navigationBarTitle("Sign Up",displayMode: .inline)
+              .navigationBarBackButtonHidden(true)
+              .navigationBarItems(leading:
+                                      Button(action:{
+                  self.presentationMode.wrappedValue.dismiss()
+              }){
+                  HStack{
+                      Image(systemName:"arrow.left")
+                          .font(.system(size: 20, weight: .regular))
+                          .foregroundColor(Color.darkred)
+                  }
+                  
+              }).position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+          }
         }
-        .edgesIgnoringSafeArea(.top)
-        .navigationBarTitle("Sign Up",displayMode: .inline)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading:
-                                Button(action:{
-            self.presentationMode.wrappedValue.dismiss()
-        }){
-            HStack{
-                Image(systemName:"arrow.left")
-                    .font(.system(size: 20, weight: .regular))
-                    .foregroundColor(Color.darkred)
-            }
-            
-        })
         //            .background(.red)
         
     }
