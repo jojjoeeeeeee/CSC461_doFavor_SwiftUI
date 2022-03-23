@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct HomePage: View {
-
+    
     var body: some View {
+        
         ZStack{
             Image("App-BG")
                 .resizable()
@@ -22,19 +23,19 @@ struct HomePage: View {
                         .edgesIgnoringSafeArea(.bottom)
                         .position(x:UIScreen.main.bounds.width/2,y:60)
                 )
-                HomeContent()
+            HomeContent()
         }.onAppear(perform: {
-//            print(UIFont.famil)
-
+            //            print(UIFont.famil)
+            
         })
-//            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-//        .navigationTitle("")
-//        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
-
-        } //body closure
-
-    } //HomePage closure
+        //            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        //        .navigationTitle("")
+        //        .navigationBarBackButtonHidden(true)
+            .navigationBarHidden(true)
+        
+    } //body closure
+    
+} //HomePage closure
 
 struct HomePage_Previews: PreviewProvider {
     static var previews: some View {
@@ -45,23 +46,23 @@ struct HomePage_Previews: PreviewProvider {
 struct addressSegment: View{
     var body: some View{
         NavigationLink(destination: SignUpPage()){
-
-        HStack{
-            Image(systemName: "house")
-                .font(.system(size: 17, weight: .semibold))
-                .padding(.leading,11)
-            Text("ห้อง 1204 อาคารเรียนรวม ตึกไข่ดาว")
-                .font(Font.custom("SukhumvitSet-SemiBold", size: 15))
-        }
-        .edgesIgnoringSafeArea(.top)
-                .edgesIgnoringSafeArea(.bottom)
+            
+            HStack{
+                Image(systemName: "house")
+                    .font(.system(size: 17, weight: .semibold))
+                    .padding(.leading,11)
+                Text("ห้อง 1204 อาคารเรียนรวม ตึกไข่ดาว")
+                    .font(Font.custom("SukhumvitSet-SemiBold", size: 15))
+            }
+            .edgesIgnoringSafeArea(.top)
+            .edgesIgnoringSafeArea(.bottom)
             .foregroundColor(Color.darkest)
             .frame(width:  UIScreen.main.bounds.width-30, height: 41, alignment: .leading)
             .background(Color.white.opacity(0.3))
             .cornerRadius(9)
         }
-//        .padding(.top, 20)
-//        .background(.red)
+        //        .padding(.top, 20)
+        //        .background(.red)
     }
 }
 
@@ -72,12 +73,13 @@ struct HomeContent: View {
             HomeView()
             TabBar()
         }
-//        .background(Color.black.opacity(0.06).edgesIgnoringSafeArea(.top))
-//        .edgesIgnoringSafeArea(.bottom)
+        //        .background(Color.black.opacity(0.06).edgesIgnoringSafeArea(.top))
+        //        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
 struct HomeView: View{
+    @State var showingSheet = false
     var body: some View{
         VStack{
             
@@ -87,8 +89,9 @@ struct HomeView: View{
                     HStack{
                         Card(image: "", text: "ฝากซื้อ", color: Color.darkred)
                         Card(image: "", text: "รับฝาก", color: Color.grey)
-//                        Spacer()
+                        //                        Spacer()
                     }
+                    
                 }
                 .padding()
             }
@@ -100,9 +103,9 @@ struct Card: View{
     var image: String
     var text: String
     var color: Color
-
+    @State private var showingSheet = false
+    
     var body: some View{
-        
         if #available(iOS 15.0, *) {
             VStack{
                 NavigationLink(destination: {}){
@@ -143,15 +146,21 @@ struct Card: View{
                     HStack{
                         Spacer()
                         
+                        
                         Button(action: {
                             print("info press")
-                        }){
+                            showingSheet.toggle()
+                        })
+                        {
                             Image(systemName: "info.circle")
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(Color.darkred)
                                 .frame(alignment: .trailing)
                                 .padding(10)
+                        }.sheet(isPresented: $showingSheet){
+                            HomePushPage(showingSheet: $showingSheet)
                         }
+                        
                     }
                     Spacer()
                 }
@@ -161,7 +170,7 @@ struct Card: View{
             // Fallback on earlier versions
         }
     }
-
+    
 }
 
 struct TabBar: View {
@@ -191,7 +200,7 @@ struct TabBar: View {
                         .foregroundColor(Color.darkest)
                 }
             }
-
+            
             Spacer(minLength: 2)
             Button(action: {
                 
@@ -209,7 +218,7 @@ struct TabBar: View {
         .padding(.top, 12)
         .padding(.bottom, (UIApplication.shared.windows.first?.safeAreaInsets.bottom)! + 15)
         .background(Color.white.opacity(0.5))
-//        .shadow(color: Color.black.opacity(0.04), radius: 0, x: 0, y: -6)
-
+        //        .shadow(color: Color.black.opacity(0.04), radius: 0, x: 0, y: -6)
+        
     }
 }

@@ -66,23 +66,24 @@ struct ContentView: View {
     }
     
     private func validateTextfield() {
-        
-        isError = true
-        if username.isEmpty {
-            errMsg = "buasri id must not be empty."
-        }
-        else if password.isEmpty {
-            errMsg = "password must not be empty."
-        }
-        else {
-            isError.toggle()
-            isLoading.toggle()
-            fetchLogin()
-        }
+        doFavorApp(rootView: .MainAppView)
+
+//        isError = true
+//        if username.isEmpty {
+//            errMsg = "buasri id must not be empty."
+//        }
+//        else if password.isEmpty {
+//            errMsg = "password must not be empty."
+//        }
+//        else {
+//            isError.toggle()
+//            isLoading.toggle()
+//            fetchLogin()
+//        }
     }
     
     var body: some View {
-        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: true) {
+//        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: true) {
           GeometryReader { geometry in
               NavigationView{
                   ZStack{
@@ -155,7 +156,7 @@ struct ContentView: View {
               }
               .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
           }
-        }
+//        } //blur closure
         
     }
 }
