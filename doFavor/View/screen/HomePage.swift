@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import RealmSwift
+
 
 struct HomePage: View {
     
@@ -79,7 +81,9 @@ struct HomeContent: View {
 }
 
 struct HomeView: View{
-    @State var showingSheet = false
+//    @State var showingSheet = false
+//    @State var favor = true
+    
     var body: some View{
         VStack{
             
@@ -87,8 +91,8 @@ struct HomeView: View{
                 addressSegment().padding(.top,60)
                 VStack(spacing: 0){
                     HStack{
-                        Card(image: "", text: "ฝากซื้อ", color: Color.darkred)
-                        Card(image: "", text: "รับฝาก", color: Color.grey)
+                        Card(image: "", text: "ฝากซื้อ", color: Color.darkred, favor: true)
+                        Card(image: "", text: "รับฝาก", color: Color.grey, favor: false)
                         //                        Spacer()
                     }
                     
@@ -103,12 +107,16 @@ struct Card: View{
     var image: String
     var text: String
     var color: Color
+    @State var favor:Bool
     @State private var showingSheet = false
     
     var body: some View{
         if #available(iOS 15.0, *) {
             VStack{
-                NavigationLink(destination: {}){
+                Button(action: {
+                    print("eiei")
+                    doFavorApp(rootView: .GiverView)
+                }){
                     
                     if #available(iOS 15.0, *) {
                         Image(image)
@@ -158,7 +166,7 @@ struct Card: View{
                                 .frame(alignment: .trailing)
                                 .padding(10)
                         }.sheet(isPresented: $showingSheet){
-                            HomePushPage(showingSheet: $showingSheet)
+                            HomePushPage(showingSheet: $showingSheet, favor: $favor)
                         }
                         
                     }
@@ -198,6 +206,8 @@ struct TabBar: View {
                         .resizable()
                         .frame(width: 25, height: 25)
                         .foregroundColor(Color.darkest)
+                }.onTapGesture {
+                    doFavorApp(rootView: .MainAppView)
                 }
             }
             

@@ -36,6 +36,10 @@ struct doFavorApp: App {
                 ContentView()
                     .environmentObject(rootView)
             }
+            else if rootView.viewId == .GiverView {
+                GiverMainPage()
+                    .environmentObject(rootView)
+            }
             else {
                 HomePage()
                     .environmentObject(rootView)
