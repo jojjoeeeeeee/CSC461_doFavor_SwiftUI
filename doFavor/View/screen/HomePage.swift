@@ -8,7 +8,6 @@
 import SwiftUI
 import RealmSwift
 
-
 struct HomePage: View {
     
     var body: some View {
@@ -25,15 +24,12 @@ struct HomePage: View {
                         .edgesIgnoringSafeArea(.bottom)
                         .position(x:UIScreen.main.bounds.width/2,y:60)
                 )
-            HomeContent()
-        }.onAppear(perform: {
-            //            print(UIFont.famil)
-            
-        })
-        //            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        //        .navigationTitle("")
-        //        .navigationBarBackButtonHidden(true)
-            .navigationBarHidden(true)
+            VStack{
+                HomeView()
+                TabbarView()
+            }
+        }
+        .navigationBarHidden(true)
         
     } //body closure
     
@@ -45,44 +41,9 @@ struct HomePage_Previews: PreviewProvider {
     }
 }
 
-struct addressSegment: View{
-    var body: some View{
-        NavigationLink(destination: SignUpPage()){
-            
-            HStack{
-                Image(systemName: "house")
-                    .font(.system(size: 17, weight: .semibold))
-                    .padding(.leading,11)
-                Text("ห้อง 1204 อาคารเรียนรวม ตึกไข่ดาว")
-                    .font(Font.custom("SukhumvitSet-SemiBold", size: 15))
-            }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.bottom)
-            .foregroundColor(Color.darkest)
-            .frame(width:  UIScreen.main.bounds.width-30, height: 41, alignment: .leading)
-            .background(Color.white.opacity(0.3))
-            .cornerRadius(9)
-        }
-        //        .padding(.top, 20)
-        //        .background(.red)
-    }
-}
-
-struct HomeContent: View {
-    
-    var body: some View{
-        VStack(spacing: 0){
-            HomeView()
-            TabBar()
-        }
-        //        .background(Color.black.opacity(0.06).edgesIgnoringSafeArea(.top))
-        //        .edgesIgnoringSafeArea(.bottom)
-    }
-}
-
 struct HomeView: View{
-//    @State var showingSheet = false
-//    @State var favor = true
+    //    @State var showingSheet = false
+    //    @State var favor = true
     
     var body: some View{
         VStack{
@@ -114,7 +75,6 @@ struct Card: View{
         if #available(iOS 15.0, *) {
             VStack{
                 Button(action: {
-                    print("eiei")
                     doFavorApp(rootView: .GiverView)
                 }){
                     
@@ -156,7 +116,6 @@ struct Card: View{
                         
                         
                         Button(action: {
-                            print("info press")
                             showingSheet.toggle()
                         })
                         {
@@ -181,54 +140,3 @@ struct Card: View{
     
 }
 
-struct TabBar: View {
-    
-    var body: some View{
-        HStack{
-            Spacer(minLength: 2)
-            Button(action: {
-                
-            }){
-                VStack{
-                    Image(systemName: "message")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .foregroundColor(Color.darkest)
-                }
-            }
-            
-            Spacer(minLength: 2)
-            Button(action: {
-                
-            }){
-                VStack{
-                    Image(systemName: "house")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .foregroundColor(Color.darkest)
-                }.onTapGesture {
-                    doFavorApp(rootView: .MainAppView)
-                }
-            }
-            
-            Spacer(minLength: 2)
-            Button(action: {
-                
-            }){
-                VStack{
-                    Image(systemName: "info.circle")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .foregroundColor(Color.darkest)
-                }
-            }
-            Spacer(minLength: 2)
-        }
-        .padding(.horizontal, 35)
-        .padding(.top, 12)
-        .padding(.bottom, (UIApplication.shared.windows.first?.safeAreaInsets.bottom)! + 15)
-        .background(Color.white.opacity(0.5))
-        //        .shadow(color: Color.black.opacity(0.04), radius: 0, x: 0, y: -6)
-        
-    }
-}
