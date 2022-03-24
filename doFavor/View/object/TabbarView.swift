@@ -45,6 +45,8 @@ struct TabbarView: View {
                         .resizable()
                         .frame(width: 25, height: 25)
                         .foregroundColor(Color.darkest)
+                }.onTapGesture {
+                    doFavorApp(rootView: .SettingView)
                 }
             }
             Spacer(minLength: 2)

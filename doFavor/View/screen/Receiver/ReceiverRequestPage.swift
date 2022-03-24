@@ -115,7 +115,7 @@ struct RequestView: View{
             .padding(.bottom)
 
         }
-        .frame(width: UIScreen.main.bounds.width,height: .infinity)
+        .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
         .cornerRadius(20)
 
