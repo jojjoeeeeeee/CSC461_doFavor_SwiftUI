@@ -68,6 +68,7 @@ struct Card: View{
     var image: String
     var text: String
     var color: Color
+    //    var isGive:Bool
     @State var favor:Bool
     @State private var showingSheet = false
     
@@ -75,7 +76,14 @@ struct Card: View{
         if #available(iOS 15.0, *) {
             VStack{
                 Button(action: {
-                    doFavorApp(rootView: .GiverView)
+//                    if favor{
+//                        ReceiverRequestPage()
+//                    }else{
+                                                doFavorApp(rootView: favor ? .ReceiverView : .GiverView)
+//                        doFavorApp(rootView: .GiverView)
+//
+//                    }
+                    
                 }){
                     
                     if #available(iOS 15.0, *) {

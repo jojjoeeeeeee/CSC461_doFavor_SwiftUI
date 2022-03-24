@@ -40,6 +40,10 @@ struct doFavorApp: App {
                 GiverMainPage()
                     .environmentObject(rootView)
             }
+            else if rootView.viewId == .ReceiverView {
+                ReceiverRequestPage()
+                    .environmentObject(rootView)
+            }
             else {
                 HomePage()
                     .environmentObject(rootView)

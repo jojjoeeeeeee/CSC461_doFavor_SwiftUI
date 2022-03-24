@@ -11,6 +11,7 @@ enum AppViews {
     case LoginView
     case MainAppView
     case GiverView
+    case ReceiverView
 }
 
 
