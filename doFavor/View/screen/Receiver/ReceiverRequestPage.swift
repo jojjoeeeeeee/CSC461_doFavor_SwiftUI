@@ -6,30 +6,33 @@
 //
 
 import SwiftUI
+import Kingfisher
+
 
 struct ReceiverRequestPage: View {
     var body: some View {
-        ZStack{
-            Image("App-BG")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width)
-                .overlay(
-                    Image("NavBar-BG")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .position(x:UIScreen.main.bounds.width/2,y:60)
-                )
-            VStack(spacing:0){
-                RequestView(shopName: "").padding(.top,60)
-                TabbarView()
+        GeometryReader{ geometry in
+            ZStack{
+                Image("App-BG")
+                    .resizable()
+                    .aspectRatio(geometry.size, contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                Image("NavBar-BG")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .position(x:UIScreen.main.bounds.width/2)
+                    
+
+                VStack(spacing:0){
+                    RequestView(shopName: "")
+                    TabbarView()
+                }
+            .edgesIgnoringSafeArea(.bottom)
+
             }
-            
-            
         }
-        .navigationBarHidden(true)
-    }
+        
+        }
 }
 
 struct ReceiverRequestPage_Previews: PreviewProvider {

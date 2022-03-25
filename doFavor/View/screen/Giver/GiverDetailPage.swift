@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct GiverDetailPage: View {
+    @Binding var showingSheet: Bool
+    
     var body: some View {
         VStack(spacing:27){
             //back button
             HStack{
                 Button(action: {
-//                    showingSheet = false
+                    showingSheet = false
                 })
                 {
                     Image(systemName: "arrow.left")
@@ -58,27 +60,32 @@ struct GiverDetailPage: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(Color.darkred)
 
-                        Text("ประตู 5")
+                        Text("ประตู 5 อาคารประดู่ไข่ดาว")
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .fontWeight(.bold)
                             .foregroundColor(Color.darkred)
                     }
                     
-                    Text("ห่างจากฉัน: 3 กิโลเมตร")
-                        .font(Font.custom("SukhumvitSet-Bold", size: 13))
-                        .fontWeight(.bold)
+                    Text(verbatim:"ห่างจากฉัน: 3 กิโลเมตร")
+                        .font(Font.custom("SukhumvitSet-Medium", size: 14))
+                        .textContentType(.none)
+//                        .lineLimit(nil)
+
 
                     
-                    Spacer()
+//                    Spacer()
                 }
+                .frame(width:UIScreen.main.bounds.width*0.42-20)
+                .fixedSize()
                 .padding(.vertical,12)
                 .padding(.trailing,12)
 
                 Spacer()
             }
             .foregroundColor(Color.darkest)
-            .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
+//            .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
             .frame(width:UIScreen.main.bounds.width-40 ,height: UIScreen.main.bounds.width*0.42)
+            .fixedSize()
 //            .padding(12)
             
             //Note
@@ -89,13 +96,14 @@ struct GiverDetailPage: View {
                         .frame(width: 34, height: 34)
                         .background(Color.white)
                         .cornerRadius(34)
-                        .padding(9)
-                    Text("หมูปิ้ง 2 ไม้")
+                        .padding(.top,9)
+                        .padding(.leading,9)
+                    Text("หมูปิ้ง 2 ไม้ ")
                         .font(Font.custom("SukhumvitSet-Bold", size: 13))
                         .fontWeight(.medium)
                         .padding(.horizontal,9)
                         .padding(.bottom,9)
-//                    Spacer()
+                    Spacer()
                 }
 
                 Spacer()
@@ -117,13 +125,14 @@ struct GiverDetailPage: View {
             .cornerRadius(15)
 
             Spacer()
-        }            .frame(width:UIScreen.main.bounds.width-40)
+        }
+        .frame(width:UIScreen.main.bounds.width-40)
 
     }
 }
 
 struct GiverDetailPage_Previews: PreviewProvider {
     static var previews: some View {
-        GiverDetailPage()
+        GiverDetailPage(showingSheet: .constant(true))
     }
 }

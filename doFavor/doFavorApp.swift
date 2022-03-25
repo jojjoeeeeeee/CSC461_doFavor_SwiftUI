@@ -19,6 +19,11 @@ struct doFavorApp: App {
     init() {
         FirebaseApp.configure()
         AppUtils.saveDeviceUUIDToken(token: UIDevice.current.identifierForVendor!.uuidString)
+        
+        if AppUtils.isAppFirstRun() {
+                    AppUtils.E2EE.generateKeyPair()
+                }
+
 
         if(AppUtils.getUsrAuthToken() == nil || AppUtils.getUsrAuthToken() == "") {
             rootView.viewId = .LoginView
@@ -26,6 +31,11 @@ struct doFavorApp: App {
         else{
             rootView.viewId = .MainAppView
         }
+        
+        //Remove app firstrun
+//        UserDefaults.standard.removeObject(forKey: "isapp_firstrun")
+        AppUtils.setAppFirstRun()
+
     }
     
     
@@ -39,10 +49,12 @@ struct doFavorApp: App {
             else if rootView.viewId == .GiverView {
                 GiverMainPage()
                     .environmentObject(rootView)
+                    .transition(.slide)
             }
             else if rootView.viewId == .ReceiverView {
                 ReceiverRequestPage()
                     .environmentObject(rootView)
+                    .transition(.move(edge: .bottom))
             }
             else if rootView.viewId == .SettingView {
                 SettingMainPage()

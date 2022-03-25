@@ -9,7 +9,23 @@ import SwiftUI
 
 struct ReceiverAddress: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader{ geometry in
+            ZStack{
+        Image("App-BG")
+            .resizable()
+            .aspectRatio(geometry.size, contentMode: .fill)
+            .edgesIgnoringSafeArea(.all)
+        Image("NavBar-BG")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .position(x:UIScreen.main.bounds.width/2)
+            }
+            VStack{
+                
+            }            .edgesIgnoringSafeArea(.bottom)
+
+        }
+
     }
 }
 

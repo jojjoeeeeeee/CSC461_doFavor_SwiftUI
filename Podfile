@@ -8,6 +8,8 @@ target 'doFavor' do
   # Pods for doFavor
   pod 'Alamofire'
   pod 'Kingfisher', '~> 7.0'
+  pod 'SwiftyRSA'
+  pod 'JWTDecode', '~> 2.6'
 
   # Add the Firebase pod for Google Analytics
   pod 'Firebase/Analytics'

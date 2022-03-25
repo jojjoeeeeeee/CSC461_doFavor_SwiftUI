@@ -11,23 +11,25 @@ import RealmSwift
 struct HomePage: View {
     
     var body: some View {
-        
-        ZStack{
-            Image("App-BG")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width)
-                .overlay(
-                    Image("NavBar-BG")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .position(x:UIScreen.main.bounds.width/2,y:60)
-                )
-            VStack{
-                HomeView()
-                TabbarView()
+        GeometryReader{ geometry in
+            ZStack{
+                Image("App-BG")
+                    .resizable()
+                    .aspectRatio(geometry.size, contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                Image("NavBar-BG")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .position(x:UIScreen.main.bounds.width/2)
+                
+                VStack(spacing:0){
+                    HomeView()
+                    TabbarView()
+                    
+                }            .edgesIgnoringSafeArea(.bottom)
+
             }
+
         }
         .navigationBarHidden(true)
         
@@ -49,7 +51,7 @@ struct HomeView: View{
         VStack{
             
             ScrollView(){
-                addressSegment().padding(.top,60)
+                addressSegment().padding(.bottom,UIScreen.main.bounds.width*0.08)
                 VStack(spacing: 0){
                     HStack{
                         Card(image: "", text: "ฝากซื้อ", color: Color.darkred, favor: true)
@@ -58,7 +60,6 @@ struct HomeView: View{
                     }
                     
                 }
-                .padding()
             }
         }
     }
@@ -76,18 +77,12 @@ struct Card: View{
         if #available(iOS 15.0, *) {
             VStack{
                 Button(action: {
-//                    if favor{
-//                        ReceiverRequestPage()
-//                    }else{
-                                                doFavorApp(rootView: favor ? .ReceiverView : .GiverView)
-//                        doFavorApp(rootView: .GiverView)
-//
-//                    }
+                        doFavorApp(rootView: favor ? .ReceiverView : .GiverView)
                     
                 }){
                     
                     if #available(iOS 15.0, *) {
-                        Image(image)
+                        Image("TestPic1")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .overlay(content: {
@@ -95,7 +90,6 @@ struct Card: View{
                                     Spacer()
                                     Text(text)
                                         .foregroundColor(Color.white)
-                                    //                            .font(Font.)
                                         .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
                                         .frame(width: 92, height: 25)
                                         .background(color)
@@ -104,12 +98,16 @@ struct Card: View{
                                     
                                 }
                                 .frame(width: (UIScreen.main.bounds.width - 30) / 2, height: (UIScreen.main.bounds.width - 30) / 3.333)
+                                .contentShape(Rectangle())
+                                .clipped()
                                 
                             })
                     } else {
                         // Fallback on earlier versions
                     }
-                }.clipped()
+                }
+                .frame(width: (UIScreen.main.bounds.width - 30) / 2, height: (UIScreen.main.bounds.width - 30) / 3.333)
+                .clipped()
                 //== ขาดแก้ไม่ให้คลิกตรง shadow ได้ == edit in needed
                 
             }

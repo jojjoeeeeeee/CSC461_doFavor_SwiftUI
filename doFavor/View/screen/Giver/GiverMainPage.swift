@@ -10,26 +10,25 @@ import SwiftUI
 struct GiverMainPage: View {
     
     var body: some View {
-        ZStack{
-            Image("App-BG")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width)
-                .overlay(
-                    Image("NavBar-BG")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .position(x:UIScreen.main.bounds.width/2,y:60)
-                )
-            VStack(){
-                addressSegment().padding(.top,60)
+        GeometryReader{ geometry in
+            ZStack{
+                Image("App-BG")
+                    .resizable()
+                    .aspectRatio(geometry.size, contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                Image("NavBar-BG")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .position(x:UIScreen.main.bounds.width/2)
                 
-                GiverView()
-                TabbarView()
+                VStack(spacing:0){
+                    addressSegment()
+                    GiverView()
+                    TabbarView()
+
+                }            .edgesIgnoringSafeArea(.bottom)
+
             }
-            
-            
         }
         .navigationBarHidden(true)
     }
@@ -42,6 +41,7 @@ struct GiverMainPage_Previews: PreviewProvider {
 }
 
 struct GiverView: View{
+    @State private var showingSheet = false
 
     var body: some View{
         VStack{
@@ -49,6 +49,14 @@ struct GiverView: View{
                 VStack(spacing: 0){
                     searchSegment()
                     giverListCard(category: "", shopName: "", landMark: "", distance: "", note: "")
+                        .onTapGesture {
+                            showingSheet.toggle()
+                        }
+                        .sheet(isPresented: $showingSheet){
+                            GiverDetailPage(showingSheet: $showingSheet)
+                        }
+                    
+                    
                 }                .frame(width:  UIScreen.main.bounds.width-30)
 
                 .padding()
@@ -97,11 +105,7 @@ struct giverListCard: View{
                 .padding(.vertical,12)
                 .padding(.leading,12)
 
-            VStack(alignment:.leading){
-                Button(action: {
-                    
-                })
-                {
+            VStack(alignment:.leading,spacing: 0){
                     Text("food")
                         .font(.system(size: 8, weight: .semibold))
                         .foregroundColor(Color.darkred)
@@ -111,7 +115,6 @@ struct giverListCard: View{
                         .overlay(
                             RoundedRectangle(cornerRadius: 20).stroke(Color.darkred, lineWidth: 1)
                         )
-                }
                 
                 Text("ร้านป้าต๋อย")
                 

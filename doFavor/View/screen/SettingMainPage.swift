@@ -9,24 +9,25 @@ import SwiftUI
 
 struct SettingMainPage: View {
     var body: some View {
-        ZStack{
-            Image("App-BG")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width)
-                .overlay(
-                    Image("NavBar-BG")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .position(x:UIScreen.main.bounds.width/2,y:60)
-                )
-            VStack(spacing:0){
-                SettingView().padding(.top,60)
-                TabbarView()
+        GeometryReader{ geometry in
+            ZStack{
+                Image("App-BG")
+                    .resizable()
+                    .aspectRatio(geometry.size, contentMode: .fill)
+                    .edgesIgnoringSafeArea(.all)
+                Image("NavBar-BG")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .position(x:UIScreen.main.bounds.width/2)
+                
+                VStack(spacing:0){
+                    SettingView()
+                    TabbarView()
+
+                }
+                .edgesIgnoringSafeArea(.bottom)
+
             }
-            
-            
         }
         .navigationBarHidden(true)
     }
@@ -43,6 +44,7 @@ struct SettingView: View{
         VStack{
             ScrollView(){
                 VStack{
+//                    Text("ree")
                     Spacer()
                     Button(action: {
                         //

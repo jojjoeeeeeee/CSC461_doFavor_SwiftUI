@@ -38,3 +38,27 @@ extension Color {
     static let grey = Color(UIColor(red: 158/255, green: 158/255, blue: 158/255, alpha: 1))
 
 }
+
+
+func testMessage() {
+        let publicPem = UserDefaults.standard.value(forKey: "publicKey") as? String
+        let privatePem = UserDefaults.standard.value(forKey: "privateKey") as? String
+        
+        AppUtils.E2EE.encryptMessage(message: "Test message", publicPem: publicPem ?? "") { result in
+            switch result{
+            case .success(let message):
+                print("VALUE",message)
+            case .failure(let err):
+                print("Error",err)
+            }
+        }
+        
+        AppUtils.E2EE.decryptMessage(base64String: "qoKfQt/LQM5adx22ye7vK367m7CwBUtgGKxTiu7z348DHhukH73zJCBOpwIoSTwYhG776MxdAQYuGNO0JdawdH/5sygYGtOFDSSyUq775pjPt+3s92paq3tQ5HvwvS2VBZ5IyzXNQLLeTIEFDHmRW1V36/9Ng/nG02eftul1I7oaDY2hssFazcLpRFtVEi1IxULG5jTLxUtem+AAT6im8+L77KF9WMV8Iqe9JnTc84ToBBBsxJN9kDiOlZ0d9WbBBa0NO+X97JcxloWv9uuGoO9cAU+z6AwXQWmvVho17bTWXnrUNwrnycmQMhqaWGMVdymIZp32ke6rGmbVCtYbgg==", privatePem: privatePem ?? "") { result in
+            switch result{
+            case .success(let message):
+                print("VALUE",message)
+            case .failure(let err):
+                print("Error",err)
+            }
+        }
+    }
