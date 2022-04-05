@@ -60,10 +60,16 @@ struct doFavorApp: App {
                 SettingMainPage()
                     .environmentObject(rootView)
             }
-            else {
+            else if rootView.viewId == .MainAppView {
                 HomePage()
                     .environmentObject(rootView)
+                    .transition(.move(edge: .top))
             }
+//            else {
+//                HomePage()
+//                    .environmentObject(rootView)
+//                    .transition(.move(edge: .top))
+//            }
         }
     }
 }

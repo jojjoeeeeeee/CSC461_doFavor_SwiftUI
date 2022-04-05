@@ -9,7 +9,7 @@ import SwiftUI
 
 struct addressSegment: View{
     var body: some View{
-        NavigationLink(destination: SignUpPage()){
+        NavigationLink(destination: ReceiverAddress()){
             
             HStack{
                 Image(systemName: "house")

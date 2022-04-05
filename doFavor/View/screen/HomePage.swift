@@ -11,6 +11,8 @@ import RealmSwift
 struct HomePage: View {
     
     var body: some View {
+        NavigationView{
+            
         GeometryReader{ geometry in
             ZStack{
                 Image("App-BG")
@@ -27,12 +29,14 @@ struct HomePage: View {
                     TabbarView()
                     
                 }            .edgesIgnoringSafeArea(.bottom)
-
+                
             }
-
+            
         }
+        .navigationTitle("")
         .navigationBarHidden(true)
-        
+        }
+
     } //body closure
     
 } //HomePage closure
@@ -51,7 +55,10 @@ struct HomeView: View{
         VStack{
             
             ScrollView(){
-                addressSegment().padding(.bottom,UIScreen.main.bounds.width*0.08)
+                
+                addressSegment()
+                    .padding(.bottom,UIScreen.main.bounds.width*0.05)
+                    .padding(.top, UIScreen.main.bounds.width*0.04)
                 VStack(spacing: 0){
                     HStack{
                         Card(image: "", text: "ฝากซื้อ", color: Color.darkred, favor: true)
@@ -61,6 +68,7 @@ struct HomeView: View{
                     
                 }
             }
+            
         }
     }
 }
@@ -77,10 +85,10 @@ struct Card: View{
         if #available(iOS 15.0, *) {
             VStack{
                 Button(action: {
-                        doFavorApp(rootView: favor ? .ReceiverView : .GiverView)
+                    doFavorApp(rootView: favor ? .ReceiverView : .GiverView)
                     
-                }){
-                    
+                })
+                {
                     if #available(iOS 15.0, *) {
                         Image("TestPic1")
                             .resizable()
@@ -130,9 +138,11 @@ struct Card: View{
                                 .foregroundColor(Color.darkred)
                                 .frame(alignment: .trailing)
                                 .padding(10)
-                        }.sheet(isPresented: $showingSheet){
+                        }
+                        .sheet(isPresented: $showingSheet){
                             HomePushPage(showingSheet: $showingSheet, favor: $favor)
                         }
+                        
                         
                     }
                     Spacer()

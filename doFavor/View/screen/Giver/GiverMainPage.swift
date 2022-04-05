@@ -67,13 +67,15 @@ struct GiverView: View{
 
 struct searchSegment: View{
     @State public var search: String = ""
+    @State var isPresented:Bool = false
+
 
     var body: some View{
         HStack{
             TextField("กำลังหาอะไรอยู่...",text: $search)
                 .textFieldStyle(doFavTextFieldStyle(icon: "magnifyingglass", color: Color.darkest))
             Button(action: {
-                
+                isPresented.toggle()
             })
             {
                 Image(systemName: "slider.vertical.3")
@@ -84,6 +86,23 @@ struct searchSegment: View{
                     .cornerRadius(46)
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
             }
+            .halfSheet(isPresented: $isPresented) {
+                ZStack{
+                    VStack{
+                        Text("Hi Filter")
+
+                        Button{
+                            isPresented.toggle()
+                        }label: {
+                            Text("Close")
+                        }
+                    }
+                }
+                    
+            } onEnd:{
+                isPresented.toggle()
+            }
+
         }
     }
 }
@@ -146,3 +165,4 @@ struct giverListCard: View{
         
     }
 }
+

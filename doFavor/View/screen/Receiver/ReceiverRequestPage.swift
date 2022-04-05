@@ -11,6 +11,7 @@ import Kingfisher
 
 struct ReceiverRequestPage: View {
     var body: some View {
+        NavigationView{
         GeometryReader{ geometry in
             ZStack{
                 Image("App-BG")
@@ -30,8 +31,10 @@ struct ReceiverRequestPage: View {
             .edgesIgnoringSafeArea(.bottom)
 
             }
+            .navigationTitle("")
+            .navigationBarHidden(true)
         }
-        
+    }
         }
 }
 
@@ -45,13 +48,14 @@ struct RequestView: View{
     @State public var shopName: String
     
     var body: some View{
+        
         VStack{
             ScrollView(){
                 VStack(alignment:.leading, spacing: 10){
                     //back button
                     HStack{
                         Button(action: {
-        //                    showingSheet = false
+                            doFavorApp(rootView: .MainAppView)
                         })
                         {
                             Image(systemName: "arrow.left")
@@ -86,6 +90,40 @@ struct RequestView: View{
                                     RoundedRectangle(cornerRadius: 33).stroke(Color.darkred, lineWidth: 1)
                                 )
                         }
+                        
+                        Button(action: {
+                            
+                        })
+                        {
+                            Text("grocery")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(Color.grey)
+                                .padding(.horizontal, 21)
+                                .frame(height: 33)
+//                                .background(Color.grey.opacity(0.15), alignment: .center)
+                                .cornerRadius(33)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 33).stroke(Color.grey, lineWidth: 1)
+                                )
+                        }
+                        
+                        Button(action: {
+                            
+                        })
+                        {
+                            Text("drinks")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(Color.grey)
+                                .padding(.horizontal, 21)
+                                .frame(height: 33)
+//                                .background(Color.grey.opacity(0.15), alignment: .center)
+                                .cornerRadius(33)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 33).stroke(Color.grey, lineWidth: 1)
+                                )
+                        }
+
+
 
                     }
                     
@@ -95,7 +133,54 @@ struct RequestView: View{
 
                         TextField("ระบุชื่อร้าน..",text: $shopName)
                             .frame(height:36)
-                            .border(Color.darkred.opacity(0.5),width: 2)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                            )
+
+                    }
+                    
+                    HStack{
+                        Text("อาคารใกล้เคียง")
+                            .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
+
+                        TextField("เลือกอาคาร",text: $shopName)
+                            .frame(height:36)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                            )
+
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 0){
+                        Text("สิ่งที่ต้องการฝาก")
+                            .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
+
+                        TextField("ระบุรายละเอียดและจำนวนที่ต้องการฝาก",text: $shopName)
+                            .frame(height:89,alignment: .topLeading)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                            )
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 0){
+                        Text("รูปภาพ (หากมี)")
+                            .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
+                        Button(action: {
+                            withAnimation(.easeInOut) {
+//                                self.isPresented = false
+                            }
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 27, weight: .regular))
+                                .foregroundColor(Color.darkred.opacity(0.5))
+                                .padding(25)
+
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                        )
+
+
                     }
 
                 }

@@ -47,7 +47,8 @@ struct SettingView: View{
 //                    Text("ree")
                     Spacer()
                     Button(action: {
-                        //
+                        AppUtils.eraseAllUsrData()
+                                        doFavorApp(rootView: .LoginView)
                     }){
                         Text("ออกจากระบบ")
                             .foregroundColor(Color.white)
