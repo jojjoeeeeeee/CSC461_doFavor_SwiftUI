@@ -13,6 +13,8 @@ struct ReceiverRequestPage: View {
     
     @State var isLoading: Bool = false
     @State var isExpired: Bool = false
+    @State var isFieldError: Bool = false
+    @State var isNoNetwork: Bool = false
     
     
     
@@ -24,6 +26,7 @@ struct ReceiverRequestPage: View {
         
         TransactionViewModel().getFormData() { result in
             isLoading.toggle()
+            isFieldError = false
             switch result {
             case .success(let response):
                 print("Success",response)
@@ -40,6 +43,8 @@ struct ReceiverRequestPage: View {
                     print("Error Code: \(val.status) - \(val.message)")
                 case .UnParsableError:
                     print("Error \(error)")
+                case .NoNetworkError:
+                    isNoNetwork.toggle()
                 }
             }
         }
@@ -61,7 +66,7 @@ struct ReceiverRequestPage: View {
                         
                         
                         VStack(spacing:0){
-                            RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, formData: self.formData)
+                            RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, isFieldError: $isFieldError, isNoNetwork: $isNoNetwork, formData: self.formData)
                             TabbarView()
                         }.onAppear{fetchFormData()}
                             .edgesIgnoringSafeArea(.bottom)
@@ -86,6 +91,23 @@ struct ReceiverRequestPage: View {
                         dismissButton: .destructive(Text("Ok")) {
                             AppUtils.eraseAllUsrData()
                             doFavorApp(rootView: .LoginView)
+                        }
+                    )
+                }.alert(isPresented: $isFieldError) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text("field missing"),
+                        dismissButton: .default(Text("Ok")) {
+                            fetchFormData()
+                        }
+                    )
+                }.alert(isPresented:$isNoNetwork) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text("No network connection please try again"),
+                        dismissButton: .default(Text("Ok")) {
+                            isLoading = false
+                            isNoNetwork = false
                         }
                     )
                 }
@@ -116,6 +138,8 @@ struct RequestView: View{
     
     @Binding var isLoading: Bool
     @Binding var isExpired: Bool
+    @Binding var isFieldError: Bool
+    @Binding var isNoNetwork: Bool
     
     @StateObject public var formData = FormDataObservedModel()
     
@@ -165,6 +189,8 @@ struct RequestView: View{
                     print("Error Code: \(val.status) - \(val.message)")
                 case .UnParsableError:
                     print("Error \(error)")
+                case .NoNetworkError:
+                    isNoNetwork.toggle()
                 }
             }
         }
@@ -175,11 +201,19 @@ struct RequestView: View{
         type = formData.type?[selectedType].title_en ?? ""
         
         isError = true
-        if shopName.isEmpty {
-            errMsg = "กรุณาระบุชื่อร้าน"
+        if type.isEmpty { //Building empty
+            isError = false
+            isFieldError = true
         }
-        else if detail.isEmpty {
-            errMsg = "กรุณาระบุรายละเอียด"
+        else if shopName.isEmpty {
+//            errMsg = "กรุณาระบุชื่อร้าน"
+            isError = false
+            isFieldError = true
+        }
+        else if detail.isEmpty || detail == detailPlaceholder {
+//            errMsg = "กรุณาระบุรายละเอียด"
+            isError = false
+            isFieldError = true
         }
         else {
             isError.toggle()

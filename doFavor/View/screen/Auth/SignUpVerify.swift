@@ -8,17 +8,6 @@
 import SwiftUI
 import Focuser
 
-//class LimitedCharacter: ObservedObject<>{
-//
-//    @Published var char:String=""{
-//        didSet{
-//            if char.count > 6{
-//                char = String(char.prefix(6))
-//            }
-//        }
-//    }
-//}
-
 struct SignUpVerify: View {
     //    @ObservedObject var limitChar: LimitedCharacter
     //    @State var verifycode: String = ""
@@ -28,6 +17,7 @@ struct SignUpVerify: View {
     @State var errMsg: String = "error"
     @State var isLoading: Bool = false
     @State var isError: Bool = false
+    @State var isNoNetwork: Bool = false
     
     @AppStorage(Constants.AppConstants.CUR_USR_EMAIL) var email:String = ""
     
@@ -70,6 +60,8 @@ struct SignUpVerify: View {
                     print("Error Code: \(val.status) - \(val.message)")
                 case .UnParsableError:
                     print("Error \(error)")
+                case .NoNetworkError:
+                    isNoNetwork.toggle()
                 }
             }
         }
@@ -206,6 +198,15 @@ struct SignUpVerify: View {
                       
                   })
               .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+          }.alert(isPresented:$isNoNetwork) {
+              Alert(
+                  title: Text("Error"),
+                  message: Text("No network connection please try again"),
+                  dismissButton: .default(Text("Ok")) {
+                      isLoading = false
+                      isNoNetwork = false
+                  }
+              )
           }
         }
         //            .background(.red)

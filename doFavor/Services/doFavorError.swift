@@ -11,6 +11,7 @@ enum ServiceError:Error {
     case UnParsableError
     case Non200StatusCodeError(doFavorAPIError)
     case BackEndError(errorMessage:String)
+    case NoNetworkError
 }
 
 struct doFavorAPIError:Decodable {

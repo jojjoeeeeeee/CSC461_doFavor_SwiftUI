@@ -12,10 +12,10 @@ struct TransactionViewModel {
     public func getFormData(completion: @escaping (Result<TSCTFormDataModel,ServiceError>) -> ()){
         
         let headers: HTTPHeaders = ["Authorization" : AppUtils.getUsrAuthToken()!,
-                           "Content-Type": "application/json"]
+                                    "Content-Type": "application/json"]
         
         let request = AF.request(Constants.BASE_URL+Constants.TSCT_FORM_DATA, method: .get, headers: headers)
-
+        
         request.responseDecodable(of: ResponseTSCTFormDataModel.self) { (response) in
             switch response.result {
             case .success(_):
@@ -32,6 +32,20 @@ struct TransactionViewModel {
                     completion(.failure(ServiceError.Non200StatusCodeError(doFavorAPIError(message: data.result, status: "500"))))
                 }
             case .failure(let error):
+                
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let sessionError):
+                        if let urlError = sessionError as? URLError, urlError.code == .notConnectedToInternet {
+                            completion(.failure(ServiceError.NoNetworkError))
+                        }
+                        else {
+                            completion(.failure(ServiceError.UnParsableError))
+                        }
+                    default :
+                        completion(.failure(ServiceError.UnParsableError))
+                    }
+                }
                 completion(.failure(ServiceError.UnParsableError))
             }
         }
@@ -40,10 +54,10 @@ struct TransactionViewModel {
     public func create(reqObj: RequestCreateTSCTModel,then completion: @escaping (Result<CreateTSCTDataModel,ServiceError>) -> ()){
         
         let headers: HTTPHeaders = ["Authorization" : AppUtils.getUsrAuthToken()!,
-                           "Content-Type": "application/json"]
+                                    "Content-Type": "application/json"]
         
         let request = AF.request(Constants.BASE_URL+Constants.TSCT_CREATE, method: .post, parameters: reqObj, encoder: JSONParameterEncoder.default, headers: headers)
-
+        
         request.responseDecodable(of: ResponseCreateTSCTModel.self) { (response) in
             switch response.result {
             case .success(_):
@@ -63,6 +77,19 @@ struct TransactionViewModel {
                     completion(.failure(ServiceError.Non200StatusCodeError(doFavorAPIError(message: data.result, status: "500"))))
                 }
             case .failure(let error):
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let sessionError):
+                        if let urlError = sessionError as? URLError, urlError.code == .notConnectedToInternet {
+                            completion(.failure(ServiceError.NoNetworkError))
+                        }
+                        else {
+                            completion(.failure(ServiceError.UnParsableError))
+                        }
+                    default :
+                        completion(.failure(ServiceError.UnParsableError))
+                    }
+                }
                 completion(.failure(ServiceError.UnParsableError))
             }
         }

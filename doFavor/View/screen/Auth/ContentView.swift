@@ -17,6 +17,7 @@ struct ContentView: View {
     @State var errMsg: String = "error"
     @State var isLoading: Bool = false
     @State var isError: Bool = false
+    @State var isNoNetwork: Bool = false
     
     @FocusStateLegacy var focusedField: SignInFormFields?
     
@@ -60,6 +61,8 @@ struct ContentView: View {
                     print("Error Code: \(val.status) - \(val.message)")
                 case .UnParsableError:
                     print("Error \(error)")
+                case .NoNetworkError:
+                    isNoNetwork.toggle()
                 }
             }
         }
@@ -158,6 +161,15 @@ struct ContentView: View {
                     }
                         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     
+                }.alert(isPresented:$isNoNetwork) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text("No network connection please try again"),
+                        dismissButton: .default(Text("Ok")) {
+                            isLoading = false
+                            isNoNetwork = false
+                        }
+                    )
                 }
                 
             }// blur closure

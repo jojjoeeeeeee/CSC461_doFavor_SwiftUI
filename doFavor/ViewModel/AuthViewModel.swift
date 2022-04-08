@@ -27,6 +27,19 @@ struct AuthViewModel {
                     completion(.failure(ServiceError.Non200StatusCodeError(doFavorAPIError(message: data.result, status: "500"))))
                 }
             case .failure(let error):
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let sessionError):
+                        if let urlError = sessionError as? URLError, urlError.code == .notConnectedToInternet {
+                            completion(.failure(ServiceError.NoNetworkError))
+                        }
+                        else {
+                            completion(.failure(ServiceError.UnParsableError))
+                        }
+                    default :
+                        completion(.failure(ServiceError.UnParsableError))
+                    }
+                }
                 completion(.failure(ServiceError.UnParsableError))
             }
         }
@@ -55,6 +68,19 @@ struct AuthViewModel {
                     completion(.failure(ServiceError.Non200StatusCodeError(doFavorAPIError(message: data.result, status: "500"))))
                 }
             case .failure(let error):
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let sessionError):
+                        if let urlError = sessionError as? URLError, urlError.code == .notConnectedToInternet {
+                            completion(.failure(ServiceError.NoNetworkError))
+                        }
+                        else {
+                            completion(.failure(ServiceError.UnParsableError))
+                        }
+                    default :
+                        completion(.failure(ServiceError.UnParsableError))
+                    }
+                }
                 completion(.failure(ServiceError.UnParsableError))
             }
         }
@@ -81,6 +107,19 @@ struct AuthViewModel {
                     completion(.failure(ServiceError.Non200StatusCodeError(doFavorAPIError(message: data.result, status: "500"))))
                 }
             case .failure(let error):
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let sessionError):
+                        if let urlError = sessionError as? URLError, urlError.code == .notConnectedToInternet {
+                            completion(.failure(ServiceError.NoNetworkError))
+                        }
+                        else {
+                            completion(.failure(ServiceError.UnParsableError))
+                        }
+                    default :
+                        completion(.failure(ServiceError.UnParsableError))
+                    }
+                }
                 completion(.failure(ServiceError.UnParsableError))
             }
         }
