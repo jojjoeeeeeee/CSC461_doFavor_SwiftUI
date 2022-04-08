@@ -17,6 +17,9 @@ struct Constants {
     static let AUTH_VERIFY = "/auth/verify"
     static let AUTH_VERIFY_RESEND = "/auth/verify/resend"
     
+    static let TSCT_FORM_DATA = "/transaction/data"
+    static let TSCT_CREATE = "/transaction/create"
+    
     struct AppConstants {
         static let CUR_USR_TOKEN = "UserAuthToken"
         static let CUR_USR_USERNAME = "UserUsername"

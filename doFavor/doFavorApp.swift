@@ -21,8 +21,8 @@ struct doFavorApp: App {
         AppUtils.saveDeviceUUIDToken(token: UIDevice.current.identifierForVendor!.uuidString)
         
         if AppUtils.isAppFirstRun() {
-                    AppUtils.E2EE.generateKeyPair()
-                }
+            AppUtils.E2EE.generateKeyPair()
+        }
 
 
         if(AppUtils.getUsrAuthToken() == nil || AppUtils.getUsrAuthToken() == "") {

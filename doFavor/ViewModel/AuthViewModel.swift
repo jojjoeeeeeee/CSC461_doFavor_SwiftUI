@@ -42,7 +42,9 @@ struct AuthViewModel {
                 if data.result == "OK" {
                     let userdata:UserModel = data.data
                     if userdata.state == "verify" {
-                        AppUtils.saveUsrAuthToken(token: response.response?.allHeaderFields["Authorization"].debugDescription ?? "")
+                        let token = response.response?.allHeaderFields["Authorization"] as? String
+                        AppUtils.saveUsrAuthToken(token: token ?? "")
+                        
                     }
                     completion(.success(userdata))
                 }
@@ -68,7 +70,8 @@ struct AuthViewModel {
                 
                 if data.result == "OK" {
                     let userdata:UserModel = data.data
-                    AppUtils.saveUsrAuthToken(token: response.response?.allHeaderFields["Authorization"].debugDescription ?? "")
+                    let token = response.response?.allHeaderFields["Authorization"] as? String
+                    AppUtils.saveUsrAuthToken(token: token ?? "")
                     completion(.success(userdata))
                 }
                 else if data.result == "nOK" {

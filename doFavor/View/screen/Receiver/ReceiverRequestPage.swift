@@ -6,46 +6,187 @@
 //
 
 import SwiftUI
-import Kingfisher
-
 
 struct ReceiverRequestPage: View {
+    @ObservedObject var formData = FormDataObservedModel()
+    //    @State var formData: TSCTFormDataModel?
+    
+    @State var isLoading: Bool = false
+    @State var isExpired: Bool = false
+    
+    
+    
+    @State var detail = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
+    var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
+    
+    func fetchFormData() {
+        isLoading.toggle()
+        
+        TransactionViewModel().getFormData() { result in
+            isLoading.toggle()
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                formData.landmark = response.landmark
+                formData.type = response.type
+            case .failure(let error):
+                switch error{
+                case .BackEndError(let msg):
+                    if msg == "session expired" {
+                        isExpired.toggle()
+                    }
+                    print(msg)
+                case .Non200StatusCodeError(let val):
+                    print("Error Code: \(val.status) - \(val.message)")
+                case .UnParsableError:
+                    print("Error \(error)")
+                }
+            }
+        }
+    }
+    
     var body: some View {
         NavigationView{
-        GeometryReader{ geometry in
-            ZStack{
-                Image("App-BG")
-                    .resizable()
-                    .aspectRatio(geometry.size, contentMode: .fill)
-                    .edgesIgnoringSafeArea(.all)
-                Image("NavBar-BG")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .position(x:UIScreen.main.bounds.width/2)
+            doFavorMainLoadingIndicatorView(isLoading: isLoading) {
+                GeometryReader { geometry in
+                    ZStack{
+                        Image("App-BG")
+                            .resizable()
+                            .aspectRatio(geometry.size, contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                        Image("NavBar-BG")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .position(x:UIScreen.main.bounds.width/2)
+                        
+                        
+                        VStack(spacing:0){
+                            RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, formData: self.formData)
+                            TabbarView()
+                        }.onAppear{fetchFormData()}
+                            .edgesIgnoringSafeArea(.bottom)
+                        
+                    }
+                    .onTapGesture {
+                        if detail.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace} == "" {
+                            detail = detailPlaceholder
+                        }
+                        UIApplication.shared.endEditing()
+                        
+                    }
+                    .navigationTitle("")
+                    .navigationBarHidden(true)
                     
-
-                VStack(spacing:0){
-                    RequestView(shopName: "")
-                    TabbarView()
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    
+                }.alert(isPresented:$isExpired) {
+                    Alert(
+                        title: Text("Session Expired"),
+                        message: Text("this account is signed-in from another location please sign-in again"),
+                        dismissButton: .destructive(Text("Ok")) {
+                            AppUtils.eraseAllUsrData()
+                            doFavorApp(rootView: .LoginView)
+                        }
+                    )
                 }
-            .edgesIgnoringSafeArea(.bottom)
-
+                
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
         }
     }
-        }
 }
 
-struct ReceiverRequestPage_Previews: PreviewProvider {
-    static var previews: some View {
-        ReceiverRequestPage()
-    }
-}
+//struct ReceiverRequestPage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ReceiverRequestPage()
+//    }
+//}
 
 struct RequestView: View{
-    @State public var shopName: String
+    
+    @State var selectedType: Int = 0
+    var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
+    
+    @State var shopName: String = ""
+    @Binding var detail: String
+    @State var type: String = ""
+    var reward: String = ""
+    
+    @State var errMsg: String = "error"
+    @State var isError: Bool = false
+    
+    @Binding var isLoading: Bool
+    @Binding var isExpired: Bool
+    
+    @StateObject public var formData = FormDataObservedModel()
+    
+    private func fetchCreateTSCT() {
+        var model = RequestCreateTSCTModel()
+        var location = RequestLocationModel()
+        var task_location = RequestTaskLocationModel()
+        
+        model.title = shopName.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace}
+        model.detail = detail
+        model.type = type
+        model.reward = ""
+        model.petitioner_id = AppUtils.getUsrId() ?? ""
+        model.applicant_id = ""
+        model.conversation_id = ""
+        
+        location.room = "1204"
+        location.floor = "12"
+        location.building = formData.landmark?[0].name
+        location.optional = ""
+        location.latitude = formData.landmark?[0].latitude
+        location.longitude = formData.landmark?[0].longitude
+        
+        task_location.name = formData.landmark?[0].name
+        task_location.building = formData.landmark?[0].building
+        task_location.latitude = formData.landmark?[0].latitude
+        task_location.longitude = formData.landmark?[0].longitude
+        
+        model.location = location
+        model.task_location = task_location
+        
+        TransactionViewModel().create(reqObj: model) { result in
+            isLoading.toggle()
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                //                onSubmit.toggle()
+            case .failure(let error):
+                switch error{
+                case .BackEndError(let msg):
+                    if msg == "session expired" {
+                        isExpired.toggle()
+                    }
+                    errMsg = msg
+                    isError = true
+                case .Non200StatusCodeError(let val):
+                    print("Error Code: \(val.status) - \(val.message)")
+                case .UnParsableError:
+                    print("Error \(error)")
+                }
+            }
+        }
+    }
+    
+    
+    private func validateData() {
+        type = formData.type?[selectedType].title_en ?? ""
+        
+        isError = true
+        if shopName.isEmpty {
+            errMsg = "กรุณาระบุชื่อร้าน"
+        }
+        else if detail.isEmpty {
+            errMsg = "กรุณาระบุรายละเอียด"
+        }
+        else {
+            isError.toggle()
+            isLoading.toggle()
+            fetchCreateTSCT()
+        }
+    }
     
     var body: some View{
         
@@ -75,91 +216,67 @@ struct RequestView: View{
                     Text("บริการที่ต้องการฝาก")
                         .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
                     HStack{
-                        Button(action: {
-                            
-                        })
-                        {
-                            Text("food")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(Color.darkred)
-                                .padding(.horizontal, 21)
-                                .frame(height: 33)
-                                .background(Color.darkred.opacity(0.15), alignment: .center)
-                                .cornerRadius(33)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 33).stroke(Color.darkred, lineWidth: 1)
-                                )
+                        ForEach((0..<(self.formData.type?.count ?? 0)), id: \.self) { index in
+                            Button(action: {
+                                selectedType = index
+                            })
+                            {
+                                Text(self.formData.type?[index].title_en ?? "")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundColor(self.selectedType == index ? Color.darkred : Color.grey)
+                                    .padding(.horizontal, 21)
+                                    .frame(height: 33)
+                                    .background(self.selectedType == index ? Color.darkred.opacity(0.15) : Color.clear, alignment: .center)
+                                    .cornerRadius(33)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 33).stroke(self.selectedType == index ? Color.darkred : Color.grey, lineWidth: 1)
+                                    )
+                            }
                         }
                         
-                        Button(action: {
-                            
-                        })
-                        {
-                            Text("grocery")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(Color.grey)
-                                .padding(.horizontal, 21)
-                                .frame(height: 33)
-//                                .background(Color.grey.opacity(0.15), alignment: .center)
-                                .cornerRadius(33)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 33).stroke(Color.grey, lineWidth: 1)
-                                )
-                        }
-                        
-                        Button(action: {
-                            
-                        })
-                        {
-                            Text("drinks")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(Color.grey)
-                                .padding(.horizontal, 21)
-                                .frame(height: 33)
-//                                .background(Color.grey.opacity(0.15), alignment: .center)
-                                .cornerRadius(33)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 33).stroke(Color.grey, lineWidth: 1)
-                                )
-                        }
-
-
-
                     }
                     
                     HStack{
                         Text("ชื่อร้าน")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
-
+                        
                         TextField("ระบุชื่อร้าน..",text: $shopName)
                             .frame(height:36)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                             )
-
+                        
                     }
                     
                     HStack{
                         Text("อาคารใกล้เคียง")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
-
+                        
                         TextField("เลือกอาคาร",text: $shopName)
                             .frame(height:36)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                             )
-
+                        
                     }
                     
                     VStack(alignment: .leading, spacing: 0){
                         Text("สิ่งที่ต้องการฝาก")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
-
-                        TextField("ระบุรายละเอียดและจำนวนที่ต้องการฝาก",text: $shopName)
+                        
+                        TextEditor(text: $detail)
+                            .foregroundColor(detail == detailPlaceholder ? Color(UIColor.placeholderText) : .primary)
                             .frame(height:89,alignment: .topLeading)
+                            .onTapGesture{
+                                if detail == detailPlaceholder {
+                                    detail = ""
+                                }
+                            }
+                            
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                             )
+                        
                     }
                     
                     VStack(alignment: .leading, spacing: 0){
@@ -167,46 +284,54 @@ struct RequestView: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
                         Button(action: {
                             withAnimation(.easeInOut) {
-//                                self.isPresented = false
+                                //                                self.isPresented = false
                             }
                         }) {
                             Image(systemName: "plus")
                                 .font(.system(size: 27, weight: .regular))
                                 .foregroundColor(Color.darkred.opacity(0.5))
                                 .padding(25)
-
+                            
                         }
                         .overlay(
                             RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                         )
-
-
+                        
+                        
                     }
-
+                    
+                    Text(errMsg)
+                        .foregroundColor(Color.darkred)
+                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                        .background(Color.clear)
+                        .opacity(isError ? 1 : 0)
+                    
                 }
                 .padding(.horizontal,20)
-//                .frame(width: UIScreen.main.bounds.width-40)
+                //                .frame(width: UIScreen.main.bounds.width-40)
                 .font(Font.custom("SukhumvitSet-Bold", size: 14).weight(.bold))
             }
             
             //button
             Button(action: {
+                validateData()
             }){
                 Text("ยืนยัน")
                     .foregroundColor(Color.white)
                     .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
-
+                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                    .background(Color.darkred)
+                    .cornerRadius(15)
+                    .padding(.bottom)
+                
             }
-            .frame(width:UIScreen.main.bounds.width-40, height: 50)
-            .background(Color.darkred)
-            .cornerRadius(15)
-            .padding(.bottom)
-
+            
+            
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
         .cornerRadius(20)
-
+        
     }
 }
 
