@@ -13,6 +13,7 @@ enum AppViews {
     case GiverView
     case ReceiverView
     case SettingView
+    case HistoryView
 }
 
 

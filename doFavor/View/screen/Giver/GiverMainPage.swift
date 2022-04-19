@@ -10,6 +10,7 @@ import SwiftUI
 struct GiverMainPage: View {
     
     var body: some View {
+        NavigationView{
         GeometryReader{ geometry in
             ZStack{
                 Image("App-BG")
@@ -31,6 +32,7 @@ struct GiverMainPage: View {
             }
         }
         .navigationBarHidden(true)
+    }
     }
 }
 

@@ -15,6 +15,7 @@ struct ReceiverRequestPage: View {
     @State var isExpired: Bool = false
     @State var isFieldError: Bool = false
     @State var isNoNetwork: Bool = false
+    @State var isAlert: Bool = false
     
     
     
@@ -26,7 +27,6 @@ struct ReceiverRequestPage: View {
         
         TransactionViewModel().getFormData() { result in
             isLoading.toggle()
-            isFieldError = false
             switch result {
             case .success(let response):
                 print("Success",response)
@@ -36,6 +36,7 @@ struct ReceiverRequestPage: View {
                 switch error{
                 case .BackEndError(let msg):
                     if msg == "session expired" {
+                        isAlert = true
                         isExpired.toggle()
                     }
                     print(msg)
@@ -44,6 +45,7 @@ struct ReceiverRequestPage: View {
                 case .UnParsableError:
                     print("Error \(error)")
                 case .NoNetworkError:
+                    isAlert = true
                     isNoNetwork.toggle()
                 }
             }
@@ -66,7 +68,7 @@ struct ReceiverRequestPage: View {
                         
                         
                         VStack(spacing:0){
-                            RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, isFieldError: $isFieldError, isNoNetwork: $isNoNetwork, formData: self.formData)
+                            RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, isFieldError: $isFieldError, isNoNetwork: $isNoNetwork, isAlert: $isAlert, formData: self.formData)
                             TabbarView()
                         }.onAppear{fetchFormData()}
                             .edgesIgnoringSafeArea(.bottom)
@@ -84,32 +86,38 @@ struct ReceiverRequestPage: View {
                     
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     
-                }.alert(isPresented:$isExpired) {
-                    Alert(
-                        title: Text("Session Expired"),
-                        message: Text("this account is signed-in from another location please sign-in again"),
-                        dismissButton: .destructive(Text("Ok")) {
-                            AppUtils.eraseAllUsrData()
-                            doFavorApp(rootView: .LoginView)
-                        }
-                    )
-                }.alert(isPresented: $isFieldError) {
-                    Alert(
-                        title: Text("Error"),
-                        message: Text("field missing"),
-                        dismissButton: .default(Text("Ok")) {
-                            fetchFormData()
-                        }
-                    )
-                }.alert(isPresented:$isNoNetwork) {
-                    Alert(
-                        title: Text("Error"),
-                        message: Text("No network connection please try again"),
-                        dismissButton: .default(Text("Ok")) {
-                            isLoading = false
-                            isNoNetwork = false
-                        }
-                    )
+                }.alert(isPresented:$isAlert) {
+                    if isExpired {
+                        return Alert(
+                            title: Text("Session Expired"),
+                            message: Text("this account is signed-in from another location please sign-in again"),
+                            dismissButton: .destructive(Text("Ok")) {
+                                AppUtils.eraseAllUsrData()
+                                doFavorApp(rootView: .LoginView)
+                            }
+                        )
+                    }
+                    else if isFieldError {
+                        return Alert(
+                            title: Text("Error"),
+                            message: Text("field missing"),
+                            dismissButton: .default(Text("Ok")) {
+                                
+                                fetchFormData()
+                            }
+                        )
+                    }
+                    else {
+                        return Alert(
+                            title: Text("Error"),
+                            message: Text("No network connection please try again"),
+                            dismissButton: .default(Text("Ok")) {
+                                isLoading = false
+                                isNoNetwork = false
+                            }
+                        )
+                    }
+                    
                 }
                 
             }
@@ -117,13 +125,37 @@ struct ReceiverRequestPage: View {
     }
 }
 
-//struct ReceiverRequestPage_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ReceiverRequestPage()
-//    }
-//}
+struct ReceiverRequestPage_Previews: PreviewProvider {
+    static var previews: some View {
+        ReceiverRequestPage()
+    }
+}
 
 struct RequestView: View{
+    @State private var selectedLandmark = "เลือกอาคาร"
+    //pickerSheet
+    @State private var pickerType = 0 // TODO: Update to Enum
+    private var isShowingOverlay: Bool {
+        get {
+            return self.pickerType != 0
+        }
+    }
+    
+
+    private var landmarkPicker: some View{
+        pickerSheet(selection: $selectedLandmark, data: formData.landmark!, pickerType: $pickerType)
+    }
+
+    private var pickerOverlay: some View {
+        Group {
+            if pickerType == 1 {
+                landmarkPicker
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
     
     @State var selectedType: Int = 0
     var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
@@ -140,6 +172,7 @@ struct RequestView: View{
     @Binding var isExpired: Bool
     @Binding var isFieldError: Bool
     @Binding var isNoNetwork: Bool
+    @Binding var isAlert: Bool
     
     @StateObject public var formData = FormDataObservedModel()
     
@@ -181,6 +214,7 @@ struct RequestView: View{
                 switch error{
                 case .BackEndError(let msg):
                     if msg == "session expired" {
+                        isAlert = true
                         isExpired.toggle()
                     }
                     errMsg = msg
@@ -190,6 +224,7 @@ struct RequestView: View{
                 case .UnParsableError:
                     print("Error \(error)")
                 case .NoNetworkError:
+                    isAlert = true
                     isNoNetwork.toggle()
                 }
             }
@@ -203,16 +238,19 @@ struct RequestView: View{
         isError = true
         if type.isEmpty { //Building empty
             isError = false
+            isAlert = true
             isFieldError = true
         }
         else if shopName.isEmpty {
 //            errMsg = "กรุณาระบุชื่อร้าน"
             isError = false
+            isAlert = true
             isFieldError = true
         }
         else if detail.isEmpty || detail == detailPlaceholder {
 //            errMsg = "กรุณาระบุรายละเอียด"
             isError = false
+            isAlert = true
             isFieldError = true
         }
         else {
@@ -244,11 +282,11 @@ struct RequestView: View{
                     
                     //
                     Text("ที่อยู่ของฉัน")
-                        .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                        .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
                     addressSegment().border(Color.darkred)
                     
                     Text("บริการที่ต้องการฝาก")
-                        .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                        .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
                     HStack{
                         ForEach((0..<(self.formData.type?.count ?? 0)), id: \.self) { index in
                             Button(action: {
@@ -285,15 +323,24 @@ struct RequestView: View{
                     HStack{
                         Text("อาคารใกล้เคียง")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
-                        
-                        TextField("เลือกอาคาร",text: $shopName)
-                            .frame(height:36)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
-                            )
-                        
+                        Button(action: {
+                            print("click picker")
+                            self.pickerType = 1
+                        }){
+                            Text("\(self.selectedLandmark)")
+                                .padding()
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 18, weight: .semibold))
+                                .padding()
+                        }
+                        .frame(height:36)
+                        .foregroundColor(Color.darkred.opacity(0.5))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                        )
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 0){
                         Text("สิ่งที่ต้องการฝาก")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
@@ -360,13 +407,54 @@ struct RequestView: View{
                 
             }
             
-            
+            if isShowingOverlay {
+    //            Spacer()
+                pickerOverlay
+                    .frame(alignment: .bottomTrailing)
+                    .transition(AnyTransition.move(edge: .bottom))
+                    .animation(.easeInOut(duration: 0.5))
+//                    .position(x: UIScreen.main.bounds.width/2, y: UIScreen.main.bounds.height-180)
+
+            }
+
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
         .cornerRadius(20)
         
+
     }
 }
 
 
+struct pickerSheet: View{
+    @Binding var selection: String
+    var data: [landmarkDataModel]
+    @Binding var pickerType: Int
+
+    
+    var body: some View {
+        VStack(spacing:0){
+            Button(action: {
+                pickerType = 0
+                print(selection)
+            }){
+                Spacer()
+                Text("Done").fontWeight(.bold).padding(.trailing)
+            }.padding(10.0)
+        Group{
+            Picker("",selection: $selection){
+                ForEach(0..<data.count, id: \.self){ index in
+                    Text(data[index].name!)
+                }
+        }.pickerStyle(WheelPickerStyle())
+            .foregroundColor(.white)
+            .frame(height: 180)
+            .padding()
+        }
+        .background(Color(UIColor(red: 226/255, green: 225/255, blue: 228/255, alpha: 1)))
+        }
+        .background(Color(UIColor(red: 247/255, green: 247/255, blue: 249/255, alpha: 1)))
+
+    }
+}

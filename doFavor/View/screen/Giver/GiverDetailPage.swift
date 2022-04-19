@@ -11,7 +11,7 @@ struct GiverDetailPage: View {
     @Binding var showingSheet: Bool
     
     var body: some View {
-        VStack(spacing:27){
+        VStack(alignment:.leading, spacing:27){
             //back button
             HStack{
                 Button(action: {
@@ -112,6 +112,20 @@ struct GiverDetailPage: View {
             .frame(minHeight: 190)
             .background(Color.darkred.opacity(0.15))
             .cornerRadius(15)
+            
+            VStack(alignment:.leading){
+                Text("จัดส่งที่ :")
+                    .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                    .fontWeight(.bold)
+                
+                Text("อาคาร COSCI ชั้น 15 ห้อง 1503")
+                    .font(Font.custom("SukhumvitSet-Bold", size: 14))
+                    .foregroundColor(Color.darkred)
+                    .fontWeight(.bold)
+
+            }
+
+            
             //Submit button
             Button(action: {
             }){
