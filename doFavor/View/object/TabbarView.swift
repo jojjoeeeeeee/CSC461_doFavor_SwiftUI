@@ -9,52 +9,48 @@ import SwiftUI
 
 struct TabbarView: View {
     var body: some View{
-        HStack{
-            Spacer(minLength: 2)
+        HStack(){
+//            Spacer(minLength: 2)
             Button(action: {
-                
+                doFavorApp(rootView: .HistoryView)
             }){
                 VStack{
                     Image(systemName: "message")
                         .resizable()
                         .frame(width: 25, height: 25)
                         .foregroundColor(Color.darkest)
-                }.onTapGesture {
-                    doFavorApp(rootView: .HistoryView)
-                        
                 }
+                .frame(width: UIScreen.main.bounds.width/3.5)
             }
             
-            Spacer(minLength: 2)
+//            Spacer(minLength: 2)
             Button(action: {
-                
+                doFavorApp(rootView: .MainAppView)
             }){
                 VStack{
                     Image(systemName: "house")
                         .resizable()
                         .frame(width: 25, height: 25)
                         .foregroundColor(Color.darkest)
-                }.onTapGesture {
-                    doFavorApp(rootView: .MainAppView)
                 }
+                .frame(width: UIScreen.main.bounds.width/3.5)
             }
-            
-            Spacer(minLength: 2)
+
             Button(action: {
-                
+                doFavorApp(rootView: .SettingView)
             }){
                 VStack{
                     Image(systemName: "info.circle")
                         .resizable()
                         .frame(width: 25, height: 25)
                         .foregroundColor(Color.darkest)
-                }.onTapGesture {
-                    doFavorApp(rootView: .SettingView)
                 }
+                 .frame(width: UIScreen.main.bounds.width/3.5)
             }
-            Spacer(minLength: 2)
+//            Spacer(minLength: 2)
         }
-        .padding(.horizontal, 35)
+        .frame(width: UIScreen.main.bounds.width, alignment: .center)
+//        .padding(.horizontal, 35)
         .padding(.top, 12)
         .padding(.bottom, (UIApplication.shared.windows.first?.safeAreaInsets.bottom)! + 15)
         .background(Color.white.opacity(0.5))

@@ -48,6 +48,7 @@ struct AppUtils {
         return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_TOKEN) as? String
     }
     
+    //get user id userid
     static func getUsrId() -> String? {
         return AppUtils.JWT.decryptUsrAuthToken()
     }
@@ -71,6 +72,7 @@ struct AppUtils {
     static func saveUsrProfile(profile:String) {
         UserDefaults.standard.setValue(Constants.ENDPOINT+profile, forKeyPath: Constants.AppConstants.CUR_USR_PROFILE)
     }
+    
     
     static func getUsrProfile() -> String? {
         return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_PROFILE) as? String

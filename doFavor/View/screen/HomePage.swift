@@ -93,6 +93,7 @@ struct Card: View{
                         Image("TestPic1")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .offset(y: 70)
                             .overlay(content: {
                                 VStack{
                                     Spacer()

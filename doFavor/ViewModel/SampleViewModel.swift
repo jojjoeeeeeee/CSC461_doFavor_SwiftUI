@@ -7,6 +7,7 @@
 
 import Alamofire
 
+
 struct HomeViewModel {
     
     public func fetchData(completion: @escaping (Result<[SampleModel],Error>) -> ()){

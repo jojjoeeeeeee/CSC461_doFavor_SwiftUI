@@ -134,6 +134,7 @@ struct ReceiverRequestPage_Previews: PreviewProvider {
 struct RequestView: View{
     @State private var selectedLandmark = "เลือกอาคาร"
     //pickerSheet
+    @State private var selectionIndex : Int = -1
     @State private var pickerType = 0 // TODO: Update to Enum
     private var isShowingOverlay: Bool {
         get {
@@ -143,7 +144,7 @@ struct RequestView: View{
     
 
     private var landmarkPicker: some View{
-        pickerSheet(selection: $selectedLandmark, data: formData.landmark!, pickerType: $pickerType)
+        pickerSheet(selection: $selectedLandmark, selectionIndex: $selectionIndex, data: formData.landmark!, pickerType: $pickerType)
     }
 
     private var pickerOverlay: some View {
@@ -196,10 +197,10 @@ struct RequestView: View{
         location.latitude = formData.landmark?[0].latitude
         location.longitude = formData.landmark?[0].longitude
         
-        task_location.name = formData.landmark?[0].name
-        task_location.building = formData.landmark?[0].building
-        task_location.latitude = formData.landmark?[0].latitude
-        task_location.longitude = formData.landmark?[0].longitude
+        task_location.name = formData.landmark?[selectionIndex].name
+        task_location.building = formData.landmark?[selectionIndex].building
+        task_location.latitude = formData.landmark?[selectionIndex].latitude
+        task_location.longitude = formData.landmark?[selectionIndex].longitude
         
         model.location = location
         model.task_location = task_location
@@ -209,6 +210,7 @@ struct RequestView: View{
             switch result {
             case .success(let response):
                 print("Success",response)
+                doFavorApp(rootView: .HistoryView)
                 //                onSubmit.toggle()
             case .failure(let error):
                 switch error{
@@ -253,6 +255,11 @@ struct RequestView: View{
             isAlert = true
             isFieldError = true
         }
+        else if selectionIndex == -1 {
+            isError = false
+            isAlert = true
+            isFieldError = true
+        }
         else {
             isError.toggle()
             isLoading.toggle()
@@ -283,7 +290,11 @@ struct RequestView: View{
                     //
                     Text("ที่อยู่ของฉัน")
                         .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
-                    addressSegment().border(Color.darkred)
+                    addressSegment()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                        )
+
                     
                     Text("บริการที่ต้องการฝาก")
                         .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
@@ -429,6 +440,7 @@ struct RequestView: View{
 
 struct pickerSheet: View{
     @Binding var selection: String
+    @Binding var selectionIndex: Int
     var data: [landmarkDataModel]
     @Binding var pickerType: Int
 
@@ -437,16 +449,19 @@ struct pickerSheet: View{
         VStack(spacing:0){
             Button(action: {
                 pickerType = 0
-                print(selection)
+                if selectionIndex != -1 {
+                    selection = data[selectionIndex].name ?? ""
+                }
             }){
                 Spacer()
                 Text("Done").fontWeight(.bold).padding(.trailing)
             }.padding(10.0)
         Group{
-            Picker("",selection: $selection){
+            Picker("",selection: $selectionIndex){
                 ForEach(0..<data.count, id: \.self){ index in
                     Text(data[index].name!)
                 }
+                
         }.pickerStyle(WheelPickerStyle())
             .foregroundColor(.white)
             .frame(height: 180)

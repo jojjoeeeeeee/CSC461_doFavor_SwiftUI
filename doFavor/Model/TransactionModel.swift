@@ -18,6 +18,41 @@ struct TSCTFormDataModel: Codable {
     let type: [typeDataModel]?
 }
 
+struct ResponseTSCTHistoryDataModel: Codable {
+    let result: String
+    let message: String
+    let data: historyModel
+}
+
+struct historyModel: Codable {
+    let history: [historyDataModel]?
+}
+
+struct historyDataModel: Codable {
+    let id: String?
+    let title: String?
+    let detail: String?
+    let type: String?
+    let reward: String?
+    let petitioner_id: String?
+    let applicant_id: String?
+    let conversation_id: String?
+    let status: String?
+    let location: userLocationDataModel?
+    let task_location: landmarkDataModel?
+    let role: String?
+    let created: String?
+}
+
+struct userLocationDataModel: Codable {
+    let room: String?
+    let floor: String?
+    let building: String?
+    let optional: String?
+    let latitude: Double?
+    let longitude: Double?
+}
+
 struct landmarkDataModel: Codable {
     let name: String?
     let building: String?
@@ -41,6 +76,38 @@ struct RequestCreateTSCTModel: Encodable {
     var conversation_id: String?
     var location: RequestLocationModel?
     var task_location: RequestTaskLocationModel?
+}
+
+struct RequestGetTSCTModel: Encodable {
+    var transaction_id: String?
+}
+
+struct ResponseGetTSCTDataModel: Codable {
+    let result: String
+    let message: String
+    let data: TSCTDataModel
+}
+
+struct TSCTDataModel: Codable {
+    let id: String?
+    let title: String?
+    let detail: String?
+    let type: String?
+    let reward: String?
+    let petitioner: ResponseUserTSCT?
+    let applicant: ResponseUserTSCT?
+    let conversation_id: String?
+    let status: String?
+    let location: userLocationDataModel?
+    let task_location: landmarkDataModel?
+    let isAccepted: Bool?
+    let created: String?
+}
+
+struct ResponseUserTSCT: Codable {
+    let id: String?
+    let firstname: String?
+    let lastname: String?
 }
 
 struct RequestLocationModel: Encodable {
@@ -72,7 +139,44 @@ struct CreateTSCTDataModel: Codable {
     let status: String?
 }
 
+struct ResponseGetAllTSCTDataModel: Codable {
+    let result: String
+    let message: String
+    let data: getAllModel
+}
+
+struct getAllModel: Codable {
+    let transactions: [getAllDataModel]?
+}
+
+struct getAllDataModel: Codable {
+    let id: String?
+    let title: String?
+    let detail: String?
+    let type: String?
+    let reward: String?
+    let petitioner_id: String?
+    let applicant_id: String?
+    let conversation_id: String?
+    let status: String?
+    let location: userLocationDataModel?
+    let task_location: landmarkDataModel?
+    let created: String?
+}
+
 class FormDataObservedModel: ObservableObject {
     @Published var landmark: [landmarkDataModel]?
     @Published var type: [typeDataModel]?
+}
+
+class HistoryDataObservedModel: ObservableObject {
+    @Published var history: [historyDataModel]?
+}
+
+class AllDataObservedModel: ObservableObject {
+    @Published var transactions: [getAllDataModel]?
+}
+
+class TSCTDataObservedModel: ObservableObject {
+    @Published var data: TSCTDataModel?
 }

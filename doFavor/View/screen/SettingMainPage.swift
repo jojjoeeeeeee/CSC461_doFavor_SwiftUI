@@ -44,25 +44,92 @@ struct SettingView: View{
         VStack{
             ScrollView(){
                 VStack{
-//                    Text("ree")
-                    Spacer()
-                    Button(action: {
-                        AppUtils.eraseAllUsrData()
-                                        doFavorApp(rootView: .LoginView)
-                    }){
-                        Text("ออกจากระบบ")
-                            .foregroundColor(Color.white)
-                            .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                    Text("ประวัติการทำรายการ")
+                        .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
+                        .padding()
+                    
+                    HStack(spacing:20){
+                        Image("TestPic1")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: UIScreen.main.bounds.width*0.26,height:UIScreen.main.bounds.width*0.26)
+                            .cornerRadius(98)
+                        
+//                        Spacer()
+                        
+                        VStack(alignment: .leading, spacing:9){
+                             Text("Buasri ID : co621010346")
+                            Text("ธนณัฐ จริยสาธิต")
+                                .frame(height: 24)
+                                .padding(.horizontal,15)
+                                .background(Color.grey.opacity(0.15))
+                                .cornerRadius(5)
+                            Text(verbatim:"Thananut.khing@g.swu.ac.th")
+                                .textContentType(.none)
+                                .frame(height: 24)
+                                .padding(.horizontal,15)
+                                .background(Color.grey.opacity(0.15))
+                                .cornerRadius(5)
+
+                            Text("เปลี่ยนรหัสผ่าน")
+                                .underline()
+                        }                        .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.regular))
+                            .foregroundColor(Color.grey)
 
                     }
-                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
-                    .background(Color.grey)
-                    .cornerRadius(15)
-                    .padding(.bottom)
+                    Divider()
+                    HStack(spacing: 8){
+                        Button(action: {
+                            
+                        }){
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(Color.darkred)
 
-                }
+                            Text("แจ้งปัญหาการใช้งาน/ติดต่อแอดมิน")
+                                .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.black))
+                                .foregroundColor(Color.darkred)
+                            Spacer()
+                        }
+                    }.padding(10)
+                    Divider()
+                    HStack(spacing: 8){
+                        Button(action: {
+                            
+                        }){
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(Color.darkred)
+
+                            Text("เกี่ยวกับแอพพลิเคชั่น")
+                                .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.black))
+                                .foregroundColor(Color.darkred)
+                            Spacer()
+                        }
+                    }.padding(10)
+                    Divider()
+
+
+                    Spacer()
+            }.padding(.horizontal,20)
+
             }
 
+            Button(action: {
+                AppUtils.eraseAllUsrData()
+                                doFavorApp(rootView: .LoginView)
+            }){
+                Text("ออกจากระบบ")
+                    .foregroundColor(Color.white)
+                    .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+
+            }
+            .frame(width:UIScreen.main.bounds.width-40, height: 50)
+            .background(Color.grey)
+            .cornerRadius(15)
+            .padding(.bottom)
+            
+            
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)

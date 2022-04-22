@@ -19,6 +19,10 @@ struct Constants {
     
     static let TSCT_FORM_DATA = "/transaction/data"
     static let TSCT_CREATE = "/transaction/create"
+    static let TSCT_GET_HISTORY = "/transaction/history"
+    static let TSCT_GET_PETITIONER = "/transaction/get/petitioner"
+    static let TSCT_GET_APPLICANT = "/transaction/get/applicant"
+    static let TSCT_GET_ALL = "/transaction/get/all"
     
     struct AppConstants {
         static let CUR_USR_TOKEN = "UserAuthToken"

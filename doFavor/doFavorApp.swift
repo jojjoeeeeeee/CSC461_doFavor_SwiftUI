@@ -59,17 +59,17 @@ struct doFavorApp: App {
             else if rootView.viewId == .SettingView {
                 SettingMainPage()
                     .environmentObject(rootView)
-                    .transition(.scale)
+//                    .transition(.scale)
             }
             else if rootView.viewId == .MainAppView {
                 HomePage()
                     .environmentObject(rootView)
-                    .transition(.slide)
+//                    .transition(.slide)
             }
             else if rootView.viewId == .HistoryView {
                 HistoryMainPage()
                     .environmentObject(rootView)
-                    .transition(.scale)
+//                    .transition(.scale)
 
 //                    .transition(.move(edge: .top))
             }

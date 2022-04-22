@@ -9,7 +9,36 @@ import SwiftUI
 
 struct HistoryDetailPage: View {
     
+    public var transactionData:TSCTDataModel?
     
+    @State var dateData = ""
+    @State var statusData = ""
+    
+    func getDetail() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d MMM yyyy"
+        let date = dateFormat().stringToDate(date: transactionData?.created ?? "")
+        let dateString = dateFormatter.string(from: date)
+        dateData = dateString
+        
+        let status = transactionData?.status ?? ""
+        if status == "pending"{
+            statusData = ("รอการตอบรับ")
+        }
+        else if status == "accept" {
+            statusData = ("กำลังดำเนินการ")
+        }
+        else if status == "p_cancel" || status == "a_cancel" {
+            statusData = ("ยกเลิก")
+        }
+        else if status == "success" {
+            statusData = ("เสร็จสิ้น")
+        }
+        else {
+            statusData = ("")
+        }
+    }
+
     
     var body: some View {
         GeometryReader { geometry in
@@ -25,9 +54,9 @@ struct HistoryDetailPage: View {
                 
                 VStack(spacing:0){
                     
-                    HistoryDetail()
+                    HistoryDetail(transactionData: transactionData, dateData: $dateData, statusData: $statusData)
                     TabbarView()
-                }
+                }.onAppear{ getDetail() }
                 .edgesIgnoringSafeArea(.bottom)
                 
             }
@@ -38,16 +67,20 @@ struct HistoryDetailPage: View {
     }
 }
 
-struct HistoryDetailPage_Previews: PreviewProvider {
-    static var previews: some View {
-        HistoryDetailPage()
-    }
-}
+//struct HistoryDetailPage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HistoryDetailPage()
+//    }
+//}
 
 struct HistoryDetail: View{
     
     @Environment(\.presentationMode) var presentationMode
-    
+    @State var transactionData:TSCTDataModel?
+    @Binding var dateData:String
+    @Binding var statusData:String
+    let userId = AppUtils.getUsrId()
+
     var body: some View{
         VStack{
             HStack{
@@ -68,21 +101,24 @@ struct HistoryDetail: View{
             ScrollView(){
                 VStack(alignment: .leading){
                     HStack{
-                        Text("ฝากซื้อ")
+                        Text(transactionData?.petitioner?.id == userId ? "ฝากซื้อ":"รับฝาก")
                             .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.bold))
                             .foregroundColor(Color.white)
                             .frame(height: 24)
                             .padding(.horizontal,15)
                             .background(Color.darkred)
                             .cornerRadius(5)
-                        
-                        Text("รายการ #A1293B23")
+//                        รายการ #A1293B23
+                        Text("รายการ #\(transactionData?.id ?? "")")
                             .font(Font.custom("SukhumvitSet-Bold", size: 18).weight(.bold))
+                            .lineLimit(1)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .truncationMode(.tail)
                             .foregroundColor(Color.grey)
                         
                         Spacer()
                         
-                        Text("5 ก.พ. 2021")
+                        Text(dateData)
                             .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.regular))
                             .foregroundColor(Color.grey)
                         
@@ -95,32 +131,34 @@ struct HistoryDetail: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
                             .foregroundColor(Color.black)
                         
-                        Text("กำลังดำเนินการ")
+                        Text(statusData)
                             .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.bold))
-                            .foregroundColor(Color.darkred)
+                            .foregroundColor(statusData == "รอการตอบรับ" ? Color.darkred : (statusData == "กำลังดำเนินการ" ? Color.darkred : Color.grey))
                             .frame(height: 24)
                             .padding(.horizontal,15)
-                            .background(Color.darkred.opacity(0.15))
+                            .background(statusData == "รอการตอบรับ" ?  Color.darkred.opacity(0.15) : (statusData == "กำลังดำเนินการ" ? Color.darkred.opacity(0.15) : Color.grey.opacity(0.15)))
                             .cornerRadius(5)
                         
                         Spacer()
-                        
-                        Image(systemName: "message")
-                            .font(.system(size: 18, weight: .regular))
-                            .foregroundColor(Color.black)
+                        NavigationLink(destination: ChatMainPage(conversation_id: (transactionData?.conversation_id)!)){
+                            Image(systemName: "message")
+                                .font(.system(size: 18, weight: .regular))
+                                .foregroundColor(Color.black)
+                        }
+
                     }
                     Divider()
                     
                     HStack{
                         VStack(alignment: .leading){
-                            Text("ร้านป้าต๋อย")
+                            Text(transactionData?.title ?? "")
                                 .font(Font.custom("SukhumvitSet-Bold", size: 18))
                             HStack{
                                 Image(systemName: "mappin.and.ellipse")
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(Color.darkred)
                                 
-                                Text("ประตู 5 อาคารประดู่ไข่ดาว")
+                                Text(transactionData?.task_location?.name ?? "")
                                     .font(Font.custom("SukhumvitSet-Bold", size: 14))
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.darkred)
@@ -145,7 +183,7 @@ struct HistoryDetail: View{
                                 .cornerRadius(34)
                                 .padding(.top,9)
                                 .padding(.leading,9)
-                            Text("หมูปิ้ง 2 ไม้ ")
+                            Text(transactionData?.detail ?? "")
                                 .font(Font.custom("SukhumvitSet-Bold", size: 13))
                                 .fontWeight(.medium)
                                 .padding(.horizontal,9)
@@ -166,7 +204,7 @@ struct HistoryDetail: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 15))
                             .fontWeight(.bold)
                         
-                        Text("อาคาร COSCI ชั้น 15 ห้อง 1503")
+                        Text("\(transactionData?.location?.building ?? "") ชั้น \(transactionData?.location?.floor ?? "") ห้อง \(transactionData?.location?.room ?? "") \(transactionData?.location?.optional ?? "")")
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .foregroundColor(Color.darkred)
                             .fontWeight(.bold)
