@@ -14,6 +14,11 @@ enum ServiceError:Error {
     case NoNetworkError
 }
 
+enum MessageError:Error {
+    case ConversationNotFound
+    case MessageNotFound
+}
+
 struct doFavorAPIError:Decodable {
     var message:String?
     var status:String?

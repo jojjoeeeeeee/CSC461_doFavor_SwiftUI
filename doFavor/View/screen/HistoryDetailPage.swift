@@ -37,6 +37,7 @@ struct HistoryDetailPage: View {
         else {
             statusData = ("")
         }
+        
     }
 
     
@@ -140,10 +141,12 @@ struct HistoryDetail: View{
                             .cornerRadius(5)
                         
                         Spacer()
-                        NavigationLink(destination: ChatMainPage(conversation_id: (transactionData?.conversation_id)!)){
-                            Image(systemName: "message")
-                                .font(.system(size: 18, weight: .regular))
-                                .foregroundColor(Color.black)
+                        if statusData != "รอการตอบรับ" {
+                            NavigationLink(destination: ChatMainPage(petitioner: transactionData?.petitioner, applicant: transactionData?.applicant, conversation_id: transactionData?.conversation_id ?? "")){
+                                Image(systemName: "message")
+                                    .font(.system(size: 18, weight: .regular))
+                                    .foregroundColor(Color.black)
+                            }
                         }
 
                     }

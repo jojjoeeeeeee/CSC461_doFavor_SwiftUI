@@ -17,8 +17,4 @@ target 'doFavor' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
 
-  pod 'Realm'
-  pod 'RealmSwift'
-  
-  pod 'MessageKit'
 end

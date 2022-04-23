@@ -24,7 +24,6 @@ struct doFavorApp: App {
             AppUtils.E2EE.generateKeyPair()
         }
 
-
         if(AppUtils.getUsrAuthToken() == nil || AppUtils.getUsrAuthToken() == "") {
             rootView.viewId = .LoginView
         }

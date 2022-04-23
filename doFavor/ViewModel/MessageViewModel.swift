@@ -14,158 +14,145 @@ import FirebaseDatabase
 struct MessageViewModel {
     
     public var messagesArray: [FirebaseMessage] = []
-//    public var  testmock = [mocking]()
+    let db = Database.database().reference()
     
-    
-//    func fetchMessageData(conversation_id: String){
-//        let ref = Database.database().reference().child("/624f69d13f8a07d7755851a6_conversation")
-//
-//
-//        ref.observe(.value, with: { (snapshot) in
-//            guard let data = snapshot.value as? NSDictionary else {
-//                print("Error fetch message")
-//                return
-//            }
-//            //            let petitionerID = data["petitioner"] as? String ?? ""
-//            //            let applicantID = data["applicant"] as? String ?? ""
-//
-//            //            let eiei = JSONDecoder().decode(mocking, from: data)
-//            //            print("MOCK",eiei)
-//
-//            //            print("dataaaaa",petitionerID)
-//            //            print("DATA MODEL",data.value(forKey: "message"))
-//            let testmock = mocking(app: data["app"] as? String ?? "",
-//                                   pet: data["pet"] as? String ?? "")
-//
-//        })
-//
-//    }
-    
-    func fetchMessageData(conversation_id: String, completion: @escaping(Result<FirebaseMessage, Error>) -> Void){
+    func fetchMessageData(conversation_id: String, completion: @escaping(Result<FirebaseMessage, MessageError>) -> Void){
 
-        Database.database().reference().child(conversation_id).observe(.value, with: { (snapshot) in
+        db.child("conversation").child(conversation_id).observe(.value, with: { (snapshot) in
             guard let data = snapshot.value as? NSDictionary else {
-                print("Error fetch message")
+                print("Error fetch message") //Not found create new conversation
+                let error = MessageError.ConversationNotFound
+                completion(.failure(error))
                 return
             }
-            var MessageData = FirebaseMessage(
-                petitioner: data["petitioner"] as? String ?? "",
-                applicant: data["applicant"] as? String ?? "",
-                message: [MessageModel(content: "", date: Date(), type: "", sender: "")])
             
-//            print("TESTTTTTT", data.value(forKey: "message"))
+            var MessageData = FirebaseMessage()
+            let petitioner = data.object(forKey: "petitioner") as! [String:String]
             
-            let eiei = data.object(forKey: "message") as! [[String: Any]]
+            var petUser = FirebaseUserModel()
+            petUser.id = petitioner["id"]
+            petUser.firstname = petitioner["firstname"]
+            petUser.lastname = petitioner["lastname"]
+            petUser.publicKey = petitioner["publicKey"]
+            
+            let applicant = data.object(forKey: "applicant") as! [String:String]
 
-            for con in eiei{
-                MessageData.message.append(MessageModel(content: con["content"] as! String,
-                                                        date: Date(),
-                                                        type: con["type"] as! String,
-                                                        sender: con["sender"] as! String))
+            
+            var appUser = FirebaseUserModel()
+            appUser.id = applicant["id"]
+            appUser.firstname = applicant["firstname"]
+            appUser.lastname = applicant["lastname"]
+            appUser.publicKey = applicant["publicKey"]
+            
+            MessageData.petitioner = petUser
+            MessageData.applicant = appUser
+
+            guard let messageArr = data.object(forKey: "message") as? [[String: Any]] else {
+                let error = MessageError.MessageNotFound
+                completion(.failure(error))
+                return
             }
+            
+            var arr = [MessageModel]()
+            for con in messageArr {
+                let msg = MessageModel(content: con["content"] as! String,
+                                       date: con["date"] as! String,
+                                       type: con["type"] as! String,
+                                       sender: con["sender"] as! String)
+                arr.append(msg)
+            }
+        
+            MessageData.message = arr
 
             completion(.success(MessageData))
-            print("REAL",MessageData)
-
         })
 
     }
-
     
-    func fetchMessageData2(conversation_id: String, completion: @escaping(Result<mocking, Error>) -> Void){
+    func sendMessage(conversation_id: String, message: String, by: String, completion: @escaping(Bool) -> Void) {
+        
+        let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .long
+            formatter.locale = .current
+            formatter.dateFormat = "MMM dd', 'yyyy' at 'HH:mm:ss O"
+            return formatter
+        }()
+        
+        let newMessage: [String: Any] = [
+            "content": message,
+            "type": "text",
+            "date": dateFormatter.string(from: Date()),
+            "sender": by
+        ]
+        
+        db.child("conversation").child("\(conversation_id)/message").observeSingleEvent(of: .value, with: { snapshot in
+            if var currentMessages = snapshot.value as? [[String: Any]] {
+                currentMessages.append(newMessage)
+                
+                db.child("conversation").child("\(conversation_id)/message").setValue(currentMessages, withCompletionBlock: { error, _ in
+                    guard error == nil else {
+                        completion(false)
+                        return
+                    }
+                    completion(true)
+                })
+            }
+            else {
+                var msgArray = [[String:Any]]()
+                msgArray.append(newMessage)
+                
+                db.child("conversation").child("\(conversation_id)/message").setValue(msgArray, withCompletionBlock: { error, _ in
+                    guard error == nil else {
+                        completion(false)
+                        return
+                    }
+                    completion(true)
+                })
+            }
+            
+            
+        })
+    }
+    
+    func createNewConversation(conversation_id: String, by userId: String, publicKey: String, petitioner: ResponseUserTSCT?, applicant: ResponseUserTSCT?, completion: @escaping(Bool) -> Void) {
 
-        Database.database().reference().child(conversation_id).observe(.value, with: { (snapshot) in
-            guard let data = snapshot.value as? NSDictionary else {
-                print("Error fetch message")
+        var petData: [String:Any] = [
+            "id": petitioner?.id ?? "",
+            "firstname": petitioner?.firstname ?? "",
+            "lastname": petitioner?.lastname ?? "",
+            "publicKey": ""
+        ]
+        
+        var appData: [String:Any] = [
+            "id": applicant?.id ?? "",
+            "firstname": applicant?.firstname ?? "",
+            "lastname": applicant?.lastname ?? "",
+            "publicKey": ""
+        ]
+        
+        if userId == petitioner?.id ?? "" {
+            petData["publicKey"] = publicKey
+        }
+        else if userId == applicant?.id ?? "" {
+            appData["publicKey"] = publicKey
+        }
+        
+        let data: [String: Any] = [
+            "petitioner": petData,
+            "applicant": appData
+        ]
+        
+
+        
+        db.child("conversation").child(conversation_id).setValue(data, withCompletionBlock: { error,_ in
+            guard error == nil else {
+                completion(false)
                 return
             }
-            
-            let testmock = mocking(app: data["app"] as? String ?? "",
-                               pet: data["pet"] as? String ?? "")
-
-            completion(.success(testmock))
-
+            completion(true)
         })
-
     }
 
-
-//    func fetchTest2(){
-//        let ref = Database.database().reference().child("/mocking")
-//
-//        ref.observe(.value) { snapshot in
-//            print("snap",snapshot)
-//            print("is that",snapshot.value!)
-//
-//            let decoder = JSONDecoder()
-//            if let decoded = try? decoder.decode(mocking.self, from: snapshot.value! as! NSDictionary){
-//                print("fin!!",decoded.app)
-//            }
-//
-//            print("test mock",testmock)
-//
-//            guard let children = snapshot.value as? Data else{
-//                print("Error fetch message")
-//                return
-//            }
-//            print("children",children)
-//
-//
-//        }
-//
-//    }
-    
-    
-    
-    func fetchTest(){
-        let requestURL:String = "https://dofavor-cb57e-default-rtdb.asia-southeast1.firebasedatabase.app/mocking"
-        let headers: HTTPHeaders = ["Authorization" : "AIzaSyCDxrGWCWcl3wdgQ8siu3kQYEYjqdgMrDw",
-                                    "Content-Type": "application/json"]
-        let request = AF.request(requestURL, method: .get, headers: headers).responseString { response in
-            
-            //            print("AF.request",response)
-            
-        }
-        
-        //        print("request.data",request.response?.code )
-        
-        //        request.responseJSON{
-        //            response in
-        //
-        //            switch(response.result){
-        //            case .success:
-        //                do{
-        //                    print("response?.statusCode",response.value)
-        //                }catch{
-        //
-        //                }
-        //            case .failure:
-        //                break
-        //            }
-        //        }
-        
-        
-        
-        request.responseDecodable(of: FirebaseMessage.self){ (response) in
-            switch response.result{
-            case .success(_):
-                guard let data = response.value else {return}
-                let petitionerID = data.petitioner
-                let applicantID = data.applicant
-                let messageData:[MessageModel] = data.message
-                
-                print("fetch test 1",petitionerID)
-                print("fetch test 2",messageData)
-                
-                
-            case .failure(let error):
-                print("fetch test",error)
-                print("response?.statusCode",response.response?.statusCode)
-                print("response?.statusCode")
-                print("petitioner404",response.value?.petitioner)
-            }
-        }
-        
-    }
-    
 }

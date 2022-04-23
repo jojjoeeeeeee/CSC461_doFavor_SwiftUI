@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import RealmSwift
-
 struct HomePage: View {
     
     var body: some View {

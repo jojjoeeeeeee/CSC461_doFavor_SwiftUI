@@ -97,25 +97,15 @@ PODS:
   - GoogleUtilities/UserDefaults (7.5.2):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.7.0)
-  - InputBarAccessoryView (5.4.0):
-    - InputBarAccessoryView/Core (= 5.4.0)
-  - InputBarAccessoryView/Core (5.4.0)
   - JWTDecode (2.6.3)
   - Kingfisher (7.1.1)
   - leveldb-library (1.22.1)
-  - MessageKit (3.7.0):
-    - InputBarAccessoryView (~> 5.4.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - PromisesObjC (2.0.0)
-  - Realm (10.17.0):
-    - Realm/Headers (= 10.17.0)
-  - Realm/Headers (10.17.0)
-  - RealmSwift (10.17.0):
-    - Realm (= 10.17.0)
   - SwiftyRSA (1.7.0):
     - SwiftyRSA/ObjC (= 1.7.0)
   - SwiftyRSA/ObjC (1.7.0)
@@ -127,9 +117,6 @@ DEPENDENCIES:
   - Firebase/Database
   - JWTDecode (~> 2.6)
   - Kingfisher (~> 7.0)
-  - MessageKit
-  - Realm
-  - RealmSwift
   - SwiftyRSA
 
 SPEC REPOS:
@@ -146,15 +133,11 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - GTMSessionFetcher
-    - InputBarAccessoryView
     - JWTDecode
     - Kingfisher
     - leveldb-library
-    - MessageKit
     - nanopb
     - PromisesObjC
-    - Realm
-    - RealmSwift
     - SwiftyRSA
 
 SPEC CHECKSUMS:
@@ -170,17 +153,13 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 8de2a97a17e15b6b98e38e8770e2d129a57c0040
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
-  InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
   JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   Kingfisher: f738f9c4a3415823b8e2985d10aa2d6a9f37bc4d
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
-  MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  Realm: 9533276bd76f66aa2fd0d3ffe700c1f6023dcab6
-  RealmSwift: 57f5d59aa29852587aad1e861989e7af139894b5
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
 
-PODFILE CHECKSUM: 3a403cea2820e1f42fb7a287964c70d3d6afb2f9
+PODFILE CHECKSUM: 30dcb2af89bf31fdc425d6ecdd6a91106f8e4ca1
 
 COCOAPODS: 1.11.2

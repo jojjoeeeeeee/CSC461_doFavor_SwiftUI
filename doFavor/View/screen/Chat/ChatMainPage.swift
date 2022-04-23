@@ -11,32 +11,33 @@ import SwiftUI
 
 struct ChatMainPage: View {
     
-    let chat:FirebaseMessage = FirebaseMessage(petitioner: "peti", applicant: "appli", message: [MessageModel(content: "Hello", date: Date(), type: "text", sender: "peti"),MessageModel(content: "Hiiiii", date: Date(), type: "text", sender: "appli")])
     
-    @State var received: Bool = false
+    public var petitioner:ResponseUserTSCT?
+    public var applicant:ResponseUserTSCT?
     public var conversation_id:String
-    @StateObject var messageData = FirebaseMessageObservedModel()
+    @ObservedObject var messageData = FirebaseMessageObservedModel()
     //    @StateObject var messageData:FirebaseMessage
     
     func getMessage(){
+        
         MessageViewModel().fetchMessageData(conversation_id: conversation_id) { result in
             switch result{
             case .success(let response):
                 messageData.data = response
-                if AppUtils.getUsrId()!.matchRegex(for: (messageData.data?.petitioner.description)!) {
-                    received = true
-                }else{
-                    received = false
+            case .failure(let error):
+                switch error {
+                case .ConversationNotFound:
+                    MessageViewModel().createNewConversation(conversation_id: conversation_id, by: AppUtils.getUsrId()!, publicKey: AppUtils.E2EE.getBase64PublicKey(), petitioner: petitioner, applicant: applicant) { success in
+                        if success {
+                            print("success create new conversation")
+                        } else {
+                            print("fail to create new conversation")
+                        }
+
+                    }
+                case .MessageNotFound:
+                    print("this conversation doesnt have any message")
                 }
-                print(response.message[0].content)
-                print("chat sucess",messageData.data!.message)
-                print("name",messageData.data!.petitioner)
-                print("name",messageData.data!.applicant)
-                //                print("ID",AppUtils.getUsrId()!)
-                //                print("received",received)
-                //                        print(response)
-            case .failure:
-                print("chat failure")
             }
         }
 
@@ -55,7 +56,7 @@ struct ChatMainPage: View {
                     .position(x:UIScreen.main.bounds.width/2)
                 
                 VStack(spacing:0){
-                    ChatContent(chat: chat, conversation_id: conversation_id, received: $received, messageData: messageData)
+                    ChatContent(conversation_id: conversation_id, messageData: messageData)
                     TabbarView()
                 }
                 .edgesIgnoringSafeArea(.bottom)
@@ -64,13 +65,14 @@ struct ChatMainPage: View {
             
             
         }
+        .keyboardAware()
         .navigationBarHidden(true)
     }
 }
 
 struct ChatMainPage_Previews: PreviewProvider {
     static var previews: some View {
-        ChatMainPage(received: true, conversation_id: "624f69d13f8a07d7755851a6_conversation")
+        ChatMainPage(conversation_id: "624f69d13f8a07d7755851a6_conversation")
     }
 }
 
@@ -119,7 +121,7 @@ struct MessageBubble: View{
 //    var messageData:MessageModel
     var TextMS:String
     
-    @Binding var received: Bool
+    @State var sender: String
     //    var message: MessagerModel
     var imageUrl = URL(string: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000")
     
@@ -132,7 +134,7 @@ struct MessageBubble: View{
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 28, height: 28)
                         .cornerRadius(28)
-                        .opacity(received ? 0 : 100)
+                        .opacity(sender == AppUtils.getUsrId()! ? 0 : 100)
                     
                 }placeholder: {
                     ProgressView()
@@ -143,23 +145,23 @@ struct MessageBubble: View{
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 28, height: 28)
                     .cornerRadius(28)
-                    .disabled(received)
+                    .disabled(sender == AppUtils.getUsrId()!)
             }
             
             
             Text(TextMS)
                 .padding()
-                .background(received ? Color.darkred.opacity(0.1) :  Color.black.opacity(0.03))
-                .onAppear(perform: {print("Text BG",received)})
+                .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.1) :  Color.black.opacity(0.03))
+                .onAppear(perform: {print("Text BG",sender == AppUtils.getUsrId()!)})
             
             Image("TestPic1")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 28, height: 28)
                 .cornerRadius(28)
-                .opacity(received ? 100 : 0)
+                .opacity(sender == AppUtils.getUsrId()! ? 100 : 0)
         }
-        .frame(maxWidth: .infinity, alignment: received ? .trailing : .leading)
+        .frame(maxWidth: .infinity, alignment: sender == AppUtils.getUsrId()! ? .trailing : .leading)
         .font(Font.custom("SukhumvitSet-Bold", size: 13).weight(.regular))
         
     }
@@ -168,6 +170,22 @@ struct MessageBubble: View{
 
 struct MessageField: View{
     @State var MessageTexts: String = ""
+    
+    @State var conversation_id: String
+    
+    func sendMsg() {
+        if !MessageTexts.isEmpty {
+            MessageViewModel().sendMessage(conversation_id: conversation_id, message: MessageTexts, by: AppUtils.getUsrId() ?? "") { success in
+                if success {
+                    print("success send message")
+                }
+                else {
+                    print("fail to send message")
+                }
+            }
+        }
+        MessageTexts = ""
+    }
     
     var body: some View{
         HStack{
@@ -178,14 +196,29 @@ struct MessageField: View{
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(Color.darkred)
             }
-            TextField("พิมพ์ข้อความ...",text: $MessageTexts)
-                .padding()
-                .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
-                .frame(height:40)
-                .background(Color.darkred.opacity(0.1))
-                .cornerRadius(40)
+            if #available(iOS 15.0, *) {
+                TextField("พิมพ์ข้อความ...",text: $MessageTexts)
+                    .padding()
+                    .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
+                    .frame(height:40)
+                    .background(Color.darkred.opacity(0.1))
+                    .cornerRadius(40)
+                    .submitLabel(.send)
+                    .onSubmit {
+                        sendMsg()
+                    }
+            } else {
+                TextField("พิมพ์ข้อความ...",text: $MessageTexts, onCommit: {
+                    sendMsg()
+                })
+                    .padding()
+                    .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
+                    .frame(height:40)
+                    .background(Color.darkred.opacity(0.1))
+                    .cornerRadius(40)
+            }
             Button(action:{
-                
+                sendMsg()
             }){
                 Image(systemName: "arrow.uturn.up")
                     .font(.system(size: 20, weight: .semibold))
@@ -204,40 +237,36 @@ struct Student: Hashable {
 }
 
 struct ChatContent: View{
-    var chat:FirebaseMessage
-
+    
     @State var conversation_id:String
-    @Binding var received: Bool
-    var messageData:FirebaseMessageObservedModel
+    @StateObject var messageData = FirebaseMessageObservedModel()
     
-    
-    
-    let students = [Student(name: "Harry Potter"), Student(name: "Hermione Granger")]
-
     
     var body: some View{
         VStack{
             ChatTitle(Name: "Name")
             ScrollView{
                 VStack{
-                    ForEach(students, id: \.self){ item in
-//                        Text(item.name)
-                        MessageBubble(TextMS: item.name, received: $received)
+
+                    ForEach(0..<(messageData.data?.message?.count ?? 0), id: \.self){ index in
+                        MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", sender: messageData.data?.message?[index].sender ?? "").onAppear{
+                            print("HII",messageData.data?.message?[index].sender,AppUtils.getUsrId())
+                        }
                     }
 
-                    //                    ForEach(messageData.data.message, id: \.content){
-                    //                        text in MessageBubble(messageData: text, received: $received)
-                    //                    }
-                    //                    MessageBubble(received: $received, message: MessageModel(content: "Hi", date: Date(), type: "1", sender: "applicant"))
-                    //                    MessageBubble(messageData: messageData, received: $received, message: <#T##MessageModel#>)
+
                 }
                 .padding(.horizontal,20)
             }
-            MessageField()
+            MessageField(conversation_id: conversation_id)
+            
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
         .cornerRadius(20)
+        .onTapGesture {
+            UIApplication.shared.endEditing()
+        }
         
     }
 }

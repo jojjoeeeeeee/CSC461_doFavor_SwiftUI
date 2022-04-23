@@ -8,22 +8,25 @@
 import SwiftUI
 
 struct FirebaseMessage: Codable{
-    var petitioner: String
-    var applicant: String
-    var message: [MessageModel]
+    var petitioner: FirebaseUserModel?
+    var applicant: FirebaseUserModel?
+    var message: [MessageModel]?
+}
+
+struct FirebaseUserModel: Codable {
+    var id: String?
+    var firstname: String?
+    var lastname: String?
+    var publicKey: String?
 }
 
 struct MessageModel: Codable {
-    var content: String
-    var date: Date
-    var type: String
-    var sender: String
+    var content: String?
+    var date: String?
+    var type: String?
+    var sender: String?
 }
 
-struct mocking: Codable {
-    var app: String
-    var pet: String
-}
 
 class FirebaseMessageObservedModel: ObservableObject{
     @Published var data: FirebaseMessage?
