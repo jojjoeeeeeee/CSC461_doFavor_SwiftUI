@@ -48,6 +48,7 @@
 		847900D927EBBF9800D245EB /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900D827EBBF9800D245EB /* Background.swift */; };
 		847900DD27EBC88F00D245EB /* SignUpVerify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900DC27EBC88F00D245EB /* SignUpVerify.swift */; };
 		847900DF27EBC8FC00D245EB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900DE27EBC8FC00D245EB /* ContentView.swift */; };
+		848B41DA281681D2002E8767 /* Focuser in Frameworks */ = {isa = PBXBuildFile; productRef = 848B41D9281681D2002E8767 /* Focuser */; };
 		84C8CE9827E165990051D01F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8CE9727E165990051D01F /* Constants.swift */; };
 		84EDF74D27E15D8B0052022B /* doFavorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EDF74C27E15D8B0052022B /* doFavorApp.swift */; };
 		84EDF75127E15D8C0052022B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84EDF75027E15D8C0052022B /* Assets.xcassets */; };
@@ -109,6 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848B41DA281681D2002E8767 /* Focuser in Frameworks */,
 				8416921327E90A6100CBFF7B /* Focuser in Frameworks */,
 				34EF1FB63A4884B39FB2655A /* Pods_doFavor.framework in Frameworks */,
 			);
@@ -334,6 +336,7 @@
 			name = doFavor;
 			packageProductDependencies = (
 				8416921227E90A6100CBFF7B /* Focuser */,
+				848B41D9281681D2002E8767 /* Focuser */,
 			);
 			productName = doFavor;
 			productReference = 84EDF74927E15D8A0052022B /* doFavor.app */;
@@ -365,6 +368,7 @@
 			mainGroup = 84EDF74027E15D8A0052022B;
 			packageReferences = (
 				8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */,
+				848B41D8281681D2002E8767 /* XCRemoteSwiftPackageReference "swift-focuser" */,
 			);
 			productRefGroup = 84EDF74A27E15D8A0052022B /* Products */;
 			projectDirPath = "";
@@ -691,10 +695,23 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		848B41D8281681D2002E8767 /* XCRemoteSwiftPackageReference "swift-focuser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/art-technologies/swift-focuser";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		8416921227E90A6100CBFF7B /* Focuser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */;
+			productName = Focuser;
+		};
+		848B41D9281681D2002E8767 /* Focuser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */;
 			productName = Focuser;

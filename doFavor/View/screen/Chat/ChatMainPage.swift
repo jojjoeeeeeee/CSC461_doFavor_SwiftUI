@@ -77,7 +77,8 @@ struct ChatMainPage_Previews: PreviewProvider {
 }
 
 struct ChatTitle: View{
-    var Name:String
+    
+    @StateObject var messageData = FirebaseMessageObservedModel()
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View{
@@ -91,10 +92,10 @@ struct ChatTitle: View{
             }
             Spacer()
             VStack{
-                Text(Name)
+                Text(messageData.data?.petitioner?.id == AppUtils.getUsrId() ? ("\(messageData.data?.applicant?.firstname ?? "") \(messageData.data?.applicant?.lastname ?? "")") : ("\(messageData.data?.petitioner?.firstname ?? "") \(messageData.data?.petitioner?.lastname ?? "")"))
                     .font(.system(size: 17, weight: .semibold))
                     .multilineTextAlignment(.center)
-                Text("Sender")
+                Text(messageData.data?.petitioner?.id == AppUtils.getUsrId() ? "ผู้รับฝาก":"ผู้ฝาก")
                     .font(.system(size: 13, weight: .regular))
                     .foregroundColor(Color.darkred)
             }
@@ -232,10 +233,6 @@ struct MessageField: View{
     
 }
 
-struct Student: Hashable {
-    let name: String
-}
-
 struct ChatContent: View{
     
     @State var conversation_id:String
@@ -244,13 +241,13 @@ struct ChatContent: View{
     
     var body: some View{
         VStack{
-            ChatTitle(Name: "Name")
+            ChatTitle(messageData: messageData)
             ScrollView{
                 VStack{
 
                     ForEach(0..<(messageData.data?.message?.count ?? 0), id: \.self){ index in
                         MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", sender: messageData.data?.message?[index].sender ?? "").onAppear{
-                            print("HII",messageData.data?.message?[index].sender,AppUtils.getUsrId())
+                            print("HII",messageData.data?.petitioner)
                         }
                     }
 
