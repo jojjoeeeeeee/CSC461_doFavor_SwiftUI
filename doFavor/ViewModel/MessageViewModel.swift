@@ -55,10 +55,10 @@ struct MessageViewModel {
             
             var arr = [MessageModel]()
             for con in messageArr {
-                let msg = MessageModel(content: con["content"] as! String,
-                                       date: con["date"] as! String,
-                                       type: con["type"] as! String,
-                                       sender: con["sender"] as! String)
+                let msg = MessageModel(content: con["content"] as? String,
+                                       date: con["date"] as? String,
+                                       type: con["type"] as? String,
+                                       sender: con["sender"] as? String)
                 arr.append(msg)
             }
         

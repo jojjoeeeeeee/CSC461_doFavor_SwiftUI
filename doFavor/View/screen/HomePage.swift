@@ -87,31 +87,27 @@ struct Card: View{
                     
                 })
                 {
-                    if #available(iOS 15.0, *) {
-                        Image("TestPic1")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .offset(y: 70)
-                            .overlay(content: {
-                                VStack{
-                                    Spacer()
-                                    Text(text)
-                                        .foregroundColor(Color.white)
-                                        .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
-                                        .frame(width: 92, height: 25)
-                                        .background(color)
-                                        .cornerRadius(5)
-                                        .padding(.bottom,10)
-                                    
-                                }
-                                .frame(width: (UIScreen.main.bounds.width - 30) / 2, height: (UIScreen.main.bounds.width - 30) / 3.333)
-                                .contentShape(Rectangle())
-                                .clipped()
+                    Image("TestPic1")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .offset(y: 70)
+                        .overlay(content: {
+                            VStack{
+                                Spacer()
+                                Text(text)
+                                    .foregroundColor(Color.white)
+                                    .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
+                                    .frame(width: 92, height: 25)
+                                    .background(color)
+                                    .cornerRadius(5)
+                                    .padding(.bottom,10)
                                 
-                            })
-                    } else {
-                        // Fallback on earlier versions
-                    }
+                            }
+                            .frame(width: (UIScreen.main.bounds.width - 30) / 2, height: (UIScreen.main.bounds.width - 30) / 3.333)
+                            .contentShape(Rectangle())
+                            .clipped()
+                            
+                        })
                 }
                 .frame(width: (UIScreen.main.bounds.width - 30) / 2, height: (UIScreen.main.bounds.width - 30) / 3.333)
                 .clipped()

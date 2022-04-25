@@ -336,6 +336,11 @@ struct RequestView: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
                         Button(action: {
                             print("click picker")
+                            UIApplication.shared.endEditing()
+                            if detail.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace} == "" {
+                                detail = detailPlaceholder
+                            }
+                            
                             self.pickerType = 1
                         }){
                             Text("\(self.selectedLandmark)")
@@ -404,28 +409,30 @@ struct RequestView: View{
                 .font(Font.custom("SukhumvitSet-Bold", size: 14).weight(.bold))
             }
             
-            //button
-            Button(action: {
-                validateData()
-            }){
-                Text("ยืนยัน")
-                    .foregroundColor(Color.white)
-                    .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
-                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
-                    .background(Color.darkred)
-                    .cornerRadius(15)
-                    .padding(.bottom)
+            ZStack {
+                //button
+                Button(action: {
+                    validateData()
+                }){
+                    Text("ยืนยัน")
+                        .foregroundColor(Color.white)
+                        .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                        .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                        .background(Color.darkred)
+                        .cornerRadius(15)
+                        .padding(.bottom)
+                    
+                }
                 
-            }
-            
-            if isShowingOverlay {
-    //            Spacer()
-                pickerOverlay
-                    .frame(alignment: .bottomTrailing)
-                    .transition(AnyTransition.move(edge: .bottom))
-                    .animation(.easeInOut(duration: 0.5))
-//                    .position(x: UIScreen.main.bounds.width/2, y: UIScreen.main.bounds.height-180)
+                if isShowingOverlay {
+        //            Spacer()
+                    pickerOverlay
+                        .frame(alignment: .bottomTrailing)
+                        .transition(AnyTransition.move(edge: .bottom))
+                        .animation(.easeInOut(duration: 0.5))
+    //                    .position(x: UIScreen.main.bounds.width/2, y: UIScreen.main.bounds.height-180)
 
+                }
             }
 
         }
