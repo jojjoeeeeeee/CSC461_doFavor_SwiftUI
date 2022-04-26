@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GiverMainPage: View {
-    
+
     var body: some View {
         NavigationView{
         GeometryReader{ geometry in
@@ -24,6 +24,10 @@ struct GiverMainPage: View {
                 
                 VStack(spacing:0){
                     addressSegment()
+//                    searchSegment()
+//                        .padding(.top,20)
+//                        .frame(width:  UIScreen.main.bounds.width-30)
+
                     GiverView()
                     TabbarView()
 
@@ -32,6 +36,7 @@ struct GiverMainPage: View {
             }
         }
         .navigationBarHidden(true)
+        
     }
     }
 }
@@ -44,37 +49,101 @@ struct GiverMainPage_Previews: PreviewProvider {
 
 struct GiverView: View{
     @State private var showingSheet = false
+    @State private var transactionID = ""
+    @State private var searchText = ""
 
+    @StateObject public var TSCTData = AllDataObservedModel()
+
+    @State var isLoading: Bool = false
+    @State var isAlert: Bool = false
+    @State var isExpired: Bool = false
+    @State var isNoNetwork: Bool = false
+    @State var isRefreshing: Bool = false
+    
+    func fetchTransaction(){
+        isLoading.toggle()
+        
+        TransactionViewModel().getAll(){ result in
+            isLoading.toggle()
+
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                TSCTData.transactions = response.transactions
+//                print(TSCTData.transactions![0].status)
+                
+            case .failure(let error):
+                print("Error \(error)")
+        }
+    }
+    }
+    
+    var TSCTDataTwo:[getAllDataModel]?{
+        if searchText.isEmpty{
+            return (TSCTData.transactions)
+        }else{
+            return (TSCTData.transactions?.filter{
+                $0.title?.contains(searchText) as! Bool
+            })!
+        }
+    }
+    
     var body: some View{
         VStack{
+            doFavorActivityIndicatorView(isLoading: isLoading, isPage: false){
             ScrollView(){
                 VStack(spacing: 0){
-                    searchSegment()
-                    giverListCard(category: "", shopName: "", landMark: "", distance: "", note: "")
-                        .onTapGesture {
-                            showingSheet.toggle()
-                        }
-                        .sheet(isPresented: $showingSheet){
-                            GiverDetailPage(showingSheet: $showingSheet)
-                        }
+                    searchSegment(searchText: $searchText)
+                    
+
+                    
+//                    ForEach((0..<(TSCTData.transactions?.count ?? 0)), id:\.self){ index in
+//                        giverListCard(category: (TSCTData.transactions?[index].type)!, shopName:( TSCTData.transactions?[index].title)!, landMark: ( TSCTData.transactions?[index].task_location?.name)!, distance: "", note: (TSCTData.transactions?[index].detail)!)
+//                            .onTapGesture {
+//                                showingSheet.toggle()
+//                                transactionID = TSCTData.transactions![index].id!
+//
+//                            }
+//                            .sheet(isPresented: $showingSheet){
+//                                GiverDetailPage(id: $transactionID, showingSheet: $showingSheet)
+//                            }
+//                    }
                     
                     
-                }                .frame(width:  UIScreen.main.bounds.width-30)
+                    ForEach((0..<(TSCTDataTwo?.count ?? 0)), id:\.self){ index in
+                        giverListCard(category: (TSCTDataTwo?[index].type)!, shopName:( TSCTDataTwo?[index].title)!, landMark: ( TSCTDataTwo?[index].task_location?.name)!, distance: "", note: (TSCTDataTwo?[index].detail)!)
+                            .onTapGesture {
+                                showingSheet.toggle()
+                                transactionID = (TSCTDataTwo?[index].id!)!
+                                    
+                            }
+                            .sheet(isPresented: $showingSheet){
+                                GiverDetailPage(id: $transactionID, showingSheet: $showingSheet)
+                            }
+                    }
+
+                    
+                    
+                }
+                .onAppear{fetchTransaction()}
+                .frame(width:  UIScreen.main.bounds.width-30)
 
                 .padding()
             }
         }
+        }
     }
+    
 }
 
 struct searchSegment: View{
-    @State public var search: String = ""
     @State var isPresented:Bool = false
+    @Binding var searchText: String
 
 
     var body: some View{
         HStack{
-            TextField("กำลังหาอะไรอยู่...",text: $search)
+            TextField("กำลังหาอะไรอยู่...",text: $searchText)
                 .textFieldStyle(doFavTextFieldStyle(icon: "magnifyingglass", color: Color.darkest))
             Button(action: {
                 isPresented.toggle()
@@ -110,6 +179,10 @@ struct searchSegment: View{
 }
 
 struct giverListCard: View{
+//    @StateObject public var TSCTData = AllDataObservedModel()
+//    @State var data:RequestGetTSCTModel?
+    
+    
     var category: String
     var shopName: String
     var landMark: String
@@ -127,7 +200,7 @@ struct giverListCard: View{
                 .padding(.leading,12)
 
             VStack(alignment:.leading,spacing: 0){
-                    Text("food")
+                    Text(category)
                         .font(.system(size: 8, weight: .semibold))
                         .foregroundColor(Color.darkred)
                         .padding(.horizontal, 11)
@@ -137,16 +210,16 @@ struct giverListCard: View{
                             RoundedRectangle(cornerRadius: 20).stroke(Color.darkred, lineWidth: 1)
                         )
                 
-                Text("ร้านป้าต๋อย")
+                Text(shopName)
                 
-                Text("ประตู 5  |  3 km")
+                Text("\(landMark)  |  \(distance)")
                     .font(Font.custom("SukhumvitSet-Bold", size: 10))
                     .fontWeight(.semibold)
                 Spacer()
                 HStack(spacing:2){
                     Image(systemName: "square.text.square")
                         .font(.system(size: 18, weight: .light))
-                    Text("หมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อหมูปิ้ง 2 ไม้ ข้าวเหนียว 1 ห่อ")
+                    Text(note)
                         .font(Font.custom("SukhumvitSet-Bold", size: 10))
                         .fontWeight(.medium)
                 }

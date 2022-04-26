@@ -181,3 +181,4 @@ class AllDataObservedModel: ObservableObject {
 class TSCTDataObservedModel: ObservableObject {
     @Published var data: TSCTDataModel?
 }
+

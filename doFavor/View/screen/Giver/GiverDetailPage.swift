@@ -8,9 +8,33 @@
 import SwiftUI
 
 struct GiverDetailPage: View {
+    @Binding var id:String
     @Binding var showingSheet: Bool
     
+    @State var isLoading: Bool = false
+    @State var data:TSCTDataModel? = nil
+    
+    func fetchDetail(){
+        isLoading.toggle()
+
+        TransactionViewModel().getTSCT(reqObj: RequestGetTSCTModel(transaction_id: id), type: Constants.TSCT_GET_APPLICANT ){ result in
+            isLoading.toggle()
+            switch result {
+            case .success(let response):
+                data = response
+                print("Success",response)
+                
+            case .failure(let error):
+                print("Error \(error)")
+            }
+        }
+        
+    }
+    
     var body: some View {
+        doFavorMainLoadingIndicatorView(isLoading: isLoading){
+            GeometryReader { geometry in
+
         VStack(alignment:.leading, spacing:27){
             //back button
             HStack{
@@ -41,7 +65,7 @@ struct GiverDetailPage: View {
                         
                     })
                     {
-                        Text("food")
+                        Text(data?.type! ?? "")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(Color.darkred)
                             .padding(.horizontal, 11)
@@ -52,7 +76,7 @@ struct GiverDetailPage: View {
                             )
                     }
                     
-                    Text("ร้านป้าต๋อย")
+                    Text(data?.title! ?? "")
                         .font(Font.custom("SukhumvitSet-Bold", size: 18))
 
                     HStack{
@@ -60,7 +84,7 @@ struct GiverDetailPage: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(Color.darkred)
 
-                        Text("ประตู 5 อาคารประดู่ไข่ดาว")
+                        Text("\(data?.task_location!.name ?? "") \(data?.task_location!.building ?? "")")
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .fontWeight(.bold)
                             .foregroundColor(Color.darkred)
@@ -69,11 +93,6 @@ struct GiverDetailPage: View {
                     Text(verbatim:"ห่างจากฉัน: 3 กิโลเมตร")
                         .font(Font.custom("SukhumvitSet-Medium", size: 14))
                         .textContentType(.none)
-//                        .lineLimit(nil)
-
-
-                    
-//                    Spacer()
                 }
                 .frame(width:UIScreen.main.bounds.width*0.42-20)
                 .fixedSize()
@@ -83,10 +102,8 @@ struct GiverDetailPage: View {
                 Spacer()
             }
             .foregroundColor(Color.darkest)
-//            .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
             .frame(width:UIScreen.main.bounds.width-40 ,height: UIScreen.main.bounds.width*0.42)
             .fixedSize()
-//            .padding(12)
             
             //Note
             HStack(alignment: .top, spacing: 2){
@@ -98,7 +115,7 @@ struct GiverDetailPage: View {
                         .cornerRadius(34)
                         .padding(.top,9)
                         .padding(.leading,9)
-                    Text("หมูปิ้ง 2 ไม้ ")
+                    Text(data?.detail! ?? "")
                         .font(Font.custom("SukhumvitSet-Bold", size: 13))
                         .fontWeight(.medium)
                         .padding(.horizontal,9)
@@ -118,7 +135,7 @@ struct GiverDetailPage: View {
                     .font(Font.custom("SukhumvitSet-Bold", size: 15))
                     .fontWeight(.bold)
                 
-                Text("อาคาร COSCI ชั้น 15 ห้อง 1503")
+                Text("\(data?.location!.building ?? "") ชั้น \(data?.location!.floor ?? "") ห้อง \(data?.location!.room ?? "")")
                     .font(Font.custom("SukhumvitSet-Bold", size: 14))
                     .foregroundColor(Color.darkred)
                     .fontWeight(.bold)
@@ -128,8 +145,10 @@ struct GiverDetailPage: View {
             
             //Submit button
             Button(action: {
+                
             }){
-                Text("รับมอบหมาย")
+                Text(data?.isAccepted ?? false  ? "รับมอบหมาย" : "ไม่สามารถรับมอบหมาย")
+//                Text("รับมอบหมาย")
                     .foregroundColor(Color.white)
                     .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
 
@@ -141,12 +160,18 @@ struct GiverDetailPage: View {
             Spacer()
         }
         .frame(width:UIScreen.main.bounds.width-40)
-
+        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        .onAppear{
+            fetchDetail()
+            print("isAccepted = ",data?.isAccepted!)
+        }
+        }
+        }
     }
 }
 
-struct GiverDetailPage_Previews: PreviewProvider {
-    static var previews: some View {
-        GiverDetailPage(showingSheet: .constant(true))
-    }
-}
+//struct GiverDetailPage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        GiverDetailPage(showingSheet: .constant(true), data: )
+//    }
+//}

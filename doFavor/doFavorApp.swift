@@ -19,7 +19,8 @@ struct doFavorApp: App {
     init() {
         FirebaseApp.configure()
         AppUtils.saveDeviceUUIDToken(token: UIDevice.current.identifierForVendor!.uuidString)
-        
+        AppUtils.E2EE.generateKeyPair()
+
         if AppUtils.isAppFirstRun() {
             AppUtils.E2EE.generateKeyPair()
         }
