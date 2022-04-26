@@ -6,8 +6,7 @@
 //
 
 import SwiftUI
-
-
+import ImageViewer
 
 struct ChatMainPage: View {
     
@@ -16,25 +15,20 @@ struct ChatMainPage: View {
     public var applicant:ResponseUserTSCT?
     public var conversation_id:String
     @ObservedObject var messageData = FirebaseMessageObservedModel()
-    //    @StateObject var messageData:FirebaseMessage
     
-    func getMessage(){
-        
+    @State var isShowFullImage: Bool = false
+    @State var tempFullImage: Image = Image(systemName: "photo")
+    
+    func getMessage() {
         MessageViewModel().fetchMessageData(conversation_id: conversation_id) { result in
             switch result{
             case .success(let response):
                 messageData.data = response
+
             case .failure(let error):
                 switch error {
                 case .ConversationNotFound:
-                    MessageViewModel().createNewConversation(conversation_id: conversation_id, by: AppUtils.getUsrId()!, publicKey: AppUtils.E2EE.getBase64PublicKey(), petitioner: petitioner, applicant: applicant) { success in
-                        if success {
-                            print("success create new conversation")
-                        } else {
-                            print("fail to create new conversation")
-                        }
-
-                    }
+                    print("Conversation not found")
                 case .MessageNotFound:
                     print("this conversation doesnt have any message")
                 }
@@ -42,6 +36,7 @@ struct ChatMainPage: View {
         }
 
     }
+
     
     var body: some View {
         GeometryReader { geometry in
@@ -56,10 +51,11 @@ struct ChatMainPage: View {
                     .position(x:UIScreen.main.bounds.width/2)
                 
                 VStack(spacing:0){
-                    ChatContent(conversation_id: conversation_id, messageData: messageData)
+                    ChatContent(conversation_id: conversation_id, messageData: messageData, isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
                     TabbarView()
                 }
                 .edgesIgnoringSafeArea(.bottom)
+                .overlay(ImageViewer(image: $tempFullImage, viewerShown: $isShowFullImage))
                 
             }.onAppear{ getMessage() }
             
@@ -121,46 +117,80 @@ struct ChatTitle: View{
 struct MessageBubble: View{
 //    var messageData:MessageModel
     var TextMS:String
-    
+    let proxy: ScrollViewProxy
+    @StateObject var messageData = FirebaseMessageObservedModel()
+
+    @State var type:String
     @State var sender: String
-    //    var message: MessagerModel
+
+    @Binding var isShowFullImage: Bool
+    @Binding var tempFullImage: Image
+
     var imageUrl = URL(string: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000")
     
     var body: some View{
         HStack(alignment:.top ,spacing: 16){
             
-            if #available(iOS 15.0, *) {
-                AsyncImage(url: imageUrl){ image in
-                    image.resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 28, height: 28)
-                        .cornerRadius(28)
-                        .opacity(sender == AppUtils.getUsrId()! ? 0 : 100)
-                    
-                }placeholder: {
-                    ProgressView()
-                }
-            } else {
-                Image("TestPic1")
-                    .resizable()
+            AsyncImage(url: imageUrl){ image in
+                image.resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 28, height: 28)
                     .cornerRadius(28)
-                    .disabled(sender == AppUtils.getUsrId()!)
+                    .opacity(sender == AppUtils.getUsrId()! ? 0 : 100)
+                
+            }placeholder: {
+                ProgressView()
             }
             
-            
-            Text(TextMS)
+            if type == "Encrypted" {
+                HStack {
+                    Text("Content Sealing")
+                    Image(systemName: "lock.circle")
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 15, height: 15)
+                }
                 .padding()
-                .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.1) :  Color.black.opacity(0.03))
-                .onAppear(perform: {print("Text BG",sender == AppUtils.getUsrId()!)})
+                .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.3) :  Color.black.opacity(0.05))
+            } else if type == "text" {
+                Text(TextMS)
+                    .padding()
+                    .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.1) :  Color.black.opacity(0.03))
+            } else if type == "photo" {
+                AsyncImage(url: URL(string: TextMS)){ image in
+                    image.resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width/3)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .onTapGesture{
+                            isShowFullImage = true
+                            self.tempFullImage = image
+                        }
+                        .onAppear{
+                            proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1)
+                        }
+                        
+                       
+                    
+                }placeholder: {
+                    HStack{
+                        ProgressView()
+                    }
+                    .padding()
+                    .frame(width: 150, height: 150)
+                    .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.3) :  Color.black.opacity(0.05))
+                }
+            }
             
-            Image("TestPic1")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 28, height: 28)
-                .cornerRadius(28)
-                .opacity(sender == AppUtils.getUsrId()! ? 100 : 0)
+            AsyncImage(url: imageUrl){ image in
+                image.resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 28, height: 28)
+                    .cornerRadius(28)
+                    .opacity(sender == AppUtils.getUsrId()! ? 100 : 0)
+                
+            }placeholder: {
+                ProgressView()
+            }
         }
         .frame(maxWidth: .infinity, alignment: sender == AppUtils.getUsrId()! ? .trailing : .leading)
         .font(Font.custom("SukhumvitSet-Bold", size: 13).weight(.regular))
@@ -172,11 +202,22 @@ struct MessageBubble: View{
 struct MessageField: View{
     @State var MessageTexts: String = ""
     
+    @State var image: Image? = Image(systemName: "photo")
+    @State var data: Data?
+    
     @State var conversation_id: String
+    @State var messageData = FirebaseMessageObservedModel()
+    
+    @State var isShowActionSheet: Bool = false
+    @State var pickerSelectedType: UIImagePickerController.SourceType = .photoLibrary
+    @State var isShowImagePicker: Bool = false
+    
+    @State var isImage: Bool = false
+    @State var imageLoading: Bool = false
     
     func sendMsg() {
         if !MessageTexts.isEmpty {
-            MessageViewModel().sendMessage(conversation_id: conversation_id, message: MessageTexts, by: AppUtils.getUsrId() ?? "") { success in
+            MessageViewModel().sendMessage(conversation_id: conversation_id, message: MessageTexts, by: AppUtils.getUsrId() ?? "", otherPublicKey: messageData.data?.petitioner?.id == AppUtils.getUsrId() ? messageData.data?.applicant?.publicKey ?? "" : messageData.data?.petitioner?.publicKey ?? "", type: "text") { success in
                 if success {
                     print("success send message")
                 }
@@ -184,20 +225,97 @@ struct MessageField: View{
                     print("fail to send message")
                 }
             }
+            MessageTexts = ""
         }
-        MessageTexts = ""
+        else if self.image != Image(systemName: "photo") && self.data != nil {
+            
+            self.imageLoading = true
+            let dateFormatter: DateFormatter = {
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .long
+                formatter.locale = .current
+                formatter.dateFormat = "MMM dd', 'yyyy' at 'HH:mm:ss O"
+                return formatter
+            }()
+            
+            let filename = "\(conversation_id)_\(AppUtils.getUsrId() ?? "")_\(dateFormatter.string(from: Date()))"
+            
+            MessageViewModel().uploadMessagePhoto(with: self.data!, fileName: filename) { result in
+                
+                switch result{
+                case .success(let url):
+                    
+                    MessageViewModel().sendMessage(conversation_id: conversation_id, message: url, by: AppUtils.getUsrId() ?? "", otherPublicKey: messageData.data?.petitioner?.id == AppUtils.getUsrId() ? messageData.data?.applicant?.publicKey ?? "" : messageData.data?.petitioner?.publicKey ?? "", type: "photo") { success in
+                        if success {
+                            print("success send message")
+                            self.image = Image(systemName: "photo")
+                            self.isImage = false
+                            self.imageLoading = false
+                            self.data = nil
+                        }
+                        else {
+                            print("fail to send message")
+                            self.image = Image(systemName: "photo")
+                            self.isImage = false
+                            self.imageLoading = false
+                            self.data = nil
+                        }
+                    }
+                case .failure(let error):
+                    print(error)
+                    self.image = Image(systemName: "photo")
+                    self.isImage = false
+                    self.imageLoading = false
+                    self.data = nil
+                }
+            }
+            
+        }
     }
     
     var body: some View{
         HStack{
-            Button(action:{
+            if isImage {
+                Button(action:{
+                    self.isImage = false
+                    self.image = Image(systemName: "photo")
+                }){
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(self.imageLoading == false ? Color.darkred : Color.grey)
+                }.disabled(self.imageLoading)
                 
-            }){
-                Image(systemName: "paperclip")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(Color.darkred)
+                ZStack {
+                    HStack{
+                        self.image?
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: UIScreen.main.bounds.height/5)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .blur(radius: self.imageLoading ? 0.5 : 0)
+                            .padding()
+                    }
+                    .padding()
+                    .frame(width: UIScreen.main.bounds.width*0.8)
+                    .background(Color.darkred.opacity(0.1))
+                    .cornerRadius(40)
+
+                    if imageLoading {
+                        ProgressView().tint(Color.white)
+                    }
+                }
+                
             }
-            if #available(iOS 15.0, *) {
+            else {
+                Button(action:{
+                    self.isShowActionSheet = true
+                }){
+                    Image(systemName: "paperclip")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(Color.darkred)
+                }
+                
                 TextField("พิมพ์ข้อความ...",text: $MessageTexts)
                     .padding()
                     .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
@@ -208,27 +326,47 @@ struct MessageField: View{
                     .onSubmit {
                         sendMsg()
                     }
-            } else {
-                TextField("พิมพ์ข้อความ...",text: $MessageTexts, onCommit: {
-                    sendMsg()
-                })
-                    .padding()
-                    .font(Font.custom("SukhumvitSet-Bold", size: 15).weight(.bold))
-                    .frame(height:40)
-                    .background(Color.darkred.opacity(0.1))
-                    .cornerRadius(40)
             }
+            
             Button(action:{
                 sendMsg()
             }){
                 Image(systemName: "arrow.uturn.up")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(Color.darkred)
-            }
+                    .foregroundColor(self.imageLoading == false ? Color.darkred : Color.grey)
+            }.disabled(self.imageLoading)
             
         }
         .padding()
-        .frame(height:50)
+        .frame(height: isImage == false ? 50 : UIScreen.main.bounds.height/4+50)
+        .onTapGesture() {
+            self.isShowActionSheet = false
+        }
+        
+        .actionSheet(isPresented: self.$isShowActionSheet) { () -> ActionSheet in
+            ActionSheet(title: Text("Send a photo"), buttons: [
+                .cancel(),
+                .default(Text("Take Photo"), action: {
+                    self.pickerSelectedType = .camera
+                    self.isShowImagePicker = true
+                }),
+                .default(Text("Choose Photo"), action: {
+                    self.pickerSelectedType = .photoLibrary
+                    self.isShowImagePicker = true
+                })
+
+              ])
+        }.sheet(isPresented: self.$isShowImagePicker) {
+            UIImagePickerVC(image: self.$image, data: self.$data, sourceType: self.pickerSelectedType).background(Color.black).edgesIgnoringSafeArea(.all)
+                .onDisappear{
+                    if data == nil {
+                        self.isImage = false
+                    } else {
+                        self.isImage = true
+                    }
+                }
+        }
+        
     }
     
 }
@@ -237,25 +375,72 @@ struct ChatContent: View{
     
     @State var conversation_id:String
     @StateObject var messageData = FirebaseMessageObservedModel()
+    @State var isShowBtn: Bool = false
+    @State var minScrollValue: CGFloat = 0.0
+    
+    @Binding var isShowFullImage: Bool
+    @Binding var tempFullImage: Image
     
     
     var body: some View{
         VStack{
             ChatTitle(messageData: messageData)
-            ScrollView{
-                VStack{
+            ScrollViewReader { proxy in
+                ScrollView{
+                    VStack{
+                        ForEach(0..<(messageData.data?.message?.count ?? 0), id: \.self) { index in
+                            MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", proxy: proxy, messageData: messageData, type: messageData.data?.message?[index].type ?? "", sender: messageData.data?.message?[index].sender ?? "", isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
+                        }
 
-                    ForEach(0..<(messageData.data?.message?.count ?? 0), id: \.self){ index in
-                        MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", sender: messageData.data?.message?[index].sender ?? "").onAppear{
-                            print("HII",messageData.data?.petitioner)
+                    }.padding(.horizontal,20)
+                    
+                    GeometryReader { geometry in
+                        let offset = geometry.frame(in: .named("scroll")).minY
+                        Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: offset)
+                    }
+                    
+                }
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear.onAppear{
+                            minScrollValue = geometry.size.height
                         }
                     }
-
-
+                )
+                .onChange(of: messageData.data?.message?.count) { _ in
+                    withAnimation{
+                        proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                    }
                 }
-                .padding(.horizontal,20)
+                .overlay(alignment: .bottomTrailing){
+                    if isShowBtn {
+                        Image(systemName: "arrow.down")
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 15, height: 15)
+                        .padding(10)
+                        .background(Color.black.opacity(0.1))
+                        .cornerRadius(2)
+                        .padding(.bottom, 20)
+                        .padding(.horizontal,20)
+                        .onTapGesture {
+                            withAnimation{
+                                proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                            }
+                        }
+                    }
+                }
+                .coordinateSpace(name: "scroll")
+                .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                    if value > minScrollValue {
+                        isShowBtn = true
+                    }
+                    else {
+                        isShowBtn = false
+                    }
+                }
+
             }
-            MessageField(conversation_id: conversation_id)
+            MessageField(conversation_id: conversation_id, messageData: messageData)
             
         }
         .frame(width: UIScreen.main.bounds.width)
@@ -265,5 +450,14 @@ struct ChatContent: View{
             UIApplication.shared.endEditing()
         }
         
+        
+    }
+}
+
+struct ScrollViewOffsetPreferenceKey: PreferenceKey {
+    typealias Value = CGFloat
+    static var defaultValue = CGFloat.zero
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value += nextValue()
     }
 }

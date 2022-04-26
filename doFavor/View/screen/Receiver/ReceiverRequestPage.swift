@@ -210,7 +210,21 @@ struct RequestView: View{
             switch result {
             case .success(let response):
                 print("Success",response)
-                doFavorApp(rootView: .HistoryView)
+                let usrName = AppUtils.getUsrName()?.components(separatedBy: " ")
+                var petitoner = FirebaseUserModel()
+                petitoner.id = model.petitioner_id
+                petitoner.firstname = usrName?[0]
+                petitoner.lastname = usrName?[1]
+                
+                MessageViewModel().createNewConversation(conversation_id: response.conversation_id ?? "", publicKey: AppUtils.E2EE.getBase64PublicKey(), by: petitoner) { success in
+                    if success {
+                        print("success create new conversation")
+                        doFavorApp(rootView: .HistoryView)
+                    }
+                    else {
+                        print("fail to create new conversation")
+                    }
+                }
                 //                onSubmit.toggle()
             case .failure(let error):
                 switch error{

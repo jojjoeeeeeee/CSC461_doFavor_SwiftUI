@@ -177,7 +177,9 @@ struct AppUtils {
                                                                         outputByteCount: 32)
                 
                 let encryptedData = Data(base64Encoded: encryptedMessage)
-                let sealedBox = try ChaChaPoly.SealedBox(combined: encryptedData!)
+                
+                guard let encryptedDataUnwrraped = encryptedData else { throw NSError.init() }
+                let sealedBox = try ChaChaPoly.SealedBox(combined: encryptedDataUnwrraped)
                 let decryptedData = try ChaChaPoly.open(sealedBox, using: symmetricKey)
                 
                 let message = String(data: decryptedData, encoding: .utf8)

@@ -7,19 +7,24 @@
 
 import Foundation
 
-enum ServiceError:Error {
+public enum ServiceError:Error {
     case UnParsableError
     case Non200StatusCodeError(doFavorAPIError)
     case BackEndError(errorMessage:String)
     case NoNetworkError
 }
 
-enum MessageError:Error {
+public enum MessageError:Error {
     case ConversationNotFound
     case MessageNotFound
 }
 
-struct doFavorAPIError:Decodable {
+public struct doFavorAPIError:Decodable {
     var message:String?
     var status:String?
+}
+
+public enum StorageErrors: Error {
+    case failedToUpload
+    case failedToGetDownloadUrl
 }

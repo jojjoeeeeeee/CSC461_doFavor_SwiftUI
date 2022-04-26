@@ -32,7 +32,6 @@
 		8416920A27E7E08600CBFF7B /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920927E7E08600CBFF7B /* AuthViewModel.swift */; };
 		8416920C27E7E81400CBFF7B /* doFavorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920B27E7E81400CBFF7B /* doFavorError.swift */; };
 		8416920E27E7EABE00CBFF7B /* AppUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920D27E7EABE00CBFF7B /* AppUtils.swift */; };
-		8416921327E90A6100CBFF7B /* Focuser in Frameworks */ = {isa = PBXBuildFile; productRef = 8416921227E90A6100CBFF7B /* Focuser */; };
 		8416921727E9240000CBFF7B /* VerifyCodeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416921627E9240000CBFF7B /* VerifyCodeForm.swift */; };
 		8416921927EA2A0500CBFF7B /* AppViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416921827EA2A0500CBFF7B /* AppViews.swift */; };
 		8416921D27EA364900CBFF7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8416921C27EA364900CBFF7B /* GoogleService-Info.plist */; };
@@ -48,7 +47,9 @@
 		847900D927EBBF9800D245EB /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900D827EBBF9800D245EB /* Background.swift */; };
 		847900DD27EBC88F00D245EB /* SignUpVerify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900DC27EBC88F00D245EB /* SignUpVerify.swift */; };
 		847900DF27EBC8FC00D245EB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900DE27EBC8FC00D245EB /* ContentView.swift */; };
-		848B41DA281681D2002E8767 /* Focuser in Frameworks */ = {isa = PBXBuildFile; productRef = 848B41D9281681D2002E8767 /* Focuser */; };
+		848B41DC2817892B002E8767 /* UIImagePickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B41DB2817892B002E8767 /* UIImagePickerVC.swift */; };
+		84AAF7F82817DFB400C719D0 /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 84AAF7F72817DFB400C719D0 /* ImageViewer */; };
+		84AAF7FB2817E7B200C719D0 /* Focuser in Frameworks */ = {isa = PBXBuildFile; productRef = 84AAF7FA2817E7B200C719D0 /* Focuser */; };
 		84C8CE9827E165990051D01F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8CE9727E165990051D01F /* Constants.swift */; };
 		84EDF74D27E15D8B0052022B /* doFavorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EDF74C27E15D8B0052022B /* doFavorApp.swift */; };
 		84EDF75127E15D8C0052022B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84EDF75027E15D8C0052022B /* Assets.xcassets */; };
@@ -96,6 +97,7 @@
 		847900D827EBBF9800D245EB /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		847900DC27EBC88F00D245EB /* SignUpVerify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerify.swift; sourceTree = "<group>"; };
 		847900DE27EBC8FC00D245EB /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		848B41DB2817892B002E8767 /* UIImagePickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImagePickerVC.swift; sourceTree = "<group>"; };
 		84C8CE9727E165990051D01F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		84EDF74927E15D8A0052022B /* doFavor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = doFavor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84EDF74C27E15D8B0052022B /* doFavorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doFavorApp.swift; sourceTree = "<group>"; };
@@ -110,8 +112,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				848B41DA281681D2002E8767 /* Focuser in Frameworks */,
-				8416921327E90A6100CBFF7B /* Focuser in Frameworks */,
+				84AAF7FB2817E7B200C719D0 /* Focuser in Frameworks */,
+				84AAF7F82817DFB400C719D0 /* ImageViewer in Frameworks */,
 				34EF1FB63A4884B39FB2655A /* Pods_doFavor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,6 +194,7 @@
 				2CC1594627EBE6C800ED73F3 /* TabbarView.swift */,
 				2CC1594827EBE72F00ED73F3 /* addressSegment.swift */,
 				2C37A85027ED801100C25099 /* HalfSheetDrawer.swift */,
+				848B41DB2817892B002E8767 /* UIImagePickerVC.swift */,
 			);
 			path = object;
 			sourceTree = "<group>";
@@ -335,8 +338,8 @@
 			);
 			name = doFavor;
 			packageProductDependencies = (
-				8416921227E90A6100CBFF7B /* Focuser */,
-				848B41D9281681D2002E8767 /* Focuser */,
+				84AAF7F72817DFB400C719D0 /* ImageViewer */,
+				84AAF7FA2817E7B200C719D0 /* Focuser */,
 			);
 			productName = doFavor;
 			productReference = 84EDF74927E15D8A0052022B /* doFavor.app */;
@@ -367,8 +370,8 @@
 			);
 			mainGroup = 84EDF74027E15D8A0052022B;
 			packageReferences = (
-				8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */,
-				848B41D8281681D2002E8767 /* XCRemoteSwiftPackageReference "swift-focuser" */,
+				84AAF7F62817DFB400C719D0 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
+				84AAF7F92817E7B200C719D0 /* XCRemoteSwiftPackageReference "swift-focuser" */,
 			);
 			productRefGroup = 84EDF74A27E15D8A0052022B /* Products */;
 			projectDirPath = "";
@@ -466,6 +469,7 @@
 				2CC1594927EBE72F00ED73F3 /* addressSegment.swift in Sources */,
 				2CC1595027EC088F00ED73F3 /* ReceiverAddress.swift in Sources */,
 				2CC1595227EC08A600ED73F3 /* HistoryMainPage.swift in Sources */,
+				848B41DC2817892B002E8767 /* UIImagePickerVC.swift in Sources */,
 				8416921927EA2A0500CBFF7B /* AppViews.swift in Sources */,
 				2CC1595427EC08BD00ED73F3 /* SettingMainPage.swift in Sources */,
 				847900D527EA84C000D245EB /* AuthForm.swift in Sources */,
@@ -611,11 +615,13 @@
 				DEVELOPMENT_TEAM = 8348YNSNZ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "doFavor requires access to your phone’s camera.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "doFavor requires access to your photo libary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -643,11 +649,13 @@
 				DEVELOPMENT_TEAM = 8348YNSNZ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "doFavor requires access to your phone’s camera.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "doFavor requires access to your photo libary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -687,15 +695,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */ = {
+		84AAF7F62817DFB400C719D0 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/art-technologies/swift-focuser";
+			repositoryURL = "https://github.com/Jake-Short/swiftui-image-viewer.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
+				minimumVersion = 2.0.0;
 			};
 		};
-		848B41D8281681D2002E8767 /* XCRemoteSwiftPackageReference "swift-focuser" */ = {
+		84AAF7F92817E7B200C719D0 /* XCRemoteSwiftPackageReference "swift-focuser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/art-technologies/swift-focuser";
 			requirement = {
@@ -706,14 +714,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8416921227E90A6100CBFF7B /* Focuser */ = {
+		84AAF7F72817DFB400C719D0 /* ImageViewer */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */;
-			productName = Focuser;
+			package = 84AAF7F62817DFB400C719D0 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
+			productName = ImageViewer;
 		};
-		848B41D9281681D2002E8767 /* Focuser */ = {
+		84AAF7FA2817E7B200C719D0 /* Focuser */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8416921127E90A6100CBFF7B /* XCRemoteSwiftPackageReference "swift-focuser" */;
+			package = 84AAF7F92817E7B200C719D0 /* XCRemoteSwiftPackageReference "swift-focuser" */;
 			productName = Focuser;
 		};
 /* End XCSwiftPackageProductDependency section */

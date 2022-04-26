@@ -137,6 +137,7 @@ struct CreateTSCTDataModel: Codable {
     let detail: String?
     let type: String?
     let status: String?
+    let conversation_id: String?
 }
 
 struct ResponseGetAllTSCTDataModel: Codable {

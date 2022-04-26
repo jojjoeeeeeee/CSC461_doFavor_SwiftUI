@@ -30,5 +30,7 @@ struct MessageModel: Codable {
 
 class FirebaseMessageObservedModel: ObservableObject{
     @Published var data: FirebaseMessage?
+
 }
+
 

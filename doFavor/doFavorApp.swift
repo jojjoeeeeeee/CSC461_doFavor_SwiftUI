@@ -31,6 +31,7 @@ struct doFavorApp: App {
             rootView.viewId = .MainAppView
         }
         
+        print(AppUtils.E2EE.getBase64PublicKey())
         //Remove app firstrun
 //        UserDefaults.standard.removeObject(forKey: "isapp_firstrun")
         AppUtils.setAppFirstRun()
