@@ -133,7 +133,7 @@ struct HistoryMainPage: View {
                 }
                 
             }
-        }
+        }.currentDeviceNavigationViewStyle()
     }
 }
 

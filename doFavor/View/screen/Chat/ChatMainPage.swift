@@ -57,12 +57,15 @@ struct ChatMainPage: View {
                 .edgesIgnoringSafeArea(.bottom)
                 .overlay(ImageViewer(image: $tempFullImage, viewerShown: $isShowFullImage))
                 
-            }.onAppear{ getMessage() }
+            }.onAppear{
+                getMessage()
+            }
             
             
         }
-        .keyboardAware()
         .navigationBarHidden(true)
+        .keyboardAware()
+        
     }
 }
 
@@ -400,6 +403,7 @@ struct ChatContent: View{
                     }
                     
                 }
+                .navigationBarHidden(true)
                 .onAppear{
                     UIScrollView.appearance().keyboardDismissMode = .interactive
                 }

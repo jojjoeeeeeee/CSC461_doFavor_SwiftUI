@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 extension UIApplication {
     func endEditing() {
@@ -98,5 +99,16 @@ extension UINavigationController: UIGestureRecognizerDelegate {
 
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return viewControllers.count > 1
+    }
+
+}
+
+extension View {
+    public func currentDeviceNavigationViewStyle() -> AnyView {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return AnyView(self.navigationViewStyle(DefaultNavigationViewStyle()))
+        } else {
+            return AnyView(self.navigationViewStyle(StackNavigationViewStyle()))
+        }
     }
 }
