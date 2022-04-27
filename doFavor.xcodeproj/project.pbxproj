@@ -98,6 +98,7 @@
 		847900DC27EBC88F00D245EB /* SignUpVerify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpVerify.swift; sourceTree = "<group>"; };
 		847900DE27EBC8FC00D245EB /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		848B41DB2817892B002E8767 /* UIImagePickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImagePickerVC.swift; sourceTree = "<group>"; };
+		84AAF7FC2818C20600C719D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		84C8CE9727E165990051D01F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		84EDF74927E15D8A0052022B /* doFavor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = doFavor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84EDF74C27E15D8B0052022B /* doFavorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doFavorApp.swift; sourceTree = "<group>"; };
@@ -280,6 +281,7 @@
 		84EDF74B27E15D8A0052022B /* doFavor */ = {
 			isa = PBXGroup;
 			children = (
+				84AAF7FC2818C20600C719D0 /* Info.plist */,
 				84EDF74C27E15D8B0052022B /* doFavorApp.swift */,
 				8416921827EA2A0500CBFF7B /* AppViews.swift */,
 				8416921C27EA364900CBFF7B /* GoogleService-Info.plist */,
@@ -615,7 +617,11 @@
 				DEVELOPMENT_TEAM = 8348YNSNZ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = doFavor/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "doFavor requires access to your phone’s camera.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "doFavor requires access to your photo libary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -649,7 +655,11 @@
 				DEVELOPMENT_TEAM = 8348YNSNZ6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = doFavor/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "doFavor requires access to your phone’s camera.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "doFavor requires access to your photo libary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

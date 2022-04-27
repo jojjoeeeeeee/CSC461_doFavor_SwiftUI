@@ -100,7 +100,7 @@ struct TSCTDataModel: Codable {
     let status: String?
     let location: userLocationDataModel?
     let task_location: landmarkDataModel?
-    let isAccepted: Bool?
+    var isAccepted: Bool?
     let created: String?
 }
 

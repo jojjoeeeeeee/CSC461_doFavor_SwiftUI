@@ -59,13 +59,18 @@ public struct RefreshableScrollView<Content>: View where Content: View {
 
     @Binding
     private var isLoading: Bool
+    
+    @State
+    private var isPaddingTop: Bool
 
     private var onRefresh: () -> Void
 
     public init(isLoading: Binding<Bool>,
+                isPaddingTop: State<Bool>,
                 onRefresh: @escaping () -> Void,
                 @ViewBuilder content: @escaping () -> Content) {
         self._isLoading = isLoading
+        self._isPaddingTop = isPaddingTop
         self.content = content()
         self.onRefresh = onRefresh
     }
@@ -77,6 +82,8 @@ public struct RefreshableScrollView<Content>: View where Content: View {
                 .frame(width: 30, height: 30)
                 .opacity(dragTransitionHeight > 0 ? 0.0 : 1.0)
                 .rotationEffect(.degrees(rotationDegree))
+                .padding(.top, isPaddingTop == true ? 10 : 0)
+                .padding(.bottom, 0)
                 .onAppear() {
                     withAnimation (self.animation){
                         rotationDegree = 360
@@ -108,13 +115,14 @@ public struct RefreshableScrollView<Content>: View where Content: View {
                         }
                         .onPreferenceChange(ScrollViewDragOffsetPreferenceKey.self) { newValue in
                             dragTransitionHeight = newValue
-                        }
+                        }.id(-1)
 
                         content
 
                         Spacer()
                     }
-                    .background(colorScheme == .dark ? Color.black : Color.white)
+//                    .background(colorScheme == .dark ? Color.black : Color.white)
+                    .background(Color.clear)
                     .offset(x: 0, y: scrollViewOffset)
                     .onChange(of: isLoading, perform: { _ in
                         if !isLoading {
@@ -132,10 +140,11 @@ public struct RefreshableScrollView<Content>: View where Content: View {
 struct RefreshableScrollViewDemoView: View {
 
     @State private var isLoading: Bool = false
+    @State private var isPaddingTop: Bool = false
 
     var body: some View {
         NavigationView {
-            RefreshableScrollView(isLoading: $isLoading,
+            RefreshableScrollView(isLoading: $isLoading, isPaddingTop: _isPaddingTop,
                                   onRefresh: {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                         self.isLoading = false

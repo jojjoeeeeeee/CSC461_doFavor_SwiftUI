@@ -376,7 +376,7 @@ struct ChatContent: View{
     @State var conversation_id:String
     @StateObject var messageData = FirebaseMessageObservedModel()
     @State var isShowBtn: Bool = false
-    @State var minScrollValue: CGFloat = 0.0
+    @State var maxScrollValue: CGFloat = 0.0
     
     @Binding var isShowFullImage: Bool
     @Binding var tempFullImage: Image
@@ -400,10 +400,13 @@ struct ChatContent: View{
                     }
                     
                 }
+                .onAppear{
+                    UIScrollView.appearance().keyboardDismissMode = .interactive
+                }
                 .background(
                     GeometryReader { geometry in
                         Color.clear.onAppear{
-                            minScrollValue = geometry.size.height
+                            maxScrollValue = geometry.size.height
                         }
                     }
                 )
@@ -431,7 +434,7 @@ struct ChatContent: View{
                 }
                 .coordinateSpace(name: "scroll")
                 .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                    if value > minScrollValue {
+                    if value > maxScrollValue {
                         isShowBtn = true
                     }
                     else {

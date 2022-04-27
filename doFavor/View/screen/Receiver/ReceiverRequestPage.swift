@@ -19,7 +19,7 @@ struct ReceiverRequestPage: View {
     
     
     
-    @State var detail = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
+    @State var detail = ""
     var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
     
     func fetchFormData() {
@@ -75,11 +75,7 @@ struct ReceiverRequestPage: View {
                         
                     }
                     .onTapGesture {
-                        if detail.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace} == "" {
-                            detail = detailPlaceholder
-                        }
                         UIApplication.shared.endEditing()
-                        
                     }
                     .navigationTitle("")
                     .navigationBarHidden(true)
@@ -159,7 +155,7 @@ struct RequestView: View{
 
     
     @State var selectedType: Int = 0
-    var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
+    @State var detailPlaceholder: String = "ระบุรายละเอียดและจำนวนที่ต้องการฝาก"
     
     @State var shopName: String = ""
     @Binding var detail: String
@@ -263,7 +259,7 @@ struct RequestView: View{
             isAlert = true
             isFieldError = true
         }
-        else if detail.isEmpty || detail == detailPlaceholder {
+        else if detail.isEmpty {
 //            errMsg = "กรุณาระบุรายละเอียด"
             isError = false
             isAlert = true
@@ -351,9 +347,6 @@ struct RequestView: View{
                         Button(action: {
                             print("click picker")
                             UIApplication.shared.endEditing()
-                            if detail.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace} == "" {
-                                detail = detailPlaceholder
-                            }
                             
                             self.pickerType = 1
                         }){
@@ -375,18 +368,21 @@ struct RequestView: View{
                         Text("สิ่งที่ต้องการฝาก")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
                         
-                        TextEditor(text: $detail)
-                            .foregroundColor(detail == detailPlaceholder ? Color(UIColor.placeholderText) : .primary)
-                            .frame(height:89,alignment: .topLeading)
-                            .onTapGesture{
-                                if detail == detailPlaceholder {
-                                    detail = ""
-                                }
+                        ZStack {
+                            if detail.isEmpty {
+                                TextEditor(text: $detailPlaceholder)
+                                    .foregroundColor(Color(UIColor.placeholderText))
+                                    .frame(height:89,alignment: .topLeading)
+                                    .disabled(true)
                             }
-                            
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
-                            )
+                            TextEditor(text: $detail)
+                                .foregroundColor(.primary)
+                                .frame(height:89,alignment: .topLeading)
+                                .opacity(detail.isEmpty ? 0.25 : 1)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+                                )
+                        }
                         
                     }
                     

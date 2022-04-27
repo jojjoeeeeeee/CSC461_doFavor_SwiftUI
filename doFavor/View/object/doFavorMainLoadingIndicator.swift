@@ -42,7 +42,7 @@ struct doFavorMainLoadingIndicatorView<Content>: View where Content: View {
             .opacity(self.isLoading ? 1 : 0)
         }.overlay( GeometryReader(content: { geometry  in
             Color.black.opacity(self.isLoading ? 0.1 : 0).frame(width: geometry.size.width,
-                                                                height: geometry.size.height+100)
+                                                                height: geometry.size.height+300)
             .ignoresSafeArea()
         })
         )

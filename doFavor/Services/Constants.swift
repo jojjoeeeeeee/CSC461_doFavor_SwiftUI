@@ -23,6 +23,11 @@ struct Constants {
     static let TSCT_GET_PETITIONER = "/transaction/get/petitioner"
     static let TSCT_GET_APPLICANT = "/transaction/get/applicant"
     static let TSCT_GET_ALL = "/transaction/get/all"
+    static let TSCT_ACCEPT = "/transaction/accept"
+    static let TSCT_CANCEL_PETITIONER = "/transaction/cancel/petitioner"
+    static let TSCT_CANCEL_APPLICANT = "/transaction/cancel/applicant"
+    static let TSCT_SUCCESS = "/transaction/success"
+    static let TSCT_REPORT = "/transaction/report"
     
     struct AppConstants {
         static let CUR_USR_TOKEN = "UserAuthToken"

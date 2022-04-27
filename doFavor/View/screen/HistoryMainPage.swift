@@ -59,7 +59,7 @@ struct HistoryMainPage: View {
             isLoading.toggle()
             switch result {
             case .success(let response):
-//                print("Success",response)
+                //                print("Success",response)
                 historyData.history = response.history
                 getDate()
                 getStatus()
@@ -101,10 +101,10 @@ struct HistoryMainPage: View {
                             HistoryView(historyData: self.historyData, isLoading: $isLoading, isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork, dateData: $dateData, statusData: $statusData, isRefreshing: $isRefreshing)
                             TabbarView()
                         }.onAppear{fetchHistoryData()}
-                        .edgesIgnoringSafeArea(.bottom)
+                            .edgesIgnoringSafeArea(.bottom)
                         
                         
-
+                        
                     }
                     .navigationBarHidden(true)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
@@ -153,6 +153,8 @@ struct HistoryView: View{
     @Binding var dateData:[String]
     @Binding var statusData:[String]
     @Binding var isRefreshing: Bool
+    
+    @State var isPaddingTop: Bool = false
     
     func getDate() {
         dateData.removeAll()
@@ -226,35 +228,32 @@ struct HistoryView: View{
             Text("ประวัติการทำรายการ")
                 .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
                 .padding()
-
-            RefreshableScrollView(isLoading: $isRefreshing,
-                                  onRefresh: {
-                                    // Update your data and
-                                    fetchHistoryData()
-                                    
-                                  },
-                                  content: {
-                                    VStack(alignment:.leading,spacing: 0){
-                                        
-                                        ForEach((0..<(self.historyData.history?.count ?? 0)), id: \.self) { index in
-                                            transactionHistory(historyData: self.historyData, isLoading: $isLoading, isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork, dateData: $dateData, statusData: $statusData, index: index)
-                                        }
-
-                                    }
-                                    .padding(.horizontal,20)
-                                  })
-//            ScrollView(){
-//
-//
-//
-//
-//            }
+            
+            RefreshableScrollView(isLoading: $isRefreshing, isPaddingTop: _isPaddingTop,onRefresh: {
+                fetchHistoryData()
+            },
+            content: {
+                VStack(alignment:.leading,spacing: 0){
+                    
+                    if(self.historyData.history?.count ?? 0 > 0) {
+                        ForEach((0..<(self.historyData.history?.count ?? 0)), id: \.self) { index in
+                            transactionHistory(historyData: self.historyData, isLoading: $isLoading, isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork, dateData: $dateData, statusData: $statusData, index: index)
+                        }
+                    } else {
+                        Text("ไม่พบประวัติการทำรายการ")
+                            .font(Font.custom("SukhumvitSet-Bold", size: 14))
+                            .fontWeight(.semibold)
+                    }
+                    
+                }
+                .padding(.horizontal,20)
+            })
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
         .cornerRadius(20)
-
-
+        
+        
     }
 }
 
@@ -275,7 +274,7 @@ struct transactionHistory: View{
     @State private var isActive: Bool = false
     //"5 ก.พ. 2021"
     //กำลังดำเดินการ
-   
+    
     func fetchDetail(type : String) {
         isLoading.toggle()
         
@@ -294,7 +293,7 @@ struct transactionHistory: View{
             isLoading.toggle()
             switch result {
             case .success(let response):
-//                print("Success",response)
+                //                print("Success",response)
                 data = response
                 isActive.toggle()
             case .failure(let error):
@@ -332,7 +331,7 @@ struct transactionHistory: View{
                 Text(dateData[index])
                     .font(Font.custom("SukhumvitSet-Bold", size: 9.6).weight(.regular))
                     .foregroundColor(Color.grey)
-
+                
             }
             VStack(alignment: .leading){
                 Text(historyData.history?[index].title ?? "")
@@ -355,7 +354,7 @@ struct transactionHistory: View{
                     .padding(.horizontal,15)
                     .background(statusData[index] == "รอการตอบรับ" ?  Color.darkred.opacity(0.15) : (statusData[index] == "กำลังดำเนินการ" ? Color.darkred.opacity(0.15) : Color.grey.opacity(0.15)))
                     .cornerRadius(5)
-
+                
                 Button(action: {
                     
                 }){

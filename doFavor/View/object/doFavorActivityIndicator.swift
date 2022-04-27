@@ -56,7 +56,7 @@ struct doFavorActivityIndicatorView<Content>: View where Content: View {
                     VStack {
                         Ring(fillPoint: fillPoint)
                             .stroke(Color.darkred, lineWidth: 10)
-                            .frame(width: 50, height: 50)
+                            .frame(width: 100, height: 100)
                             .rotationEffect(.degrees(rotationDegree))
                             .onAppear() {
                                 DispatchQueue.main.async {

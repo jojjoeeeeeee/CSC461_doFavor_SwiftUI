@@ -83,7 +83,7 @@ struct SignUpVerify: View {
     
     var body: some View {
         //        NavigationView{
-        doFavorActivityIndicatorView(isLoading: self.isLoading, isPage: true) {
+        doFavorMainLoadingIndicatorView(isLoading: self.isLoading) {
           GeometryReader { geometry in
                   ZStack{
                       Image("App-BG")
@@ -183,7 +183,7 @@ struct SignUpVerify: View {
                       .frame(width: UIScreen.main.bounds.width*0.8)
                       
                   }
-                  .edgesIgnoringSafeArea(.top)
+                  .edgesIgnoringSafeArea(.all)
                   .navigationBarTitle("Sign Up",displayMode: .inline)
                   .navigationBarBackButtonHidden(true)
                   .navigationBarItems(leading:
@@ -197,7 +197,7 @@ struct SignUpVerify: View {
                       }
                       
                   })
-              .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                  .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
           }.alert(isPresented:$isNoNetwork) {
               Alert(
                   title: Text("Error"),
