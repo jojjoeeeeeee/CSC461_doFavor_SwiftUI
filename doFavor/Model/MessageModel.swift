@@ -27,6 +27,15 @@ struct MessageModel: Codable {
     var sender: String?
 }
 
+struct ResponseUploadImage: Codable {
+    let result: String
+    let message: String
+    let data: ImageUrlDataModel
+}
+
+struct ImageUrlDataModel: Codable {
+    let url: [String]?
+}
 
 class FirebaseMessageObservedModel: ObservableObject{
     @Published var data: FirebaseMessage?

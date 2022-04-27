@@ -29,6 +29,8 @@ struct Constants {
     static let TSCT_SUCCESS = "/transaction/success"
     static let TSCT_REPORT = "/transaction/report"
     
+    static let FILE_UPLOAD_CONVERSATION_IMAGE = "/file/upload/img/conversation"
+    
     struct AppConstants {
         static let CUR_USR_TOKEN = "UserAuthToken"
         static let CUR_USR_USERNAME = "UserUsername"

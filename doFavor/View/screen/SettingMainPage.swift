@@ -40,6 +40,10 @@ struct SettingMainPage_Previews: PreviewProvider {
 }
 
 struct SettingView: View{
+    @State var username: String = AppUtils.getUsrUsername() ?? ""
+    @State var email: String = AppUtils.getUsrEmail() ?? ""
+    @State var name: String = AppUtils.getUsrName() ?? ""
+    
     var body: some View{
         VStack{
             ScrollView(){
@@ -58,13 +62,13 @@ struct SettingView: View{
 //                        Spacer()
                         
                         VStack(alignment: .leading, spacing:9){
-                             Text("Buasri ID : co621010346")
-                            Text("ธนณัฐ จริยสาธิต")
+                            Text("Buasri ID : \(username)")
+                            Text(name)
                                 .frame(height: 24)
                                 .padding(.horizontal,15)
                                 .background(Color.grey.opacity(0.15))
                                 .cornerRadius(5)
-                            Text(verbatim:"Thananut.khing@g.swu.ac.th")
+                            Text(email)
                                 .textContentType(.none)
                                 .frame(height: 24)
                                 .padding(.horizontal,15)

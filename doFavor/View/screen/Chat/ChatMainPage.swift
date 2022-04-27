@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ImageViewer
+import Kingfisher
 
 struct ChatMainPage: View {
     
@@ -15,6 +16,10 @@ struct ChatMainPage: View {
     public var applicant:ResponseUserTSCT?
     public var conversation_id:String
     @ObservedObject var messageData = FirebaseMessageObservedModel()
+    
+    @State var isAlert: Bool = false
+    @State var isExpired: Bool = false
+    @State var isNoNetwork: Bool = false
     
     @State var isShowFullImage: Bool = false
     @State var tempFullImage: Image = Image(systemName: "photo")
@@ -51,7 +56,7 @@ struct ChatMainPage: View {
                     .position(x:UIScreen.main.bounds.width/2)
                 
                 VStack(spacing:0){
-                    ChatContent(conversation_id: conversation_id, messageData: messageData, isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
+                    ChatContent(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData, isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
                     TabbarView()
                 }
                 .edgesIgnoringSafeArea(.bottom)
@@ -126,6 +131,7 @@ struct MessageBubble: View{
     @State var type:String
     @State var sender: String
 
+    @State var image = Image(systemName: "photo")
     @Binding var isShowFullImage: Bool
     @Binding var tempFullImage: Image
 
@@ -159,29 +165,40 @@ struct MessageBubble: View{
                     .padding()
                     .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.1) :  Color.black.opacity(0.03))
             } else if type == "photo" {
-                AsyncImage(url: URL(string: TextMS)){ image in
-                    image.resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: UIScreen.main.bounds.width/3)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .onTapGesture{
-                            isShowFullImage = true
-                            self.tempFullImage = image
+                let url = URL(string: TextMS)
+                let processor = ResizingImageProcessor(referenceSize: .init(width: 800,height:800), mode: .aspectFill)
+                
+                KFImage.url(url)
+                    .placeholder({
+                        HStack{
+                            ProgressView()
                         }
-                        .onAppear{
-                            proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1)
+                        .padding()
+                        .frame(width: 150, height: 150)
+                        .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.3) :  Color.black.opacity(0.05))
+                    })
+                    .setProcessor(processor)
+                    .loadDiskFileSynchronously()
+                    .cacheMemoryOnly()
+                    .fade(duration: 0.25)
+                    .onProgress { receivedSize, totalSize in  }
+                    .onSuccess { result in
+                        withAnimation{
+                            proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
                         }
-                        
-                       
-                    
-                }placeholder: {
-                    HStack{
-                        ProgressView()
+                        image = Image(uiImage: result.image)
                     }
-                    .padding()
-                    .frame(width: 150, height: 150)
-                    .background(sender == AppUtils.getUsrId()! ? Color.darkred.opacity(0.3) :  Color.black.opacity(0.05))
-                }
+                    .onFailure { error in print("ERROR LOAD IMAGE",error) }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: UIScreen.main.bounds.width/3)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .onTapGesture{
+                        self.tempFullImage = image
+                        if self.tempFullImage != Image(systemName: "photo") {
+                            isShowFullImage = true
+                        }
+                    }
             }
             
             AsyncImage(url: imageUrl){ image in
@@ -203,6 +220,11 @@ struct MessageBubble: View{
 }
 
 struct MessageField: View{
+    
+    @Binding var isAlert: Bool
+    @Binding var isExpired: Bool
+    @Binding var isNoNetwork: Bool
+    
     @State var MessageTexts: String = ""
     
     @State var image: Image? = Image(systemName: "photo")
@@ -266,11 +288,26 @@ struct MessageField: View{
                         }
                     }
                 case .failure(let error):
-                    print(error)
                     self.image = Image(systemName: "photo")
                     self.isImage = false
                     self.imageLoading = false
                     self.data = nil
+                    switch error{
+                    case .BackEndError(let msg):
+                        if msg == "session expired" {
+                            isAlert = true
+                            isExpired.toggle()
+                        }
+                        print(msg)
+                    case .Non200StatusCodeError(let val):
+                        print("Error Code: \(val.status) - \(val.message)")
+                    case .UnParsableError:
+                        print("Error \(error)")
+                    case .NoNetworkError:
+                        isAlert = true
+                        isNoNetwork.toggle()
+                    }
+                    
                 }
             }
             
@@ -376,6 +413,10 @@ struct MessageField: View{
 
 struct ChatContent: View{
     
+    @Binding var isAlert: Bool
+    @Binding var isExpired: Bool
+    @Binding var isNoNetwork: Bool
+    
     @State var conversation_id:String
     @StateObject var messageData = FirebaseMessageObservedModel()
     @State var isShowBtn: Bool = false
@@ -392,8 +433,9 @@ struct ChatContent: View{
                 ScrollView{
                     VStack{
                         ForEach(0..<(messageData.data?.message?.count ?? 0), id: \.self) { index in
-                            MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", proxy: proxy, messageData: messageData, type: messageData.data?.message?[index].type ?? "", sender: messageData.data?.message?[index].sender ?? "", isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
+                            MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", proxy: proxy, messageData: messageData, type: messageData.data?.message?[index].type ?? "", sender: messageData.data?.message?[index].sender ?? "", isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage).id(index)
                         }
+                        
 
                     }.padding(.horizontal,20)
                     
@@ -414,9 +456,11 @@ struct ChatContent: View{
                         }
                     }
                 )
-                .onChange(of: messageData.data?.message?.count) { _ in
-                    withAnimation{
-                        proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                .onChange(of: messageData.data?.message?.count) { value in
+                    if (value ?? 0) > 0 {
+                        withAnimation{
+                            proxy.scrollTo((value ?? 0) - 1, anchor: .bottom)
+                        }
                     }
                 }
                 .overlay(alignment: .bottomTrailing){
@@ -429,6 +473,7 @@ struct ChatContent: View{
                         .cornerRadius(2)
                         .padding(.bottom, 20)
                         .padding(.horizontal,20)
+                        .disabled(!isShowBtn)
                         .onTapGesture {
                             withAnimation{
                                 proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
@@ -447,7 +492,7 @@ struct ChatContent: View{
                 }
 
             }
-            MessageField(conversation_id: conversation_id, messageData: messageData)
+            MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData)
             
         }
         .frame(width: UIScreen.main.bounds.width)
