@@ -107,7 +107,7 @@ struct AppUtils {
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_NAME)
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_PROFILE)
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_USERNAME)
-        
+        UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_ADDRESS)
     }
     
     

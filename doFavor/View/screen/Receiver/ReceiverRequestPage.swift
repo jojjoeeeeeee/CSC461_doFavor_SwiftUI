@@ -173,6 +173,9 @@ struct RequestView: View{
     
     @StateObject public var formData = FormDataObservedModel()
     
+    @State var address: userLocationDataModel?
+    @State var isNoAddress: Bool = true
+    
     private func fetchCreateTSCT() {
         var model = RequestCreateTSCTModel()
         var location = RequestLocationModel()
@@ -186,12 +189,12 @@ struct RequestView: View{
         model.applicant_id = ""
         model.conversation_id = ""
         
-        location.room = "1204"
-        location.floor = "12"
-        location.building = formData.landmark?[0].name
-        location.optional = ""
-        location.latitude = formData.landmark?[0].latitude
-        location.longitude = formData.landmark?[0].longitude
+        location.room = address?.room ?? ""
+        location.floor = address?.floor ?? ""
+        location.building = address?.building ?? ""
+        location.optional = address?.optional ?? ""
+        location.latitude = address?.latitude ?? 0.0
+        location.longitude = address?.longitude ?? 0.0
         
         task_location.name = formData.landmark?[selectionIndex].name
         task_location.building = formData.landmark?[selectionIndex].building
@@ -303,7 +306,14 @@ struct RequestView: View{
                     addressSegment()
                         .overlay(
                             RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
-                        )
+                        ).onAppear{
+                            address = AppUtils.getUsrAddress()
+                            if address != nil {
+                                isNoAddress = false
+                            } else {
+                                isNoAddress = true
+                            }
+                        }
 
                     
                     Text("บริการที่ต้องการฝาก")
@@ -345,10 +355,11 @@ struct RequestView: View{
                         Text("อาคารใกล้เคียง")
                             .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
                         Button(action: {
-                            print("click picker")
                             UIApplication.shared.endEditing()
                             
-                            self.pickerType = 1
+                            if (formData.landmark?.count ?? 0) > 0 {
+                                self.pickerType = 1
+                            }
                         }){
                             Text("\(self.selectedLandmark)")
                                 .padding()
@@ -479,7 +490,10 @@ struct pickerSheet: View{
                     Text(data[index].name!)
                 }
                 
-        }.pickerStyle(WheelPickerStyle())
+            }.onAppear{
+                selectionIndex = 0
+            }
+        .pickerStyle(WheelPickerStyle())
             .foregroundColor(.white)
             .frame(height: 180)
             .padding()

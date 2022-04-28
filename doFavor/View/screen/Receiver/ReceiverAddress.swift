@@ -14,8 +14,8 @@ struct ReceiverAddress: View {
     @State var kwAddress: String = ""
     @State var isLoading: Bool = false
     @State var isExpired: Bool = false
-    @State var isFieldError: Bool = false
     @State var isNoNetwork: Bool = false
+    @State var isValidateFail: Bool = false
     @State var isAlert: Bool = false
     
     @Environment(\.presentationMode) var presentationMode
@@ -63,7 +63,7 @@ struct ReceiverAddress: View {
                             .onTapGesture {
                                 UIApplication.shared.endEditing()
                             }
-                        AddressView(formData: formData)
+                        AddressView(formData: formData, isAlert: $isAlert, isValidateFail: $isValidateFail)
                         TabbarView()
                     }
                     .edgesIgnoringSafeArea(.bottom)
@@ -88,6 +88,38 @@ struct ReceiverAddress: View {
 
                 )
 
+            }.alert(isPresented:$isAlert) {
+                if isExpired {
+                    return Alert(
+                        title: Text("Session Expired"),
+                        message: Text("this account is signed-in from another location please sign-in again"),
+                        dismissButton: .destructive(Text("Ok")) {
+                            AppUtils.eraseAllUsrData()
+                            doFavorApp(rootView: .LoginView)
+                        }
+                    )
+                }
+                else if isNoNetwork {
+                    return Alert(
+                        title: Text("Error"),
+                        message: Text("No network connection please try again"),
+                        dismissButton: .default(Text("Ok")) {
+                            isLoading = false
+                            isNoNetwork = false
+                        }
+                    )
+                }
+                else {
+                    return Alert(
+                        title: Text("เกิดข้อผิดพลาด"),
+                        message: Text("กรุณาเลือกอาคารใกล้เคียง"),
+                        dismissButton: .default(Text("Ok")) {
+                            isAlert = false
+                            isValidateFail = false
+                        }
+                    )
+                }
+                
             }
         }
 
@@ -99,7 +131,8 @@ struct AddressView: View{
     @ObservedObject var ContentView = ContentViewModel()
 
 //    @StateObject public var model = userLocationObservedModel()
-    
+    @State var address: userLocationDataModel?
+
     @State var lmRoom: String = "" //landmark room
     @State var lmFloor: String = ""
     @State var lmBuilding: String = ""
@@ -107,6 +140,11 @@ struct AddressView: View{
     @State private var selectedLandmark = "เลือกอาคาร"
     @State private var selectionIndex : Int = -1
     @State private var pickerType = 0
+    
+    @Binding var isAlert: Bool
+    @Binding var isValidateFail: Bool
+    
+    @Environment(\.presentationMode) var presentationMode
     
     private var isShowingOverlay: Bool {
         get {
@@ -128,16 +166,33 @@ struct AddressView: View{
         }
     }
     
+    private func validateUserLocation() {
+        
+        for i in 0..<(formData.landmark?.count ?? 0) {
+            print("STATEMENT",selectedLandmark == (formData.landmark?[i].name ?? ""))
+            if selectedLandmark == (formData.landmark?[i].name ?? "") {
+                selectionIndex = i
+                formatUserLocation()
+            }
+        }
+        
+        if selectionIndex == -1 {
+            isAlert = true
+            isValidateFail = true
+        } else {
+            formatUserLocation()
+        }
+    }
+    
     private func formatUserLocation(){
         let model = userLocationDataModel(room: lmRoom, floor: lmFloor, building: selectedLandmark, optional: addNote, latitude: Double(ContentView.region.center.latitude), longitude: Double(ContentView.region.center.longitude))
-        
         do {
 
             try AppUtils.saveUsrAddress(model: model)
-
-            print("Finish setValue to UserDefaults")
+            self.presentationMode.wrappedValue.dismiss()
+//            print("Finish setValue to UserDefaults")
             
-            print(AppUtils.getUsrAddress())
+//            print(AppUtils.getUsrAddress())
 //            if let data = UserDefaults.standard.value(forKey:Constants.AppConstants.CUR_USR_ADDRESS) as? Data {
 //                let dataDecoded = try? PropertyListDecoder().decode(userLocationDataModel.self, from: data)
 //                print("UserDefaults 2",dataDecoded!)
@@ -181,11 +236,10 @@ struct AddressView: View{
                     .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
                 Button(action: {
                     UIApplication.shared.endEditing()
-//                    if detail.trimmingCharacters(in: .whitespacesAndNewlines).filter{!$0.isWhitespace} == "" {
-//                        detail = detailPlaceholder
-//                    }
                     
-                    self.pickerType = 1
+                    if (formData.landmark?.count ?? 0) > 0 {
+                        self.pickerType = 1
+                    }
                 }){
                     Text("\(self.selectedLandmark)")
                         .padding()
@@ -215,7 +269,7 @@ struct AddressView: View{
 
             //button
             Button(action: {
-                formatUserLocation()
+                validateUserLocation()
             }){
                 Text("ยืนยัน")
                     .foregroundColor(Color.white)
@@ -232,6 +286,14 @@ struct AddressView: View{
         .padding(.top,20)
         .padding(.horizontal,20)
         .font(Font.custom("SukhumvitSet-Bold", size: 14).weight(.bold))
+        .onAppear{
+            address = AppUtils.getUsrAddress()
+            lmRoom = address?.room ?? ""
+            lmFloor = address?.floor ?? ""
+            selectedLandmark = address?.building ?? ""
+            addNote = address?.optional ?? ""
+        }
+        
 
         if isShowingOverlay {
             pickerOverlay
@@ -250,12 +312,14 @@ struct MapView: View{
 
     var body: some View{
         ZStack(alignment: .bottom){
-            Map(coordinateRegion: $viewModel.region, showsUserLocation: true).onAppear{
+            Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true)
+            .onAppear{
                 viewModel.requestLocationPermission()
             }
             
             Button(action: {
                 viewModel.getCurrentLocation()
+//                viewModel.mapView(mapView: Map, regionDidChangeAnimated: true)
             }){
                 Text("Current Location")
                     .padding()
@@ -278,12 +342,20 @@ struct ReceiverAddress_Previews: PreviewProvider {
 
 final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate{
     
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 40, longitude: 120), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
+    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
+    
     let locationManager = CLLocationManager()
     
     override init(){
         super.init()
         locationManager.delegate = self
+    }
+    
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        let mapLatitude = mapView.centerCoordinate.latitude
+        let mapLongitude = mapView.centerCoordinate.longitude
+        var center = "Latitude: \(mapLatitude) Longitude: \(mapLongitude)"
+        print(center)
     }
     
     func requestLocationPermission(){
@@ -295,6 +367,19 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     func getCurrentLocation() {
         locationManager.requestLocation()
     }
+    
+    
+    //Real-time update location
+//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//        if manager.authorizationStatus == .authorizedWhenInUse {
+//            print("Authorized...")
+//            manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+//            manager.startUpdatingLocation()
+//        } else {
+//            print("Not Authorized...")
+//            manager.requestWhenInUseAuthorization()
+//        }
+//    }
     
     //load location
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

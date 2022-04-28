@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct addressSegment: View{
+    
+    @State var address: userLocationDataModel?
+    @State var addressStr: String = ""
+    
     var body: some View{
         NavigationLink(destination: ReceiverAddress()){
             
@@ -15,7 +19,7 @@ struct addressSegment: View{
                 Image(systemName: "house")
                     .font(.system(size: 17, weight: .semibold))
                     .padding(.leading,11)
-                Text("ห้อง 1204 อาคารเรียนรวม ตึกไข่ดาว")
+                Text(addressStr)
                     .font(Font.custom("SukhumvitSet-SemiBold", size: 15))
             }
             .edgesIgnoringSafeArea(.top)
@@ -24,6 +28,17 @@ struct addressSegment: View{
             .frame(width:  UIScreen.main.bounds.width-30, height: 41, alignment: .leading)
             .background(Color.white.opacity(0.3))
             .cornerRadius(9)
+            .onAppear{
+                address = AppUtils.getUsrAddress()
+                if address != nil {
+                    let room = !(address?.room?.isEmpty ?? true) ? "ห้อง \(address?.room ?? "")" : ""
+                    let floor = !(address?.floor?.isEmpty ?? true) ? "ชั้น \(address?.floor ?? "") ": ""
+                    let building = address?.building ?? ""
+                    addressStr = "\(room) \(floor)\(building)"
+                } else {
+                    addressStr = "กรุณาใส่ที่อยู่ปัจจุบัน"
+                }
+            }
         }
         //        .padding(.top, 20)
         //        .background(.red)
