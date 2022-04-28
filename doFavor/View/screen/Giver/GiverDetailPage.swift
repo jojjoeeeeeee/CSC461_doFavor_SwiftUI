@@ -188,12 +188,12 @@ struct GiverDetailPage: View {
                         //                Text("รับมอบหมาย")
                             .foregroundColor(Color.white)
                             .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                            .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                            .background(data?.isAccepted == false ? Color.darkred : Color.grey)
+                            
+                            .cornerRadius(15)
                         
-                    }
-                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
-                    .background(data?.isAccepted == false ? Color.darkred : Color.grey)
-                    .disabled(data?.isAccepted ?? true)
-                    .cornerRadius(15)
+                    }.disabled(data?.isAccepted ?? true)
                     
                     Spacer()
                 }

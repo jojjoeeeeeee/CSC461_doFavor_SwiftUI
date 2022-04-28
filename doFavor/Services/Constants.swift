@@ -37,6 +37,7 @@ struct Constants {
         static let CUR_USR_EMAIL = "UserEmail"
         static let CUR_USR_PROFILE = "UserProfile"
         static let CUR_USR_NAME = "UserName"
+        static let CUR_USR_ADDRESS = "UserAddress"
     }
 }
 

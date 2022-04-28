@@ -23,12 +23,12 @@ struct ReceiverAddress: View {
     
     func fetchFormData() {
         isLoading.toggle()
-        
+    
         TransactionViewModel().getFormData() { result in
             isLoading.toggle()
             switch result {
             case .success(let response):
-                print("Success",response)
+//                print("Success",response)
                 formData.landmark = response.landmark
                 formData.type = response.type
             case .failure(let error):
@@ -54,36 +54,41 @@ struct ReceiverAddress: View {
     
     var body: some View {
         
-        GeometryReader{ geometry in
-            ZStack{
-                
-                VStack(spacing:0){
-                    MapView()
-//                    AddressView(formData: formData)
-//                    TabbarView()
+        doFavorMainLoadingIndicatorView(isLoading: isLoading) {
+            GeometryReader{ geometry in
+                ZStack{
+                    
+                    VStack(spacing:0){
+                        MapView()
+                            .onTapGesture {
+                                UIApplication.shared.endEditing()
+                            }
+                        AddressView(formData: formData)
+                        TabbarView()
+                    }
+                    .edgesIgnoringSafeArea(.bottom)
+
                 }
-                .edgesIgnoringSafeArea(.bottom)
+                .onAppear{fetchFormData()}
+                .navigationBarBackButtonHidden(true)
+                .navigationBarItems(leading:
+                    HStack{
+                    Button(action:{
+                    self.presentationMode.wrappedValue.dismiss()
+                    }){
+                        Image(systemName:"arrow.left")
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundColor(Color.darkest)
+                    }
+                        TextField("ค้นหาที่อยู่...", text: self.$kwAddress)
+                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
+
+                    }
+    //                 .background(Color.white)
+
+                )
 
             }
-//            .onAppear{fetchFormData()}
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading:
-                HStack{
-                Button(action:{
-                self.presentationMode.wrappedValue.dismiss()
-                }){
-                    Image(systemName:"arrow.left")
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundColor(Color.darkest)
-                }
-                    TextField("ค้นหาที่อยู่...", text: self.$kwAddress)
-                    .font(Font.custom("SukhumvitSet-Bold", size: 15))
-
-                }
-//                 .background(Color.white)
-
-            )
-
         }
 
     }
@@ -91,7 +96,10 @@ struct ReceiverAddress: View {
 
 struct AddressView: View{
     @StateObject public var formData = FormDataObservedModel()
+    @ObservedObject var ContentView = ContentViewModel()
 
+//    @StateObject public var model = userLocationObservedModel()
+    
     @State var lmRoom: String = "" //landmark room
     @State var lmFloor: String = ""
     @State var lmBuilding: String = ""
@@ -99,12 +107,12 @@ struct AddressView: View{
     @State private var selectedLandmark = "เลือกอาคาร"
     @State private var selectionIndex : Int = -1
     @State private var pickerType = 0
+    
     private var isShowingOverlay: Bool {
         get {
             return self.pickerType != 0
         }
     }
-    
 
     private var landmarkPicker: some View{
         pickerSheet(selection: $selectedLandmark, selectionIndex: $selectionIndex, data: formData.landmark!, pickerType: $pickerType)
@@ -118,6 +126,29 @@ struct AddressView: View{
                 EmptyView()
             }
         }
+    }
+    
+    private func formatUserLocation(){
+        let model = userLocationDataModel(room: lmRoom, floor: lmFloor, building: selectedLandmark, optional: addNote, latitude: Double(ContentView.region.center.latitude), longitude: Double(ContentView.region.center.longitude))
+        
+        do {
+
+            try AppUtils.saveUsrAddress(model: model)
+
+            print("Finish setValue to UserDefaults")
+            
+            print(AppUtils.getUsrAddress())
+//            if let data = UserDefaults.standard.value(forKey:Constants.AppConstants.CUR_USR_ADDRESS) as? Data {
+//                let dataDecoded = try? PropertyListDecoder().decode(userLocationDataModel.self, from: data)
+//                print("UserDefaults 2",dataDecoded!)
+//            }
+
+
+        }catch{
+            print("Unable to Encode Note (\(error))")
+        }
+        
+        
     }
 
 
@@ -180,19 +211,22 @@ struct AddressView: View{
                         RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                     )
             }
+            
 
             //button
             Button(action: {
+                formatUserLocation()
             }){
                 Text("ยืนยัน")
                     .foregroundColor(Color.white)
                     .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                    .background(Color.darkred)
+                    .cornerRadius(15)
 
             }
-            .frame(width:UIScreen.main.bounds.width-40, height: 50)
-            .background(Color.darkred)
-            .cornerRadius(15)
             .padding(.bottom)
+            .keyboardAware(multiplier: 0.4)
 
         }
         .padding(.top,20)
@@ -277,6 +311,7 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         //update location
         DispatchQueue.main.async {
             self.region = MKCoordinateRegion(center: latestLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+            print("region",self.region.center)
         }
     }
     

@@ -86,6 +86,21 @@ struct AppUtils {
         return UserDefaults.standard.value(forKey: Constants.AppConstants.CUR_USR_NAME) as? String
     }
     
+    static func saveUsrAddress(model:userLocationDataModel){
+        UserDefaults.standard.set(try? PropertyListEncoder().encode(model), forKey:Constants.AppConstants.CUR_USR_ADDRESS)
+    }
+    
+    
+    static func getUsrAddress() -> userLocationDataModel? {
+        var userLocation:userLocationDataModel?
+        
+        if let data = UserDefaults.standard.value(forKey:Constants.AppConstants.CUR_USR_ADDRESS) as? Data {
+            let dataDecoded = try! PropertyListDecoder().decode(userLocationDataModel.self, from: data)
+            userLocation = dataDecoded
+        }
+        return userLocation
+    }
+    
     static func eraseAllUsrData() {
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_TOKEN)
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_EMAIL)
@@ -94,6 +109,7 @@ struct AppUtils {
         UserDefaults.standard.removeObject(forKey: Constants.AppConstants.CUR_USR_USERNAME)
         
     }
+    
     
     struct E2EE {
         

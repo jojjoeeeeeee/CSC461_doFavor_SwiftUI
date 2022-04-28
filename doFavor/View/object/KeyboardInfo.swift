@@ -24,26 +24,29 @@ public class KeyboardInfo: ObservableObject {
         if notification.name == UIApplication.keyboardWillHideNotification {
             self.height = 0
         } else {
-            self.height = ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0)+CGFloat(1)
+            self.height = ((notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0)
         }
     }
 
 }
 
 struct KeyboardAware: ViewModifier {
+    
+    @State var multiplier: CGFloat
     @ObservedObject private var keyboard = KeyboardInfo.shared
 
     func body(content: Content) -> some View {
         content
-            .padding(.bottom, self.keyboard.height)
-            .edgesIgnoringSafeArea(self.keyboard.height > 0 ? .bottom : [])
+            .padding(.bottom, self.keyboard.height*multiplier)
+            .ignoresSafeArea(.keyboard)
             .animation(.easeOut)
     }
 }
 
 extension View {
-    public func keyboardAware() -> some View {
-        ModifiedContent(content: self, modifier: KeyboardAware())
+    
+    public func keyboardAware(multiplier: CGFloat) -> some View {
+        ModifiedContent(content: self, modifier: KeyboardAware(multiplier: multiplier))
     }
 }
 

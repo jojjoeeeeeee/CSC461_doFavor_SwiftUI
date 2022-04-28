@@ -69,7 +69,6 @@ struct ChatMainPage: View {
             
         }
         .navigationBarHidden(true)
-        .keyboardAware()
         
     }
 }
@@ -492,7 +491,7 @@ struct ChatContent: View{
                 }
 
             }
-            MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData)
+            MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData).keyboardAware(multiplier: 0.85)
             
         }
         .frame(width: UIScreen.main.bounds.width)
