@@ -29,7 +29,7 @@ struct ChatMainPage: View {
             switch result{
             case .success(let response):
                 messageData.data = response
-
+                
             case .failure(let error):
                 switch error {
                 case .ConversationNotFound:
@@ -39,9 +39,9 @@ struct ChatMainPage: View {
                 }
             }
         }
-
+        
     }
-
+    
     
     var body: some View {
         GeometryReader { geometry in
@@ -122,18 +122,18 @@ struct ChatTitle: View{
 }
 
 struct MessageBubble: View{
-//    var messageData:MessageModel
+    //    var messageData:MessageModel
     var TextMS:String
     let proxy: ScrollViewProxy
     @StateObject var messageData = FirebaseMessageObservedModel()
-
+    
     @State var type:String
     @State var sender: String
-
+    
     @State var image = Image(systemName: "photo")
     @Binding var isShowFullImage: Bool
     @Binding var tempFullImage: Image
-
+    
     var imageUrl = URL(string: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000")
     
     var body: some View{
@@ -196,20 +196,21 @@ struct MessageBubble: View{
                         self.tempFullImage = image
                         if self.tempFullImage != Image(systemName: "photo") {
                             isShowFullImage = true
+                            UIApplication.shared.endEditing()
                         }
                     }
             }
             
-            AsyncImage(url: imageUrl){ image in
-                image.resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 28, height: 28)
-                    .cornerRadius(28)
-                    .opacity(sender == AppUtils.getUsrId()! ? 100 : 0)
-                
-            }placeholder: {
-                ProgressView()
-            }
+            //            AsyncImage(url: imageUrl){ image in
+            //                image.resizable()
+            //                    .aspectRatio(contentMode: .fill)
+            //                    .frame(width: 28, height: 28)
+            //                    .cornerRadius(28)
+            //                    .opacity(sender == AppUtils.getUsrId()! ? 100 : 0)
+            //
+            //            }placeholder: {
+            //                ProgressView()
+            //            }
         }
         .frame(maxWidth: .infinity, alignment: sender == AppUtils.getUsrId()! ? .trailing : .leading)
         .font(Font.custom("SukhumvitSet-Bold", size: 13).weight(.regular))
@@ -238,6 +239,40 @@ struct MessageField: View{
     
     @State var isImage: Bool = false
     @State var imageLoading: Bool = false
+    
+    @State var uiimage: UIImage?
+    
+    
+    func getSize(by uiimage: UIImage) -> (width:CGFloat,height:CGFloat) {
+        let image = uiimage
+        let width = image.size.width
+        let height = image.size.height
+        var finalwidth: CGFloat = 0
+        var finalheight: CGFloat = 0
+        var scale:CGFloat = 0.0
+        
+        if width > height {
+            // Landscape image
+            // Use screen width if < than image width
+            
+            finalwidth = width > UIScreen.main.bounds.width ? UIScreen.main.bounds.width : width
+            scale = 300/finalwidth
+            // Scale height
+            finalheight = finalwidth/width * height
+        } else {
+            // Portrait
+            // Use 600 if image height > 600
+            
+            
+            finalheight = height > 600 ? 600 : height
+            scale = 200/finalheight
+            // Scale width
+            finalwidth = finalheight/height * width
+        }
+        
+//        fieldHeight = finalheight*scale+100
+        return (width: finalwidth*scale,height: finalheight*scale)
+    }
     
     func sendMsg() {
         if !MessageTexts.isEmpty {
@@ -327,19 +362,24 @@ struct MessageField: View{
                 
                 ZStack {
                     HStack{
-                        self.image?
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: UIScreen.main.bounds.height/5)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                            .blur(radius: self.imageLoading ? 0.5 : 0)
-                            .padding()
+                        if uiimage != nil {
+                            var width = getSize(by: uiimage!).width
+                            var height = getSize(by: uiimage!).height
+                            
+                            self.image?
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: width,height: height)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .blur(radius: self.imageLoading ? 0.5 : 0)
+//                                .padding()
+                        }
                     }
                     .padding()
                     .frame(width: UIScreen.main.bounds.width*0.8)
                     .background(Color.darkred.opacity(0.1))
                     .cornerRadius(40)
-
+                    
                     if imageLoading {
                         ProgressView().tint(Color.white)
                     }
@@ -348,6 +388,7 @@ struct MessageField: View{
             }
             else {
                 Button(action:{
+                    UIApplication.shared.endEditing()
                     self.isShowActionSheet = true
                 }){
                     Image(systemName: "paperclip")
@@ -377,7 +418,7 @@ struct MessageField: View{
             
         }
         .padding()
-        .frame(height: isImage == false ? 50 : UIScreen.main.bounds.height/4+50)
+        .frame(height: isImage == false ? 50 : (UIScreen.main.bounds.height/4.5)+50)
         .onTapGesture() {
             self.isShowActionSheet = false
         }
@@ -393,10 +434,10 @@ struct MessageField: View{
                     self.pickerSelectedType = .photoLibrary
                     self.isShowImagePicker = true
                 })
-
-              ])
+                
+            ])
         }.sheet(isPresented: self.$isShowImagePicker) {
-            UIImagePickerVC(image: self.$image, data: self.$data, sourceType: self.pickerSelectedType).background(Color.black).edgesIgnoringSafeArea(.all)
+            UIImagePickerVC(image: self.$image, data: self.$data, uiimage: $uiimage, sourceType: self.pickerSelectedType).background(Color.black).edgesIgnoringSafeArea(.all)
                 .onDisappear{
                     if data == nil {
                         self.isImage = false
@@ -421,6 +462,8 @@ struct ChatContent: View{
     @State var isShowBtn: Bool = false
     @State var maxScrollValue: CGFloat = 0.0
     
+    @StateObject private var keyboard = KeyboardInfo.shared
+    
     @Binding var isShowFullImage: Bool
     @Binding var tempFullImage: Image
     
@@ -435,8 +478,15 @@ struct ChatContent: View{
                             MessageBubble(TextMS: messageData.data?.message?[index].content ?? "", proxy: proxy, messageData: messageData, type: messageData.data?.message?[index].type ?? "", sender: messageData.data?.message?[index].sender ?? "", isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage).id(index)
                         }
                         
-
+                        
                     }.padding(.horizontal,20)
+                        .onChange(of: keyboard.height) { v in
+                            if !isShowBtn {
+                                withAnimation{
+                                    proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                                }
+                            }
+                        }
                     
                     GeometryReader { geometry in
                         let offset = geometry.frame(in: .named("scroll")).minY
@@ -467,17 +517,17 @@ struct ChatContent: View{
                         Image(systemName: "arrow.down")
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 15, height: 15)
-                        .padding(10)
-                        .background(Color.black.opacity(0.1))
-                        .cornerRadius(2)
-                        .padding(.bottom, 20)
-                        .padding(.horizontal,20)
-                        .disabled(!isShowBtn)
-                        .onTapGesture {
-                            withAnimation{
-                                proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                            .padding(10)
+                            .background(Color.black.opacity(0.1))
+                            .cornerRadius(2)
+                            .padding(.bottom, 20)
+                            .padding(.horizontal,20)
+                            .disabled(!isShowBtn)
+                            .onTapGesture {
+                                withAnimation{
+                                    proxy.scrollTo((messageData.data?.message?.count ?? 0) - 1, anchor: .bottom)
+                                }
                             }
-                        }
                     }
                 }
                 .coordinateSpace(name: "scroll")
@@ -489,7 +539,7 @@ struct ChatContent: View{
                         isShowBtn = false
                     }
                 }
-
+                
             }
             MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData).keyboardAware(multiplier: 0.85)
             

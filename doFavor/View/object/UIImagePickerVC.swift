@@ -11,6 +11,7 @@ struct UIImagePickerVC: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     @Binding var image: Image?
     @Binding var data: Data?
+    @Binding var uiimage: UIImage?
     var sourceType: UIImagePickerController.SourceType = .photoLibrary
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -23,25 +24,28 @@ struct UIImagePickerVC: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
     
     func makeCoordinator() -> UIImagePickerVC.Coordinator {
-        return Coordinator(presentationMode: presentationMode, image: self.$image, data: self.$data)
+        return Coordinator(presentationMode: presentationMode, image: self.$image, data: self.$data, uiimage: self.$uiimage)
     }
     
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         @Binding var presentationMode: PresentationMode
         @Binding var image: Image?
         @Binding var data: Data?
+        @Binding var uiimage: UIImage?
         
-        init(presentationMode: Binding<PresentationMode>, image: Binding<Image?>, data: Binding<Data?>) {
+        init(presentationMode: Binding<PresentationMode>, image: Binding<Image?>, data: Binding<Data?>, uiimage: Binding<UIImage?>) {
             _presentationMode = presentationMode
             _image = image
             _data = data
+            _uiimage = uiimage
         }
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             let selectedImage = info[.originalImage] as! UIImage
             let orientationFixedImage = selectedImage.fixOrientation()
             data = orientationFixedImage.compress(to: 1024)
-            image = Image(uiImage: self.resizeImage(image: selectedImage))
+            image = Image(uiImage: self.resizeImage(image: orientationFixedImage))
+            uiimage = orientationFixedImage
             presentationMode.dismiss()
         }
         
