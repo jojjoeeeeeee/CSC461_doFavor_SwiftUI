@@ -129,7 +129,7 @@ struct ReceiverAddress: View {
 
 struct AddressView: View{
     @StateObject public var formData = FormDataObservedModel()
-    @ObservedObject var ContentView = ContentViewModel2()
+    @ObservedObject var ContentView = ContentViewModel.shared
 
 //    @StateObject public var model = userLocationObservedModel()
     @State var address: userLocationDataModel?
@@ -306,7 +306,7 @@ struct Marker: Identifiable {
 }
 
 struct MapView: View{
-    @ObservedObject private var viewModel = ContentViewModel()
+    @ObservedObject var viewModel = ContentViewModel.shared
 //    @StateObject var managerDelegate = locationDelegate()
 
     let markers = [Marker(location: MapMarker(coordinate: CLLocationCoordinate2D(latitude: 38.8977, longitude: -77.0365), tint: .red))]
@@ -331,6 +331,7 @@ struct MapView: View{
             
             Button(action: {
                 viewModel.getCurrentLocation()
+                viewModel.isGetNewLocation = true
             }){
                 Image(systemName: "location.fill")
                     .font(.system(size: 27, weight: .light))
@@ -350,106 +351,4 @@ struct ReceiverAddress_Previews: PreviewProvider {
     static var previews: some View {
         MapView()
     }
-}
-
-final class ContentViewModel2: NSObject, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate{
-    var map = MKMapView()
-    
-    let locationManager = CLLocationManager()
-    private var mapChangedFromUserInteraction = false
-    
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
-
-        override init(){
-        super.init()
-        locationManager.delegate = self
-        map.delegate = self
-    }
-    
-    
-    func mapView(mapView: MKMapView, regionWillChangeAnimated animated: Bool){
-        mapChangedFromUserInteraction = mapViewRegionDidChangeFromUserInteraction()
-
-        if mapChangedFromUserInteraction{
-            print("user WILL change map.")
-        }
-    }
-    
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        
-        let mapLatitude = mapView.centerCoordinate.latitude
-        let mapLongitude = mapView.centerCoordinate.longitude
-        var center = "Latitude: \(mapLatitude) Longitude: \(mapLongitude)"
-        print(center)
-        
-        if mapChangedFromUserInteraction{
-            print("user CHANGED map.")
-            print(mapLatitude)
-            print(mapLongitude)
-        }
-    }
-    
-    func requestLocationPermission(){
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
-    }
-    
-    func getCurrentLocation() {
-        locationManager.requestLocation()
-    }
-    
-    //mapView didchange
-    private func mapViewRegionDidChangeFromUserInteraction() -> Bool {
-        //  Look through gesture recognizers to determine whether this region change is from user interaction
-        let view = map.subviews[0]
-        if let gestureRecognizers = view.gestureRecognizers{
-            for recognizer in gestureRecognizers{
-                if (recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended){
-                    print("HI TRUE")
-                    return true
-                }
-            }
-        }
-        print("HI FALSE")
-        return false
-    }
-    
-    
-    //Real-time update location
-//    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-//        if manager.authorizationStatus == .authorizedWhenInUse {
-//            print("Authorized...")
-//            manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-//            manager.startUpdatingLocation()
-//        } else {
-//            print("Not Authorized...")
-//            manager.requestWhenInUseAuthorization()
-//        }
-//    }
-    
-    //load location
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
-            locationManager.requestLocation()
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let latestLocation = locations.first else {
-            return
-        }
-
-        //update location
-        DispatchQueue.main.async {
-            self.region = MKCoordinateRegion(center: latestLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-            self.map.setRegion(self.region, animated: true)
-            print("region",self.region.center)
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("error:: \(error.localizedDescription )")
-    }
-    
 }

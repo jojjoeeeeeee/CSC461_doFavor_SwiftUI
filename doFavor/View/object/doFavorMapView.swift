@@ -10,26 +10,26 @@ import MapKit
 import CoreLocation
 
 struct doFavorMapView: UIViewRepresentable {
-        
+    
     let map = MKMapView()
     var centerAnnotation = MKPointAnnotation()
-
-    @StateObject public var viewModel = ContentViewModel()
+    
+    @StateObject public var viewModel = ContentViewModel.shared
     
     func makeUIView(context: Context) -> MKMapView {
         map.showsUserLocation = true
         map.delegate = context.coordinator
-//        map.setUserTrackingMode(.followWithHeading, animated: true)
+        //        map.setUserTrackingMode(.followWithHeading, animated: true)
         centerAnnotation.coordinate = map.centerCoordinate
         self.map.addAnnotation(centerAnnotation)
         
         viewModel.requestLocationPermission()
-//        viewModel.getCurrentLocation()
-
+        //        viewModel.getCurrentLocation()
+        
         
         return map
     }
-        
+    
     func makeCoordinator() -> ContentViewModel {
         ContentViewModel()
     }
@@ -37,6 +37,14 @@ struct doFavorMapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         let region = self.viewModel.region
         uiView.setRegion(region,animated: true)
+        //            if AppUtils.getUsrAddress()?.latitude == nil{
+        //                let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), latitudinalMeters: 200, longitudinalMeters: 200)
+        //                uiView.setRegion(region,animated: true)
+        //            }else{
+        //                let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (AppUtils.getUsrAddress()?.latitude)!, longitude: (AppUtils.getUsrAddress()?.longitude)!), latitudinalMeters: 200, longitudinalMeters: 200)
+        //                uiView.setRegion(region,animated: true)
+        //            }
+        
     }
     
 }
@@ -45,10 +53,12 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     var myMapView = doFavorMapView().map
     
     let locationManager = CLLocationManager()
-    private var mapChangedFromUserInteraction = false
+    
+    static let shared = ContentViewModel()
     
     @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
-
+    @Published var isGetNewLocation:Bool = false
+    
     override init(){
         super.init()
         locationManager.delegate = self
@@ -59,11 +69,11 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
         let mapLongitude = mapView.centerCoordinate.longitude
         var center = "Latitude: \(mapLatitude) Longitude: \(mapLongitude)"
         
-//        self.myMapView.setRegion(self.region, animated: true)
+        //        self.myMapView.setRegion(self.region, animated: true)
         myMapView.region.center.latitude = mapView.centerCoordinate.latitude
-//        myMapView.setRegion(mapView.region, animated: true)
+        //        myMapView.setRegion(mapView.region, animated: true)
         
-//        print("",myMapView.region.center.latitude)
+        //        print("",myMapView.region.center.latitude)
         print(center)
         
     }
@@ -76,45 +86,44 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     
     func getCurrentLocation() {
         locationManager.requestLocation()
-        print("TOIL")
     }
     
     //load location
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print("locationManager")
         if status == .authorizedWhenInUse {
-            print("locationManager 2")
-//            AppUtils.getUsrAddress()?.latitude
-            if AppUtils.getUsrAddress()?.latitude == nil{
-                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), latitudinalMeters: 200, longitudinalMeters: 200)
-                print("locationManager 3")
-            }else{
-                print("locationManager 4")
-                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (AppUtils.getUsrAddress()?.latitude)!, longitude: (AppUtils.getUsrAddress()?.longitude)!), latitudinalMeters: 200, longitudinalMeters: 200)
-            }
-                
+            locationManager.requestLocation()
         } else {
             print("Please allow")
         }
-        print("locationManager 5")
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latestLocation = locations.first else {
             return
         }
-
-        //update location
-        DispatchQueue.main.async {
-            self.region = MKCoordinateRegion(center: latestLocation.coordinate, latitudinalMeters: 200, longitudinalMeters: 200)
-            print("pen pai dai",self.region)
+        
+        
+        if isGetNewLocation {
+            //update location
+            DispatchQueue.main.async {
+                self.region = MKCoordinateRegion(center: latestLocation.coordinate, latitudinalMeters: 200, longitudinalMeters: 200)
+                print("pen pai dai",self.region)
+            }
+            
+        } else {
+            if AppUtils.getUsrAddress()?.latitude == nil{
+                self.region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), latitudinalMeters: 200, longitudinalMeters: 200)
+            }else{
+                self.region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (AppUtils.getUsrAddress()?.latitude)!, longitude: (AppUtils.getUsrAddress()?.longitude)!), latitudinalMeters: 200, longitudinalMeters: 200)
+            }
         }
+        
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("error:: \(error.localizedDescription )")
     }
-
+    
     
 }
 
