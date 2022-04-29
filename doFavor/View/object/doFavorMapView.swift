@@ -17,7 +17,6 @@ struct doFavorMapView: UIViewRepresentable {
     @StateObject public var viewModel = ContentViewModel()
     
     func makeUIView(context: Context) -> MKMapView {
-        map.addSubview(homebtn)
         map.showsUserLocation = true
         map.delegate = context.coordinator
 //        map.setUserTrackingMode(.followWithHeading, animated: true)
@@ -25,19 +24,12 @@ struct doFavorMapView: UIViewRepresentable {
         self.map.addAnnotation(centerAnnotation)
         
         viewModel.requestLocationPermission()
+//        viewModel.getCurrentLocation()
+
         
         return map
     }
-    
-    private let homebtn: UIButton = {
-        let button = UIButton()
-        button.setTitle("หน้าหลัก", for: .normal)
-        button.layer.cornerRadius = 15
-        button.setTitleColor(UIColor(red: 114/255, green: 75/255, blue: 255/255, alpha: 1), for: .normal)
-        button.setImage(UIImage(named: "home-btn.png"), for: .normal)
-        return button
-    }()
-    
+        
     func makeCoordinator() -> ContentViewModel {
         ContentViewModel()
     }
@@ -55,21 +47,11 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     let locationManager = CLLocationManager()
     private var mapChangedFromUserInteraction = false
     
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
+    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
 
     override init(){
         super.init()
         locationManager.delegate = self
-//        myMapView.delegate = self
-    }
-    
-    func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
-        mapChangedFromUserInteraction = mapViewRegionDidChangeFromUserInteraction()
-        
-        if mapChangedFromUserInteraction{
-            print("user WILL change map.")
-        }
-
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
@@ -84,47 +66,37 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
 //        print("",myMapView.region.center.latitude)
         print(center)
         
-        if mapChangedFromUserInteraction{
-            print("user CHANGED map.")
-            print(mapLatitude)
-            print(mapLongitude)
-        }
     }
     
     
     func requestLocationPermission(){
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
     }
     
     func getCurrentLocation() {
         locationManager.requestLocation()
-    }
-
-    //mapView didchange
-    private func mapViewRegionDidChangeFromUserInteraction() -> Bool {
-        //  Look through gesture recognizers to determine whether this region change is from user interaction
-        let view = myMapView.subviews[0]
-        if let gestureRecognizers = view.gestureRecognizers{
-            for recognizer in gestureRecognizers{
-                if (recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended){
-                    print("HI TRUE")
-                    return true
-                }
-            }
-        }
-        print("HI FALSE")
-        return false
+        print("TOIL")
     }
     
     //load location
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        print("locationManager")
         if status == .authorizedWhenInUse {
-            locationManager.requestLocation()
+            print("locationManager 2")
+//            AppUtils.getUsrAddress()?.latitude
+            if AppUtils.getUsrAddress()?.latitude == nil{
+                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74719, longitude: 100.56559), latitudinalMeters: 200, longitudinalMeters: 200)
+                print("locationManager 3")
+            }else{
+                print("locationManager 4")
+                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (AppUtils.getUsrAddress()?.latitude)!, longitude: (AppUtils.getUsrAddress()?.longitude)!), latitudinalMeters: 200, longitudinalMeters: 200)
+            }
+                
         } else {
             print("Please allow")
         }
+        print("locationManager 5")
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -134,7 +106,8 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
 
         //update location
         DispatchQueue.main.async {
-            self.region = MKCoordinateRegion(center: latestLocation.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+            self.region = MKCoordinateRegion(center: latestLocation.coordinate, latitudinalMeters: 200, longitudinalMeters: 200)
+            print("pen pai dai",self.region)
         }
     }
     
@@ -150,36 +123,4 @@ struct doFavorMapView_Previews: PreviewProvider {
     static var previews: some View {
         doFavorMapView()
     }
-}
-
-
-struct PillButton: UIViewRepresentable {
-    let title: String
-    let action: () -> ()
-
-    var ntPillButton = UIButton()//NTPillButton(type: .filled, title: "Start Test")
-
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
-
-    class Coordinator: NSObject {
-        var parent: PillButton
-
-        init(_ pillButton: PillButton) {
-            self.parent = pillButton
-            super.init()
-        }
-
-        @objc func doAction(_ sender: Any) {
-            self.parent.action()
-        }
-    }
-
-    func makeUIView(context: Context) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle(self.title, for: .normal)
-        button.addTarget(context.coordinator, action: #selector(Coordinator.doAction(_ :)), for: .touchDown)
-        return button
-    }
-
-    func updateUIView(_ uiView: UIButton, context: Context) {}
 }
