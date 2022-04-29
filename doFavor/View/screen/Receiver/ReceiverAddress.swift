@@ -11,6 +11,7 @@ import CoreLocation
 
 struct ReceiverAddress: View {
     @ObservedObject var formData = FormDataObservedModel()
+    
     @State var kwAddress: String = ""
     @State var isLoading: Bool = false
     @State var isExpired: Bool = false
@@ -60,6 +61,12 @@ struct ReceiverAddress: View {
                     
                     VStack(spacing:0){
                         doFavorMapView()
+                            .overlay(
+                                Text("eiei")
+                                    .background(Color.darkred)
+                                    .onTapGesture {
+                                        doFavorMapView().viewModel.getCurrentLocation()
+                                    })
                         MapView()
                             .onTapGesture {
 //                                UIApplication.shared.endEditing()
@@ -129,7 +136,7 @@ struct ReceiverAddress: View {
 
 struct AddressView: View{
     @StateObject public var formData = FormDataObservedModel()
-    @ObservedObject var ContentView = ContentViewModel()
+    @ObservedObject var ContentView = ContentViewModel2()
 
 //    @StateObject public var model = userLocationObservedModel()
     @State var address: userLocationDataModel?
@@ -306,7 +313,7 @@ struct Marker: Identifiable {
 }
 
 struct MapView: View{
-    @StateObject private var viewModel = ContentViewModel()
+    @StateObject private var viewModel = ContentViewModel2()
 //    @StateObject var managerDelegate = locationDelegate()
 
     let markers = [Marker(location: MapMarker(coordinate: CLLocationCoordinate2D(latitude: 38.8977, longitude: -77.0365), tint: .red))]
@@ -344,7 +351,7 @@ struct ReceiverAddress_Previews: PreviewProvider {
     }
 }
 
-final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate{
+final class ContentViewModel2: NSObject, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate{
     var map = MKMapView()
     
     let locationManager = CLLocationManager()
@@ -367,7 +374,7 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         }
     }
     
-    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         
         let mapLatitude = mapView.centerCoordinate.latitude
         let mapLongitude = mapView.centerCoordinate.longitude
