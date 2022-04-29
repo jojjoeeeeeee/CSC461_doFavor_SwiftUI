@@ -59,9 +59,10 @@ struct ReceiverAddress: View {
                 ZStack{
                     
                     VStack(spacing:0){
+                        doFavorMapView()
                         MapView()
                             .onTapGesture {
-                                UIApplication.shared.endEditing()
+//                                UIApplication.shared.endEditing()
                             }
                         AddressView(formData: formData, isAlert: $isAlert, isValidateFail: $isValidateFail)
                         TabbarView()
@@ -169,7 +170,7 @@ struct AddressView: View{
     private func validateUserLocation() {
         
         for i in 0..<(formData.landmark?.count ?? 0) {
-            print("STATEMENT",selectedLandmark == (formData.landmark?[i].name ?? ""))
+//            print("STATEMENT",selectedLandmark == (formData.landmark?[i].name ?? ""))
             if selectedLandmark == (formData.landmark?[i].name ?? "") {
                 selectionIndex = i
                 formatUserLocation()
@@ -190,14 +191,6 @@ struct AddressView: View{
 
             try AppUtils.saveUsrAddress(model: model)
             self.presentationMode.wrappedValue.dismiss()
-//            print("Finish setValue to UserDefaults")
-            
-//            print(AppUtils.getUsrAddress())
-//            if let data = UserDefaults.standard.value(forKey:Constants.AppConstants.CUR_USR_ADDRESS) as? Data {
-//                let dataDecoded = try? PropertyListDecoder().decode(userLocationDataModel.self, from: data)
-//                print("UserDefaults 2",dataDecoded!)
-//            }
-
 
         }catch{
             print("Unable to Encode Note (\(error))")
@@ -307,26 +300,37 @@ struct AddressView: View{
     }
 }
 
+struct Marker: Identifiable {
+    let id = UUID()
+    var location: MapMarker
+}
+
 struct MapView: View{
     @StateObject private var viewModel = ContentViewModel()
+//    @StateObject var managerDelegate = locationDelegate()
+
+    let markers = [Marker(location: MapMarker(coordinate: CLLocationCoordinate2D(latitude: 38.8977, longitude: -77.0365), tint: .red))]
 
     var body: some View{
-        ZStack(alignment: .bottom){
-            Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true)
+        ZStack(alignment: .bottomTrailing){
+            Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true,annotationItems: markers){
+                marker in
+                marker.location
+            }
             .onAppear{
                 viewModel.requestLocationPermission()
             }
             
             Button(action: {
                 viewModel.getCurrentLocation()
-//                viewModel.mapView(mapView: Map, regionDidChangeAnimated: true)
             }){
-                Text("Current Location")
+                Image(systemName: "location.fill")
+                    .font(.system(size: 27, weight: .light))
                     .padding()
                     .foregroundColor(Color.white)
-                    .background(Color.grey)
+                    .background(Color.darkred)
             }
-            .cornerRadius(10)
+            .cornerRadius(50)
             .labelStyle(.iconOnly)
             .symbolVariant(.fill)
             .padding()
@@ -336,26 +340,45 @@ struct MapView: View{
 
 struct ReceiverAddress_Previews: PreviewProvider {
     static var previews: some View {
-        ReceiverAddress()
+        MapView()
     }
 }
 
-final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate{
-    
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
+final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate{
+    var map = MKMapView()
     
     let locationManager = CLLocationManager()
+    private var mapChangedFromUserInteraction = false
     
-    override init(){
+    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
+
+        override init(){
         super.init()
         locationManager.delegate = self
+        map.delegate = self
+    }
+    
+    
+    func mapView(mapView: MKMapView, regionWillChangeAnimated animated: Bool){
+        mapChangedFromUserInteraction = mapViewRegionDidChangeFromUserInteraction()
+
+        if mapChangedFromUserInteraction{
+            print("user WILL change map.")
+        }
     }
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
         let mapLatitude = mapView.centerCoordinate.latitude
         let mapLongitude = mapView.centerCoordinate.longitude
         var center = "Latitude: \(mapLatitude) Longitude: \(mapLongitude)"
         print(center)
+        
+        if mapChangedFromUserInteraction{
+            print("user CHANGED map.")
+            print(mapLatitude)
+            print(mapLongitude)
+        }
     }
     
     func requestLocationPermission(){
@@ -366,6 +389,22 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     
     func getCurrentLocation() {
         locationManager.requestLocation()
+    }
+    
+    //mapView didchange
+    private func mapViewRegionDidChangeFromUserInteraction() -> Bool {
+        //  Look through gesture recognizers to determine whether this region change is from user interaction
+        let view = map.subviews[0]
+        if let gestureRecognizers = view.gestureRecognizers{
+            for recognizer in gestureRecognizers{
+                if (recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended){
+                    print("HI TRUE")
+                    return true
+                }
+            }
+        }
+        print("HI FALSE")
+        return false
     }
     
     
@@ -396,6 +435,7 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         //update location
         DispatchQueue.main.async {
             self.region = MKCoordinateRegion(center: latestLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+            self.map.setRegion(self.region, animated: true)
             print("region",self.region.center)
         }
     }
@@ -404,9 +444,4 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         print("error:: \(error.localizedDescription )")
     }
     
-//
-//
-//    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-//        print(error.localizedDescription)
-//    }
 }

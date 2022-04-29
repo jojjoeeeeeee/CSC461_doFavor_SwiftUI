@@ -48,7 +48,7 @@ struct SettingView: View{
         VStack{
             ScrollView(){
                 VStack{
-                    Text("ประวัติการทำรายการ")
+                    Text("บัญชีผู้ใช้")
                         .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
                         .padding()
                     

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C3692FE281C071300E7E4B8 /* doFavorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3692FD281C071300E7E4B8 /* doFavorMapView.swift */; };
 		2C37A84F27ED690B00C25099 /* GiverFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C37A84E27ED690B00C25099 /* GiverFilterSheet.swift */; };
 		2C37A85127ED801100C25099 /* HalfSheetDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C37A85027ED801100C25099 /* HalfSheetDrawer.swift */; };
 		2C70708A280F3C7C0098CE53 /* HistoryDetailPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C707089280F3C7B0098CE53 /* HistoryDetailPage.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C3692FD281C071300E7E4B8 /* doFavorMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doFavorMapView.swift; sourceTree = "<group>"; };
 		2C37A84E27ED690B00C25099 /* GiverFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiverFilterSheet.swift; sourceTree = "<group>"; };
 		2C37A85027ED801100C25099 /* HalfSheetDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfSheetDrawer.swift; sourceTree = "<group>"; };
 		2C707089280F3C7B0098CE53 /* HistoryDetailPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailPage.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				2CC1594827EBE72F00ED73F3 /* addressSegment.swift */,
 				2C37A85027ED801100C25099 /* HalfSheetDrawer.swift */,
 				848B41DB2817892B002E8767 /* UIImagePickerVC.swift */,
+				2C3692FD281C071300E7E4B8 /* doFavorMapView.swift */,
 			);
 			path = object;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				8477F83F27E167D300DAEBD9 /* ExtensionsHelper.swift in Sources */,
 				847900DF27EBC8FC00D245EB /* ContentView.swift in Sources */,
 				8477F83D27E166B400DAEBD9 /* SampleModel.swift in Sources */,
+				2C3692FE281C071300E7E4B8 /* doFavorMapView.swift in Sources */,
 				2CDD781E2811DD0300A27E1E /* RefreshableScrollView.swift in Sources */,
 				2C37A84F27ED690B00C25099 /* GiverFilterSheet.swift in Sources */,
 				2CC24FF527EB9BCD009D9C4C /* HomePushPage.swift in Sources */,

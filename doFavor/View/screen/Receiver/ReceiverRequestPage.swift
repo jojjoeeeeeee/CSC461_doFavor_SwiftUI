@@ -273,6 +273,11 @@ struct RequestView: View{
             isAlert = true
             isFieldError = true
         }
+        else if isNoAddress {
+                    isError = false
+                    isAlert = true
+                    isFieldError = true
+        }
         else {
             isError.toggle()
             isLoading.toggle()

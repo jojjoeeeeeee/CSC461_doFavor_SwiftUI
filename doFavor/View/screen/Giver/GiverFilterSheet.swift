@@ -52,3 +52,9 @@ extension View {
         self.modifier(GiverFilterSheet(isPresented: isPresented, sheetContent: sheetContent))
     }
 }
+
+//struct GiverFilterSheet_Previews: PreviewProvider {
+//    static var previews: some View {
+//        GiverFilterSheet<>(isPresented: .constant(true), sheetContent: View)
+//    }
+//}

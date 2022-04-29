@@ -59,8 +59,8 @@ struct HomeView: View{
                     .padding(.top, UIScreen.main.bounds.width*0.04)
                 VStack(spacing: 0){
                     HStack{
-                        Card(image: "", text: "ฝากซื้อ", color: Color.darkred, favor: true)
-                        Card(image: "", text: "รับฝาก", color: Color.grey, favor: false)
+                        Card(image: "TestPic1", text: "ฝากซื้อ", color: Color.darkred, favor: true)
+                        Card(image: "TestPic2", text: "รับฝาก", color: Color.grey, favor: false)
                         //                        Spacer()
                     }
                     
@@ -87,10 +87,9 @@ struct Card: View{
                     
                 })
                 {
-                    Image("TestPic1")
+                    Image(image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .offset(y: 70)
                         .overlay(content: {
                             VStack{
                                 Spacer()
