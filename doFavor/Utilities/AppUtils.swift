@@ -155,10 +155,10 @@ struct AppUtils {
             
             do {
                 let privateString = UserDefaults.standard.string(forKey: AppUtils.USR_PRV_KEY) ?? ""
-                let privatekeyData = Data(base64Encoded: privateString)
+                let privatekeyData = Data.init(base64Encoded: privateString)
                 let privateKey = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privatekeyData!)
                 
-                let keyData = Data(base64Encoded: otherPublicKey)
+                let keyData = Data.init(base64Encoded: otherPublicKey)
                 let keyFromData = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: keyData!)
                 
                 let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: keyFromData)
@@ -180,10 +180,10 @@ struct AppUtils {
             
             do {
                 let privateString = UserDefaults.standard.string(forKey: AppUtils.USR_PRV_KEY) ?? ""
-                let privatekeyData = Data(base64Encoded: privateString)
+                let privatekeyData = Data.init(base64Encoded: privateString)
                 let privateKey = try Curve25519.KeyAgreement.PrivateKey(rawRepresentation: privatekeyData!)
                 
-                let keyData = Data(base64Encoded: otherPublicKey)
+                let keyData = Data.init(base64Encoded: otherPublicKey)
                 let keyFromData = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: keyData!)
                 
                 let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: keyFromData)

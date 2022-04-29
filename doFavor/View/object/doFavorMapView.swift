@@ -25,7 +25,6 @@ struct doFavorMapView: UIViewRepresentable {
         self.map.addAnnotation(centerAnnotation)
         
         viewModel.requestLocationPermission()
-        viewModel.getCurrentLocation()
         
         return map
     }
@@ -44,7 +43,8 @@ struct doFavorMapView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-
+        let region = self.viewModel.region
+        uiView.setRegion(region,animated: true)
     }
     
 }
@@ -55,7 +55,7 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     let locationManager = CLLocationManager()
     private var mapChangedFromUserInteraction = false
     
-    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10))
+    @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 13.74486, longitude: 100.56472), span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
 
     override init(){
         super.init()
@@ -91,16 +91,6 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
         }
     }
     
-//        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-//            region = MKCoordinateRegion(center: userLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-//
-//            UIView.animate(withDuration: 0.1){
-//                mapView.setRegion(self.region, animated: true)
-//            }
-//
-//            print("Location update",region.center.latitude,region.center.longitude)
-//
-//        }
     
     func requestLocationPermission(){
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -110,7 +100,6 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     
     func getCurrentLocation() {
         locationManager.requestLocation()
-        print("get current")
     }
 
     //mapView didchange
@@ -133,6 +122,8 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {
             locationManager.requestLocation()
+        } else {
+            print("Please allow")
         }
     }
 
@@ -143,9 +134,7 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
 
         //update location
         DispatchQueue.main.async {
-//            self.region = MKCoordinateRegion(center: latestLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-//            self.myMapView.setRegion(self.region, animated: true)
-//            print("region2",self.region.center)
+            self.region = MKCoordinateRegion(center: latestLocation.coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
         }
     }
     

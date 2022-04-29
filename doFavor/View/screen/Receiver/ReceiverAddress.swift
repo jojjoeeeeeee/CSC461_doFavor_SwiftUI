@@ -60,16 +60,9 @@ struct ReceiverAddress: View {
                 ZStack{
                     
                     VStack(spacing:0){
-                        doFavorMapView()
-                            .overlay(
-                                Text("eiei")
-                                    .background(Color.darkred)
-                                    .onTapGesture {
-                                        doFavorMapView().viewModel.getCurrentLocation()
-                                    })
                         MapView()
                             .onTapGesture {
-//                                UIApplication.shared.endEditing()
+                                UIApplication.shared.endEditing()
                             }
                         AddressView(formData: formData, isAlert: $isAlert, isValidateFail: $isValidateFail)
                         TabbarView()
@@ -290,7 +283,7 @@ struct AddressView: View{
             address = AppUtils.getUsrAddress()
             lmRoom = address?.room ?? ""
             lmFloor = address?.floor ?? ""
-            selectedLandmark = address?.building ?? ""
+            selectedLandmark = address?.building ?? "เลือกอาคาร"
             addNote = address?.optional ?? ""
         }
         
@@ -313,20 +306,28 @@ struct Marker: Identifiable {
 }
 
 struct MapView: View{
-    @StateObject private var viewModel = ContentViewModel2()
+    @ObservedObject private var viewModel = ContentViewModel()
 //    @StateObject var managerDelegate = locationDelegate()
 
     let markers = [Marker(location: MapMarker(coordinate: CLLocationCoordinate2D(latitude: 38.8977, longitude: -77.0365), tint: .red))]
 
     var body: some View{
         ZStack(alignment: .bottomTrailing){
-            Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true,annotationItems: markers){
-                marker in
-                marker.location
-            }
-            .onAppear{
-                viewModel.requestLocationPermission()
-            }
+//            Map(coordinateRegion: $viewModel.region, interactionModes: .all, showsUserLocation: true,annotationItems: markers){
+//                marker in
+//                marker.location
+//            }
+//            .onAppear{
+//                viewModel.requestLocationPermission()
+//            }
+            
+            doFavorMapView(viewModel: viewModel)
+                .overlay(
+                    Text("eiei")
+                        .background(Color.darkred)
+                ).onAppear{
+                    viewModel.requestLocationPermission()
+                }
             
             Button(action: {
                 viewModel.getCurrentLocation()
