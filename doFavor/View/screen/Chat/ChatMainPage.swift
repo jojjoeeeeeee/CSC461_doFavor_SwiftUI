@@ -364,8 +364,8 @@ struct MessageField: View{
                 ZStack {
                     HStack{
                         if uiimage != nil {
-                            var width = getSize(by: uiimage!).width
-                            var height = getSize(by: uiimage!).height
+                            let width = getSize(by: uiimage!).width
+                            let height = getSize(by: uiimage!).height
                             
                             self.image?
                                 .resizable()
@@ -505,7 +505,7 @@ struct ChatContent: View{
                 }
                 .navigationBarHidden(true)
                 .onAppear{
-                    UIScrollView.appearance().keyboardDismissMode = .interactive
+                    UIScrollView.appearance().keyboardDismissMode = .onDrag
                 }
                 .background(
                     GeometryReader { geometry in
