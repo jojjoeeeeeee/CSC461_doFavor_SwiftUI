@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct GiverDetailPage: View {
     @Binding var id:String
@@ -17,6 +18,7 @@ struct GiverDetailPage: View {
     @State var isNoNetwork: Bool = false
     @State var isMessage: Bool = false
     @State var data:TSCTDataModel?
+    @State var distance: String = ""
     
     func fetchAcceptTSCT() {
         isLoading.toggle()
@@ -127,9 +129,30 @@ struct GiverDetailPage: View {
                                     .foregroundColor(Color.darkred)
                             }
                             
-                            Text(verbatim:"ห่างจากฉัน: 3 กิโลเมตร")
+                            Text(distance)
                                 .font(Font.custom("SukhumvitSet-Medium", size: 14))
                                 .textContentType(.none)
+                                .onAppear{
+                                    let address = AppUtils.getUsrAddress()
+                                    if let lat = address?.latitude, let lon = address?.longitude {
+                                        let coordinateAddress = CLLocation(latitude: lat, longitude: lon)
+                                        let coordinateTask = CLLocation(latitude: data?.task_location?.latitude ?? 0.0, longitude: data?.task_location?.longitude ?? 0.0)
+
+                                        let distanceInMeters = coordinateAddress.distance(from: coordinateTask)
+                                        if distanceInMeters >= 1000 {
+                                            print("ระยะ",distanceInMeters)
+                                            let distanceInKm:Double = distanceInMeters/1000
+                                            print("ระยะEIEI",distanceInKm)
+                                            distance = String(format:"ห่างจากฉัน: %.2f กิโลเมตร",distanceInKm)
+                                        } else {
+                                            print("ระยะ",distanceInMeters)
+                                            distance = String(format:"ห่างจากฉัน: %.0f เมตร",distanceInMeters)
+                                        }
+                                        
+                                    } else {
+                                        distance = "กรุณาใส่ที่อยู่ปัจจุบัน"
+                                    }
+                                }
                         }
                         .frame(width:UIScreen.main.bounds.width*0.42-20)
                         .fixedSize()

@@ -189,8 +189,8 @@ struct RequestView: View{
         model.applicant_id = ""
         model.conversation_id = ""
         
-        location.room = address?.room ?? ""
-        location.floor = address?.floor ?? ""
+        location.room = (address?.room ?? "").isEmpty ? "-" : address?.room
+        location.floor = (address?.floor ?? "").isEmpty ? "-" : address?.floor
         location.building = address?.building ?? ""
         location.optional = address?.optional ?? ""
         location.latitude = address?.latitude ?? 0.0

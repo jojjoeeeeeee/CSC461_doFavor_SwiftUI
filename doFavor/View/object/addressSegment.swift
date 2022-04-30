@@ -20,7 +20,11 @@ struct addressSegment: View{
                     .font(.system(size: 17, weight: .semibold))
                     .padding(.leading,11)
                 Text(addressStr)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .truncationMode(.tail)
                     .font(Font.custom("SukhumvitSet-SemiBold", size: 15))
+                
             }
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.bottom)

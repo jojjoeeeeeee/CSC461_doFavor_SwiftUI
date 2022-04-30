@@ -207,7 +207,7 @@ struct HistoryDetail: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 15))
                             .fontWeight(.bold)
                         
-                        Text("\(transactionData?.location?.building ?? "") ชั้น \(transactionData?.location?.floor ?? "") ห้อง \(transactionData?.location?.room ?? "") \(transactionData?.location?.optional ?? "")")
+                        Text("\(transactionData?.location?.building ?? "") ห้อง \(transactionData?.location?.room ?? "") ชั้น \(transactionData?.location?.floor ?? "") \(transactionData?.location?.optional ?? "")")
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .foregroundColor(Color.darkred)
                             .fontWeight(.bold)
