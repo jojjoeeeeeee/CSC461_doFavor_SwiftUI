@@ -11,7 +11,7 @@ import CoreLocation
 
 struct ReceiverAddress: View {
     @ObservedObject var formData = FormDataObservedModel()
-    
+    @State var viewModel = ContentViewModel.shared
     @State var kwAddress: String = ""
     @State var isLoading: Bool = false
     @State var isExpired: Bool = false
@@ -60,11 +60,22 @@ struct ReceiverAddress: View {
                 ZStack{
                     
                     VStack(spacing:0){
-                        MapView()
+                        MapView(viewModel: $viewModel)
                             .onTapGesture {
                                 UIApplication.shared.endEditing()
                             }
-                        AddressView(formData: formData, isAlert: $isAlert, isValidateFail: $isValidateFail)
+                            .onAppear{
+                                let address = AppUtils.getUsrAddress()
+                                if let lat = address?.latitude, let lon = address?.longitude {
+                                    viewModel.addressLat = lat
+                                    viewModel.addressLon = lon
+                                } else {
+                                    viewModel.addressLat = 13.74719
+                                    viewModel.addressLon = 100.56559
+                                }
+                                viewModel.setLocation()
+                            }
+                        AddressView(formData: formData, viewModel: $viewModel, isAlert: $isAlert, isValidateFail: $isValidateFail)
                         TabbarView()
                     }
                     .edgesIgnoringSafeArea(.bottom)
@@ -129,8 +140,8 @@ struct ReceiverAddress: View {
 
 struct AddressView: View{
     @StateObject public var formData = FormDataObservedModel()
-    @ObservedObject var ContentView = ContentViewModel.shared
-
+    @Binding var viewModel: ContentViewModel
+//    @AppStorage("scrollRegion") var scrollRegion:CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
 //    @StateObject public var model = userLocationObservedModel()
     @State var address: userLocationDataModel?
 
@@ -186,7 +197,13 @@ struct AddressView: View{
     }
     
     private func formatUserLocation(){
-        let model = userLocationDataModel(room: lmRoom, floor: lmFloor, building: selectedLandmark, optional: addNote, latitude: Double(ContentView.region.center.latitude), longitude: Double(ContentView.region.center.longitude))
+        
+        let scrollRegionLat = UserDefaults.standard.double(forKey: "scrollRegionLatitude")
+        let scrollRegionLon = UserDefaults.standard.double(forKey: "scrollRegionLongitude")
+        
+        let model = userLocationDataModel(room: lmRoom, floor: lmFloor, building: selectedLandmark, optional: addNote, latitude: scrollRegionLat, longitude: scrollRegionLon)
+        print("saved",model)
+        
         do {
 
             try AppUtils.saveUsrAddress(model: model)
@@ -306,7 +323,7 @@ struct Marker: Identifiable {
 }
 
 struct MapView: View{
-    @ObservedObject var viewModel = ContentViewModel.shared
+    @Binding var viewModel: ContentViewModel
 //    @StateObject var managerDelegate = locationDelegate()
 
     let markers = [Marker(location: MapMarker(coordinate: CLLocationCoordinate2D(latitude: 38.8977, longitude: -77.0365), tint: .red))]
@@ -347,8 +364,8 @@ struct MapView: View{
     }
 }
 
-struct ReceiverAddress_Previews: PreviewProvider {
-    static var previews: some View {
-        MapView()
-    }
-}
+//struct ReceiverAddress_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MapView(viewModel: <#ContentViewModel#>)
+//    }
+//}

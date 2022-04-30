@@ -36,10 +36,19 @@ struct KeyboardAware: ViewModifier {
     @ObservedObject private var keyboard = KeyboardInfo.shared
 
     func body(content: Content) -> some View {
-        content
-            .padding(.bottom, self.keyboard.height*multiplier)
-            .ignoresSafeArea(.keyboard)
-            .animation(.easeOut)
+        if (multiplier==0.95) {
+            content
+                .padding(.bottom, self.keyboard.height*multiplier)
+//                .edgesIgnoringSafeArea(self.keyboard.height > 0 ? .bottom : [])
+                .ignoresSafeArea(.keyboard)
+                .animation(.easeOut)
+        } else {
+            content
+                .padding(.bottom, self.keyboard.height*multiplier)
+                .ignoresSafeArea(.keyboard)
+                .animation(.easeOut)
+        }
+        
     }
 }
 

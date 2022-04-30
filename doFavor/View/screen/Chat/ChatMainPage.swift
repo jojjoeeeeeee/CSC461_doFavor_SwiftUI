@@ -57,9 +57,9 @@ struct ChatMainPage: View {
                 
                 VStack(spacing:0){
                     ChatContent(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData, isShowFullImage: $isShowFullImage, tempFullImage: $tempFullImage)
-                    TabbarView()
+//                    TabbarView()
                 }
-                .edgesIgnoringSafeArea(.bottom)
+//                .edgesIgnoringSafeArea(.bottom)
                 .overlay(ImageViewer(image: $tempFullImage, viewerShown: $isShowFullImage))
                 
             }.onAppear{
@@ -68,6 +68,7 @@ struct ChatMainPage: View {
             
             
         }
+        .keyboardAware(multiplier: 0.95) //0.85
         .navigationBarHidden(true)
         
     }
@@ -442,6 +443,14 @@ struct MessageField: View{
                     if data == nil {
                         self.isImage = false
                     } else {
+                        let bcf = ByteCountFormatter()
+                        bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+                        bcf.countStyle = .file
+                        let string = bcf.string(fromByteCount: Int64(data?.count ?? 0))
+                        print("formatted result: \(string)")
+                        data = uiimage!.fixOrientation().compress(to: 768)
+                        let string2 = bcf.string(fromByteCount: Int64(data?.count ?? 0))
+                        print("formatted result: \(string2)")
                         self.isImage = true
                     }
                 }
@@ -541,7 +550,7 @@ struct ChatContent: View{
                 }
                 
             }
-            MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData).keyboardAware(multiplier: 0.85)
+            MessageField(isAlert: $isAlert, isExpired: $isExpired, isNoNetwork: $isNoNetwork,conversation_id: conversation_id, messageData: messageData)
             
         }
         .frame(width: UIScreen.main.bounds.width)

@@ -69,7 +69,7 @@ struct ReceiverRequestPage: View {
                         
                         VStack(spacing:0){
                             RequestView(detail: $detail, isLoading: $isLoading, isExpired: $isExpired, isFieldError: $isFieldError, isNoNetwork: $isNoNetwork, isAlert: $isAlert, formData: self.formData)
-                            TabbarView()
+//                            TabbarView()
                         }.onAppear{fetchFormData()}
                             .edgesIgnoringSafeArea(.bottom)
                         
