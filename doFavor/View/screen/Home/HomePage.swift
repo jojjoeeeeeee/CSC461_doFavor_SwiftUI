@@ -135,7 +135,11 @@ struct Card: View{
                         }
                         .sheet(isPresented: $showingSheet){
                             HomePushPage(showingSheet: $showingSheet, favor: $favor)
+//                                .padding(.top,100)
+//                                .transition(.move(edge: .bottom))
+//                                .clipShape(RoundedRectangle(cornerRadius: 25.0, style: .continuous))
                         }
+
                         
                         
                     }

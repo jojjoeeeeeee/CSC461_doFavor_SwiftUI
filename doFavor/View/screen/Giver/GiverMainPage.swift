@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct GiverMainPage: View {
     
@@ -24,10 +25,6 @@ struct GiverMainPage: View {
                     
                     VStack(spacing:0){
                         addressSegment()
-                        //                    searchSegment()
-                        //                        .padding(.top,20)
-                        //                        .frame(width:  UIScreen.main.bounds.width-30)
-                        
                         GiverView()
                         TabbarView()
                         
@@ -41,13 +38,9 @@ struct GiverMainPage: View {
     }
 }
 
-struct GiverMainPage_Previews: PreviewProvider {
-    static var previews: some View {
-        GiverMainPage()
-    }
-}
-
 struct GiverView: View{
+    @State var FilterType: [String] = ["food","grocery","drinks"] //use for creating ViewButton
+    @State private var isLatest = true
     @State private var showingSheet = false
     @State private var transactionID = ""
     @State private var searchText = ""
@@ -65,18 +58,27 @@ struct GiverView: View{
     
     @State var isShowBtn: Bool = false
     @State var minScrollValue: CGFloat = 0.0
-    
+    let dateFormatter = DateFormatter()
+
     
     func fetchTransaction(){
-
+        
         
         TransactionViewModel().getAll(){ result in
             self.isLoading = false
             self.isRefreshing = false
             switch result {
             case .success(let response):
-                print("Success",response)
+                print("Success")
                 TSCTData.transactions = response.transactions
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                
+                if isLatest{
+                    TSCTData.transactions?.sorted { dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! < dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! }
+                }else{
+                    
+                    
+                }
                 
             case .failure(let error):
                 switch error{
@@ -105,7 +107,7 @@ struct GiverView: View{
             isLoading.toggle()
             switch result {
             case .success(let response):
-                print("Success",response)
+                print("Success")
                 data = response
                 showingSheet.toggle()
                 
@@ -131,18 +133,20 @@ struct GiverView: View{
     }
     
     var TSCTDataTwo:[getAllDataModel]?{
+                        
         if searchText.isEmpty{
-            return (TSCTData.transactions)
+            return TSCTData.transactions?.filter{FilterType.contains($0.type ?? "") as Bool}
         }else{
             return (TSCTData.transactions?.filter{
-                $0.title?.contains(searchText) as! Bool || $0.task_location?.name?.contains(searchText) as! Bool
+                ($0.title?.contains(searchText) as! Bool || $0.task_location?.name?.contains(searchText) as! Bool) && FilterType.contains($0.type ?? "") as Bool
             })!
         }
+        
     }
     
     var body: some View{
         VStack{
-            searchSegment(searchText: $searchText).padding(.horizontal).padding(.top)
+            searchSegment(FilterType: $FilterType, searchText: $searchText, TSCTDataTwo: TSCTDataTwo, isLatest: $isLatest).padding(.horizontal).padding(.top)
             doFavorActivityIndicatorView(isLoading: isLoading, isPage: false){
                 ScrollViewReader { proxy in
                     RefreshableScrollView(isLoading: $isRefreshing, isPaddingTop: _isPaddingTop,onRefresh: {
@@ -150,12 +154,12 @@ struct GiverView: View{
                         generator.notificationOccurred(.success)
                         fetchTransaction()
                     },
-                    content: {
+                                          content: {
                         VStack(spacing: 0){
                             
                             if (TSCTDataTwo?.count ?? 0 > 0) {
                                 ForEach((0..<(TSCTDataTwo?.count ?? 0)), id:\.self){ index in
-                                    giverListCard(category: (TSCTDataTwo?[index].type)!, shopName:( TSCTDataTwo?[index].title)!, landMark: ( TSCTDataTwo?[index].task_location?.name)!, distance: "", note: (TSCTDataTwo?[index].detail)!)
+                                    giverListCard(category: (TSCTDataTwo?[index].type)!, shopName:( TSCTDataTwo?[index].title)!, landMark: ( TSCTDataTwo?[index].task_location?.name)!, tasklocation: (TSCTDataTwo?[index].task_location)!, note: (TSCTDataTwo?[index].detail)!)
                                         .onTapGesture {
                                             transactionID = (TSCTDataTwo?[index].id!)!
                                             fetchDetail()
@@ -170,9 +174,6 @@ struct GiverView: View{
                                     .font(Font.custom("SukhumvitSet-Bold", size: 14))
                                     .fontWeight(.semibold)
                             }
-                            
-                            
-                            
                         }
                         .onAppear{
                             self.isLoading = true
@@ -187,38 +188,38 @@ struct GiverView: View{
                         }
                         
                     })
-                    .onTapGesture {
-                        UIApplication.shared.endEditing()
-                    }.onAppear{
-                        minScrollValue = UIScreen.main.bounds.height-100
-                        UIScrollView.appearance().keyboardDismissMode = .interactive
-                    }
-                    .overlay(alignment: .bottomTrailing){
-                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 0) {
-                            Image(systemName: "arrow.up")
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 15, height: 15)
-                            .padding(10)
-                            .background(Color.black.opacity(0.1))
-                            .cornerRadius(2)
-                            .padding(.bottom, 20)
-                            .padding(.horizontal,20)
-                            .onTapGesture {
-                                withAnimation{
-                                    proxy.scrollTo(-1, anchor: .top)
-                                }
+                        .onTapGesture {
+                            UIApplication.shared.endEditing()
+                        }.onAppear{
+                            minScrollValue = UIScreen.main.bounds.height-100
+                            UIScrollView.appearance().keyboardDismissMode = .interactive
+                        }
+                        .overlay(alignment: .bottomTrailing){
+                            if isShowBtn && (TSCTDataTwo?.count ?? 0 > 0) {
+                                Image(systemName: "arrow.up")
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 15, height: 15)
+                                    .padding(10)
+                                    .background(Color.black.opacity(0.1))
+                                    .cornerRadius(2)
+                                    .padding(.bottom, 20)
+                                    .padding(.horizontal,20)
+                                    .onTapGesture {
+                                        withAnimation{
+                                            proxy.scrollTo(-1, anchor: .top)
+                                        }
+                                    }
                             }
                         }
-                    }
-                    .coordinateSpace(name: "scroll")
-                    .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                        if value < minScrollValue {
-                            isShowBtn = true
+                        .coordinateSpace(name: "scroll")
+                        .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                            if value < minScrollValue {
+                                isShowBtn = true
+                            }
+                            else {
+                                isShowBtn = false
+                            }
                         }
-                        else {
-                            isShowBtn = false
-                        }
-                    }
                 }
             }
         }.alert(isPresented:$isAlert) {
@@ -248,18 +249,20 @@ struct GiverView: View{
 }
 
 struct searchSegment: View{
+    @Binding var FilterType: [String]
     @State var isPresented:Bool = false
     @Binding var searchText: String
-    
+    var TSCTDataTwo:[getAllDataModel]?
+    @Binding var isLatest: Bool
     
     var body: some View{
         HStack{
             TextField("กำลังหาอะไรอยู่...",text: $searchText)
                 .textFieldStyle(doFavTextFieldStyle(icon: "magnifyingglass", color: Color.darkest))
+            
             Button(action: {
                 isPresented.toggle()
-            })
-            {
+            }){
                 Image(systemName: "slider.vertical.3")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Color.darkest)
@@ -267,27 +270,16 @@ struct searchSegment: View{
                     .background(Color.white, alignment: .center)
                     .cornerRadius(46)
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-            }
-            .halfSheet(isPresented: $isPresented) {
-                ZStack{
-                    VStack{
-                        Text("Hi Filter")
-                        
-                        Button{
-                            isPresented.toggle()
-                        }label: {
-                            Text("Close")
-                        }
-                    }
-                }
-                
-            } onEnd:{
-                isPresented.toggle()
+            }.sheet(isPresented: $isPresented){
+                GiverFilterSheet(showingSheet: $isPresented, isLatest: $isLatest, FilterType: $FilterType)
             }
             
         }
+        
     }
 }
+
+//}
 
 struct giverListCard: View{
     //    @StateObject public var TSCTData = AllDataObservedModel()
@@ -297,8 +289,9 @@ struct giverListCard: View{
     var category: String
     var shopName: String
     var landMark: String
-    var distance: String
+    var tasklocation: landmarkDataModel
     var note: String
+    @State var distance: String = ""
     
     var body: some View{
         HStack(){
@@ -337,6 +330,26 @@ struct giverListCard: View{
                 }
                 
             }
+            .onAppear{
+                let address = AppUtils.getUsrAddress()
+                if let lat = address?.latitude, let lon = address?.longitude {
+                    let coordinateAddress = CLLocation(latitude: lat, longitude: lon)
+                    let coordinateTask = CLLocation(latitude: tasklocation.latitude ?? 0.0, longitude: tasklocation.longitude ?? 0.0)
+                    
+                    let distanceInMeters = coordinateAddress.distance(from: coordinateTask)
+                    if distanceInMeters >= 1000 {
+                        let distanceInKm:Double = distanceInMeters/1000
+                        distance = String(format:"%.2f km",distanceInKm)
+                    } else {
+//                        print("ระยะ",distanceInMeters)
+                        distance = String(format:"%.0f m",distanceInMeters)
+                    }
+                    
+                } else {
+                    distance = "กรุณาใส่ที่อยู่ปัจจุบัน"
+                }
+                
+            }
             .padding(.vertical,12)
             .padding(.trailing,12)
             
@@ -352,4 +365,3 @@ struct giverListCard: View{
         
     }
 }
-

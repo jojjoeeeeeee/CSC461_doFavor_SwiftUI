@@ -10,6 +10,7 @@ import SwiftUI
 struct HomePushPage: View {
     @Binding var showingSheet: Bool
     @Binding var favor: Bool
+
     
     var body: some View {
         VStack(spacing: 23){
@@ -52,7 +53,6 @@ struct HomePushPage: View {
                 Text("สไปเดอร์เซ็นเซอร์ฟลุคคอนแทค วอเตอร์ เทคโนแครต อุตสาหการกัมมันตะ แจ๊กพ็อตนายแบบเซรามิกแยมโรล เซลส์แมนรามเทพ อิออน พล็อตทัวริสต์ แดรี่ สคริปต์ สเต็ป ฮาลาลสตรอเบอรีกีวีเดอะ เนิร์สเซอรี่ฟอร์มยูวีต่อยอดบ็อกซ์ พฤหัสตุ๊กตุ๊กมอบตัว เปปเปอร์มินต์ เหมยตรวจทาน")
                     .font(Font.custom("SukhumvitSet-Medium", size: 14))
                     .multilineTextAlignment(.center)
-
             }
             Spacer()
         }

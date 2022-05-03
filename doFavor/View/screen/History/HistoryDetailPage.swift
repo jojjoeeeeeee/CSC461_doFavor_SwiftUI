@@ -77,6 +77,7 @@ struct HistoryDetailPage: View {
 struct HistoryDetail: View{
     
     @Environment(\.presentationMode) var presentationMode
+    @State var isLinkActive = false
     @State var transactionData:TSCTDataModel?
     @Binding var dateData:String
     @Binding var statusData:String
@@ -107,7 +108,7 @@ struct HistoryDetail: View{
                             .foregroundColor(Color.white)
                             .frame(height: 24)
                             .padding(.horizontal,15)
-                            .background(Color.darkred)
+                            .background(transactionData?.petitioner?.id == userId ? Color.darkred:Color.grey)
                             .cornerRadius(5)
 //                        รายการ #A1293B23
                         Text("รายการ #\(transactionData?.id ?? "")")
@@ -169,10 +170,14 @@ struct HistoryDetail: View{
                             
                         }
                         Spacer()
-                        Text("รายงานปัญหา")
-                            .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.bold))
-                            .foregroundColor(Color.grey)
-                            .underline()
+                        
+                        NavigationLink(destination: HistoryReportRequest(transactionID: transactionData?.id ?? "")){
+                            Text("รายงานปัญหา")
+                                .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.bold))
+                                .foregroundColor(Color.grey)
+                                .underline()
+                        }
+
                         
                     }
                     
@@ -216,6 +221,25 @@ struct HistoryDetail: View{
                 }
                 .padding(.horizontal,20)
             }
+            NavigationLink(destination: PaymentPage(), isActive: $isLinkActive){
+            Button(action: {
+                // ยกเลิก/ได้รับของแล้ว
+                if (statusData=="กำลังดำเนินการ") {
+                    self.isLinkActive = true
+                }
+                
+            }){
+                Text(statusData=="รอการตอบรับ" ? "ยกเลิก" :  statusData=="กำลังดำเนินการ" ? "ได้รับสิ่งของ" : "")
+                    .foregroundColor(Color.white)
+                    .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+
+            }
+            .frame(width:UIScreen.main.bounds.width-40, height: 50)
+            .background(statusData=="รอการตอบรับ" ? Color.grey : statusData=="กำลังดำเนินการ" ? Color.darkred : Color.clear)
+            .cornerRadius(15)
+            .padding(.bottom)
+        }
+            
         }
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)

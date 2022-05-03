@@ -340,8 +340,8 @@ struct MapView: View{
             
             doFavorMapView(viewModel: viewModel)
                 .overlay(
-                    Text("eiei")
-                        .background(Color.darkred)
+                    PlaceAnnotationView()
+                        .offset(x: 0, y: -10)
                 ).onAppear{
                     viewModel.requestLocationPermission()
                 }

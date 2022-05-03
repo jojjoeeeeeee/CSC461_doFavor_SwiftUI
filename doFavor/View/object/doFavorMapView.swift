@@ -116,9 +116,17 @@ final class ContentViewModel: NSObject, ObservableObject, MKMapViewDelegate, CLL
     
 }
 
-
-struct doFavorMapView_Previews: PreviewProvider {
-    static var previews: some View {
-        doFavorMapView()
+struct PlaceAnnotationView: View {
+  var body: some View {
+    VStack(spacing: 0) {
+      Image(systemName: "mappin.circle.fill")
+        .font(.title)
+        .foregroundColor(.red)
+      
+      Image(systemName: "arrowtriangle.down.fill")
+        .font(.caption)
+        .foregroundColor(.red)
+        .offset(x: 0, y: -5)
     }
+  }
 }

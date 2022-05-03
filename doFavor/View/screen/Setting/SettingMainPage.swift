@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SettingMainPage: View {
     var body: some View {
+        NavigationView{
+
         GeometryReader{ geometry in
             ZStack{
                 Image("App-BG")
@@ -31,6 +33,7 @@ struct SettingMainPage: View {
         }
         .navigationBarHidden(true)
     }
+    }
 }
 
 struct SettingMainPage_Previews: PreviewProvider {
@@ -45,6 +48,7 @@ struct SettingView: View{
     @State var name: String = AppUtils.getUsrName() ?? ""
     
     var body: some View{
+
         VStack{
             ScrollView(){
                 VStack{
@@ -83,9 +87,7 @@ struct SettingView: View{
                     }
                     Divider()
                     HStack(spacing: 8){
-                        Button(action: {
-                            
-                        }){
+                        NavigationLink(destination: SettingReportRequest()){
                             Image(systemName: "info.circle")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(Color.darkred)
@@ -138,6 +140,5 @@ struct SettingView: View{
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.white)
 //        .cornerRadius(20)
-
     }
 }

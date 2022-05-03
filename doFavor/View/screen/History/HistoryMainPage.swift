@@ -326,7 +326,7 @@ struct transactionHistory: View{
                     .foregroundColor(Color.white)
                     .frame(height: 24)
                     .padding(.horizontal,15)
-                    .background(Color.darkred)
+                    .background(historyData.history?[index].role=="ฝากซื้อ" ? Color.darkred : Color.grey)
                     .cornerRadius(5)
                 Text(dateData[index])
                     .font(Font.custom("SukhumvitSet-Bold", size: 9.6).weight(.regular))
@@ -355,14 +355,14 @@ struct transactionHistory: View{
                     .background(statusData[index] == "รอการตอบรับ" ?  Color.darkred.opacity(0.15) : (statusData[index] == "กำลังดำเนินการ" ? Color.darkred.opacity(0.15) : Color.grey.opacity(0.15)))
                     .cornerRadius(5)
                 
-                Button(action: {
-                    
-                }){
+                NavigationLink(destination: HistoryReportRequest(transactionID: historyData.history?[index].id ?? "")){
                     Text("รายงานปัญหา")
                         .font(Font.custom("SukhumvitSet-Bold", size: 11).weight(.bold))
                         .underline()
                         .foregroundColor(Color.grey)
                 }
+
+                
             }
         }
         .padding(.vertical,25)
