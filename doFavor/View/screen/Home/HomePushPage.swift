@@ -32,7 +32,7 @@ struct HomePushPage: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width-60, height: (UIScreen.main.bounds.width-60)*0.57)
-                    
+                    .cornerRadius(10)
                     
                 Text("บริการฝากซื้อ")
                     .font(Font.custom("SukhumvitSet-Bold", size: 20))
@@ -45,6 +45,7 @@ struct HomePushPage: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width-60, height: (UIScreen.main.bounds.width-60)*0.57)
+                    .cornerRadius(10)
                     
                     
                 Text("บริการรับฝาก")
