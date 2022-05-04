@@ -73,7 +73,7 @@ struct GiverFilterSheet: View {
                         }
                     }){
                         Text("ล่าสุด")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(Font.custom("SukhumvitSet-Bold", size: 17))
                             .foregroundColor(isLatest ? Color.darkred : Color.grey)
                             .padding(.horizontal, 21)
                             .frame(height: 33)
@@ -92,7 +92,7 @@ struct GiverFilterSheet: View {
                         }
                     }){
                         Text("ใกล้ฉัน")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(Font.custom("SukhumvitSet-Bold", size: 17))
                             .foregroundColor(!isLatest ? Color.darkred : Color.grey)
                             .padding(.horizontal, 21)
                             .frame(height: 33)
