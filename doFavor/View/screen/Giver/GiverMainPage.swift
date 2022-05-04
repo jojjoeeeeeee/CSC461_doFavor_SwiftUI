@@ -128,6 +128,7 @@ struct GiverView: View{
     @State var minScrollValue: CGFloat = 0.0
     
     let dateFormatter = DateFormatter()
+    @State var stateOfMinScrollValue:Int = 0
     
     
     func fetchTransaction(){
@@ -290,11 +291,10 @@ struct GiverView: View{
                     .onTapGesture {
                         UIApplication.shared.endEditing()
                     }.onAppear{
-                        minScrollValue = UIScreen.main.bounds.height-100
                         UIScrollView.appearance().keyboardDismissMode = .interactive
                     }
                     .overlay(alignment: .bottomTrailing){
-                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 4) {
+                        if isShowBtn {
                             Image(systemName: "arrow.up")
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 15, height: 15)
@@ -312,6 +312,11 @@ struct GiverView: View{
                     }
                     .coordinateSpace(name: "scroll")
                     .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                        if stateOfMinScrollValue < 2 {
+                            minScrollValue = value*0.85
+                            stateOfMinScrollValue += 1
+                        }
+
                         if value < minScrollValue {
                             isShowBtn = true
                         }
