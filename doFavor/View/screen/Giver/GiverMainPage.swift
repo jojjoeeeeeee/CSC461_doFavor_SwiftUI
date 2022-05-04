@@ -13,6 +13,7 @@ struct GiverMainPage: View {
     @State var FilterType: [String] = ["food","grocery","drinks"] //use for creating ViewButton
     @State var isPresented: Bool = false
     @State var isLatest = true
+    @State private var offset = CGSize.zero
     
     
     var popOverFilter: some View {
@@ -20,8 +21,22 @@ struct GiverMainPage: View {
             ZStack(alignment: .bottom) {
                 Color.black.opacity(0.001).ignoresSafeArea(.all)
                     .onTapGesture {
-                        isPresented.toggle()
+                        isPresented = false
                     }
+                    .gesture(
+                        DragGesture()
+                            .onChanged{ gesture in
+                                offset = gesture.translation
+                            }
+                            .onEnded{ _ in
+                                if abs(offset.height) > 80 {
+                                    offset = .zero
+                                    isPresented = false
+                                } else {
+                                    offset = .zero
+                                }
+                            }
+                    )
                 ZStack {
                     Rectangle()
                         .fill(Color.white)
@@ -31,6 +46,21 @@ struct GiverMainPage: View {
                     GiverFilterSheet(showingSheet: $isPresented, isLatest: $isLatest, FilterType: $FilterType)
                         .padding(.bottom, 50)
                 }
+                .gesture(
+                    DragGesture()
+                        .onChanged{ gesture in
+                            offset = gesture.translation
+                        }
+                        .onEnded{ _ in
+                            if abs(offset.height) > 40 {
+                                offset = .zero
+                                isPresented = false
+                            } else {
+                                offset = .zero
+                            }
+                        }
+                )
+                .offset(x: 0, y: offset.height)
             }
         }
     }
@@ -264,7 +294,7 @@ struct GiverView: View{
                         UIScrollView.appearance().keyboardDismissMode = .interactive
                     }
                     .overlay(alignment: .bottomTrailing){
-                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 3) {
+                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 4) {
                             Image(systemName: "arrow.up")
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 15, height: 15)
