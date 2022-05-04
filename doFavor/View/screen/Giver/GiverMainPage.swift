@@ -294,7 +294,7 @@ struct GiverView: View{
                         UIScrollView.appearance().keyboardDismissMode = .interactive
                     }
                     .overlay(alignment: .bottomTrailing){
-                        if isShowBtn {
+                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 4) {
                             Image(systemName: "arrow.up")
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 15, height: 15)
