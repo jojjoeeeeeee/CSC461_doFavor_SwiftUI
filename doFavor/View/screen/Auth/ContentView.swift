@@ -100,7 +100,7 @@ struct ContentView: View {
                             //            ScrollView(.vertical, showsIndicators: false, content: {
                             VStack(alignment: .center, spacing: 12){
                                 // App Logo Image
-                                Image("app-icon-2")
+                                Image("app-icon-1")
                                     .resizable()
                                     .frame(width: 190, height: 190)
                                     .clipShape(Circle())

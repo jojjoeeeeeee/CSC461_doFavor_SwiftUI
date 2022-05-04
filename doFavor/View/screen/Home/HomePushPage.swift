@@ -28,7 +28,7 @@ struct HomePushPage: View {
                 Spacer()
             }
             if favor{
-                Image("noname")
+                Image("Receiver-pic")
                     .resizable()
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width-60, height: (UIScreen.main.bounds.width-60)*0.57)
@@ -37,11 +37,11 @@ struct HomePushPage: View {
                 Text("บริการฝากซื้อ")
                     .font(Font.custom("SukhumvitSet-Bold", size: 20))
 
-                Text("สไปเดอร์เซ็นเซอร์ฟลุคคอนแทค วอเตอร์ เทคโนแครต อุตสาหการกัมมันตะ แจ๊กพ็อตนายแบบเซรามิกแยมโรล เซลส์แมนรามเทพ อิออน พล็อตทัวริสต์ แดรี่ สคริปต์ สเต็ป ฮาลาลสตรอเบอรีกีวีเดอะ เนิร์สเซอรี่ฟอร์มยูวีต่อยอดบ็อกซ์ พฤหัสตุ๊กตุ๊กมอบตัว เปปเปอร์มินต์ เหมยตรวจทาน")
+                Text("บริการหาคนรับฝากซื้ออาหาร ของจิปาถะ และเครื่องดื่มตามคำขอ สามารถฝากซื้อได้ทั้งร้านอาหารภายในมหาวิทยาลัยศรีนครินทรวิโรฒหรือโดยรอบ มีระบบแชทให้คุณสามารถติดต่อกับผู้รับฝากได้อย่างสะดวก!")
                     .font(Font.custom("SukhumvitSet-Medium", size: 14))
                     .multilineTextAlignment(.center)
             }else{
-                Image("noname")
+                Image("Giver-pic")
                     .resizable()
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width-60, height: (UIScreen.main.bounds.width-60)*0.57)
@@ -50,7 +50,7 @@ struct HomePushPage: View {
                 Text("บริการรับฝาก")
                     .font(Font.custom("SukhumvitSet-Bold", size: 20))
 
-                Text("สไปเดอร์เซ็นเซอร์ฟลุคคอนแทค วอเตอร์ เทคโนแครต อุตสาหการกัมมันตะ แจ๊กพ็อตนายแบบเซรามิกแยมโรล เซลส์แมนรามเทพ อิออน พล็อตทัวริสต์ แดรี่ สคริปต์ สเต็ป ฮาลาลสตรอเบอรีกีวีเดอะ เนิร์สเซอรี่ฟอร์มยูวีต่อยอดบ็อกซ์ พฤหัสตุ๊กตุ๊กมอบตัว เปปเปอร์มินต์ เหมยตรวจทาน")
+                Text("บริการรับฝากซื้อตามคำร้องขอของนิสิตหรือเจ้าหน้าที่ภายในมหาวิทยาลัยศรีนครินทรวิโรฒ สามารถรับคำร้องที่มีผู้ร้องขอเข้ามาได้และรับค่าตอบแทนเป็นรางวัล!")
                     .font(Font.custom("SukhumvitSet-Medium", size: 14))
                     .multilineTextAlignment(.center)
             }
