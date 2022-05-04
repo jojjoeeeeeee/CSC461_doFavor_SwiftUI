@@ -143,16 +143,22 @@ struct ReportRequestView:View{
                 Spacer()
             }
             
+            Text("แจ้งปัญหาการใช้งาน/ติดต่อแอดมิน")
+                    .font(Font.custom("SukhumvitSet-Bold", size: UIScreen.main.bounds.width*0.054).weight(.bold))
+                .padding()
+
             
             ScrollView(){
-                Text("แจ้งปัญหาการใช้งาน/ติดต่อแอดมิน")
-                    .font(Font.custom("SukhumvitSet-Bold", size: 23).weight(.bold))
-                    .padding()
-
+                VStack(alignment: .leading){
                 HStack{
                     Text("อีเมล์ติดต่อ")
+                        .font(Font.custom("SukhumvitSet-Bold", size: 15))
+                        .foregroundColor(Color.grey)
+
                     
                     Text(email)
+                        .font(Font.custom("SukhumvitSet-Medium", size: 12))
+                        .foregroundColor(Color.grey)
                         .textContentType(.none)
                         .frame(height: 24)
                         .padding(.horizontal,15)
@@ -160,8 +166,9 @@ struct ReportRequestView:View{
                         .cornerRadius(5)
                 }
                 
-                VStack{
+                    VStack(alignment: .leading, spacing: 0){
                     Text("รายงานปัญหา")
+                        .font(Font.custom("SukhumvitSet-Bold", size: 17))
 
                     ZStack {
                         if detail.isEmpty {
@@ -172,13 +179,14 @@ struct ReportRequestView:View{
                                 .padding()
                         }
                         TextEditor(text: $detail)
+                            .font(Font.custom("SukhumvitSet-Bold", size: 15))
                             .foregroundColor(.primary)
                             .frame(height:UIScreen.main.bounds.width*0.8,alignment: .topLeading)
                             .opacity(detail.isEmpty ? 0.25 : 1)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
                             )
-                            .padding()
+                            .padding(2)
                     }
                 }
                 
@@ -187,8 +195,11 @@ struct ReportRequestView:View{
                     .font(Font.custom("SukhumvitSet-Bold", size: 15))
                     .background(Color.clear)
                     .opacity(isError ? 1 : 0)
-                
             }
+            }
+            .frame(width:UIScreen.main.bounds.width-40)
+
+
             Button(action: {
                 validateData()
             }){

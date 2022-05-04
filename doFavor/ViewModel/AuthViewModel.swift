@@ -1,5 +1,5 @@
 //
-//  SignUpViewModel.swift
+//  AuthViewModel.swift
 //  doFavor
 //
 //  Created by Phakkharachate on 21/3/2565 BE.

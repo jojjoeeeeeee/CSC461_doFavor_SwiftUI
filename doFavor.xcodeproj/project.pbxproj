@@ -13,6 +13,7 @@
 		2C8A50C82821996100B74BBD /* SettingReportRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8A50C72821996000B74BBD /* SettingReportRequest.swift */; };
 		2C8A50CD28219B5100B74BBD /* HistoryReportRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8A50CC28219B5100B74BBD /* HistoryReportRequest.swift */; };
 		2C8A50D02821A19600B74BBD /* PaymentPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8A50CF2821A19600B74BBD /* PaymentPage.swift */; };
+		2CB85A952822FF7000D7731C /* AboutPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB85A942822FF7000D7731C /* AboutPage.swift */; };
 		2CC1594527EBDA2500ED73F3 /* GiverMainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1594427EBDA2500ED73F3 /* GiverMainPage.swift */; };
 		2CC1594727EBE6C800ED73F3 /* TabbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1594627EBE6C800ED73F3 /* TabbarView.swift */; };
 		2CC1594927EBE72F00ED73F3 /* addressSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC1594827EBE72F00ED73F3 /* addressSegment.swift */; };
@@ -29,7 +30,6 @@
 		2CE8A210280F5FB800D825D1 /* ChatMainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE8A20F280F5FB800D825D1 /* ChatMainPage.swift */; };
 		34EF1FB63A4884B39FB2655A /* Pods_doFavor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347E5189532FE774161D6794 /* Pods_doFavor.framework */; };
 		8416920227E6A8CE00CBFF7B /* SignUpPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841691FB27E6A8CE00CBFF7B /* SignUpPage.swift */; };
-		8416920527E6A8CE00CBFF7B /* CustomNavBarStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841691FF27E6A8CE00CBFF7B /* CustomNavBarStyle.swift */; };
 		8416920627E6A8CE00CBFF7B /* CustomTextFieldStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920127E6A8CE00CBFF7B /* CustomTextFieldStyles.swift */; };
 		8416920827E7DFEE00CBFF7B /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920727E7DFEE00CBFF7B /* UserModel.swift */; };
 		8416920A27E7E08600CBFF7B /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8416920927E7E08600CBFF7B /* AuthViewModel.swift */; };
@@ -44,7 +44,6 @@
 		8451745E27FF3172005A7DD0 /* doFavorMainLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451745D27FF3172005A7DD0 /* doFavorMainLoadingIndicator.swift */; };
 		8471D4F2281378AB00115022 /* KeyboardInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8471D4F1281378AA00115022 /* KeyboardInfo.swift */; };
 		8477F83927E1667200DAEBD9 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477F83827E1667200DAEBD9 /* UserViewModel.swift */; };
-		8477F83D27E166B400DAEBD9 /* SampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477F83C27E166B400DAEBD9 /* SampleModel.swift */; };
 		8477F83F27E167D300DAEBD9 /* ExtensionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477F83E27E167D300DAEBD9 /* ExtensionsHelper.swift */; };
 		847900D527EA84C000D245EB /* AuthForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900D427EA84C000D245EB /* AuthForm.swift */; };
 		847900D927EBBF9800D245EB /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847900D827EBBF9800D245EB /* Background.swift */; };
@@ -66,6 +65,7 @@
 		2C8A50C72821996000B74BBD /* SettingReportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingReportRequest.swift; sourceTree = "<group>"; };
 		2C8A50CC28219B5100B74BBD /* HistoryReportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryReportRequest.swift; sourceTree = "<group>"; };
 		2C8A50CF2821A19600B74BBD /* PaymentPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentPage.swift; sourceTree = "<group>"; };
+		2CB85A942822FF7000D7731C /* AboutPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPage.swift; sourceTree = "<group>"; };
 		2CC1594427EBDA2500ED73F3 /* GiverMainPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GiverMainPage.swift; sourceTree = "<group>"; };
 		2CC1594627EBE6C800ED73F3 /* TabbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbarView.swift; sourceTree = "<group>"; };
 		2CC1594827EBE72F00ED73F3 /* addressSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addressSegment.swift; sourceTree = "<group>"; };
@@ -82,7 +82,6 @@
 		2CE8A20F280F5FB800D825D1 /* ChatMainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMainPage.swift; sourceTree = "<group>"; };
 		347E5189532FE774161D6794 /* Pods_doFavor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_doFavor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		841691FB27E6A8CE00CBFF7B /* SignUpPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpPage.swift; sourceTree = "<group>"; };
-		841691FF27E6A8CE00CBFF7B /* CustomNavBarStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomNavBarStyle.swift; sourceTree = "<group>"; };
 		8416920127E6A8CE00CBFF7B /* CustomTextFieldStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTextFieldStyles.swift; sourceTree = "<group>"; };
 		8416920727E7DFEE00CBFF7B /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		8416920927E7E08600CBFF7B /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -97,7 +96,6 @@
 		8451745D27FF3172005A7DD0 /* doFavorMainLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doFavorMainLoadingIndicator.swift; sourceTree = "<group>"; };
 		8471D4F1281378AA00115022 /* KeyboardInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInfo.swift; sourceTree = "<group>"; };
 		8477F83827E1667200DAEBD9 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
-		8477F83C27E166B400DAEBD9 /* SampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleModel.swift; sourceTree = "<group>"; };
 		8477F83E27E167D300DAEBD9 /* ExtensionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsHelper.swift; sourceTree = "<group>"; };
 		847900D427EA84C000D245EB /* AuthForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthForm.swift; sourceTree = "<group>"; };
 		847900D827EBBF9800D245EB /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
@@ -153,6 +151,7 @@
 			children = (
 				2CC1595327EC08BD00ED73F3 /* SettingMainPage.swift */,
 				2C8A50C72821996000B74BBD /* SettingReportRequest.swift */,
+				2CB85A942822FF7000D7731C /* AboutPage.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -208,14 +207,6 @@
 			path = screen;
 			sourceTree = "<group>";
 		};
-		841691FE27E6A8CE00CBFF7B /* navigation */ = {
-			isa = PBXGroup;
-			children = (
-				841691FF27E6A8CE00CBFF7B /* CustomNavBarStyle.swift */,
-			);
-			path = navigation;
-			sourceTree = "<group>";
-		};
 		8416920027E6A8CE00CBFF7B /* object */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,7 +236,6 @@
 		84C8CE9227E165220051D01F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				841691FE27E6A8CE00CBFF7B /* navigation */,
 				8416920027E6A8CE00CBFF7B /* object */,
 				841691FA27E6A8CE00CBFF7B /* screen */,
 			);
@@ -255,7 +245,6 @@
 		84C8CE9327E1652B0051D01F /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8477F83C27E166B400DAEBD9 /* SampleModel.swift */,
 				8416920727E7DFEE00CBFF7B /* UserModel.swift */,
 				8451745B27FE5039005A7DD0 /* TransactionModel.swift */,
 				2CDD781428117FC200A27E1E /* MessageModel.swift */,
@@ -482,7 +471,6 @@
 				2CC1594E27EC088400ED73F3 /* ReceiverRequestPage.swift in Sources */,
 				8477F83F27E167D300DAEBD9 /* ExtensionsHelper.swift in Sources */,
 				847900DF27EBC8FC00D245EB /* ContentView.swift in Sources */,
-				8477F83D27E166B400DAEBD9 /* SampleModel.swift in Sources */,
 				2C3692FE281C071300E7E4B8 /* doFavorMapView.swift in Sources */,
 				2CDD781E2811DD0300A27E1E /* RefreshableScrollView.swift in Sources */,
 				2C37A84F27ED690B00C25099 /* GiverFilterSheet.swift in Sources */,
@@ -495,10 +483,10 @@
 				8451745C27FE5039005A7DD0 /* TransactionModel.swift in Sources */,
 				8416920E27E7EABE00CBFF7B /* AppUtils.swift in Sources */,
 				2CC24FF327EB9BC5009D9C4C /* HomePage.swift in Sources */,
+				2CB85A952822FF7000D7731C /* AboutPage.swift in Sources */,
 				2C8A50CD28219B5100B74BBD /* HistoryReportRequest.swift in Sources */,
 				2C70708A280F3C7C0098CE53 /* HistoryDetailPage.swift in Sources */,
 				2CC1594527EBDA2500ED73F3 /* GiverMainPage.swift in Sources */,
-				8416920527E6A8CE00CBFF7B /* CustomNavBarStyle.swift in Sources */,
 				8451745E27FF3172005A7DD0 /* doFavorMainLoadingIndicator.swift in Sources */,
 				2CC1594B27EC00C900ED73F3 /* GiverDetailPage.swift in Sources */,
 				84C8CE9827E165990051D01F /* Constants.swift in Sources */,
@@ -650,7 +638,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"doFavor/Preview Content\"";
-				DEVELOPMENT_TEAM = 8348YNSNZ6;
+				DEVELOPMENT_TEAM = F7A63T58W8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = doFavor/Info.plist;
@@ -688,7 +676,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"doFavor/Preview Content\"";
-				DEVELOPMENT_TEAM = 8348YNSNZ6;
+				DEVELOPMENT_TEAM = F7A63T58W8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = doFavor/Info.plist;

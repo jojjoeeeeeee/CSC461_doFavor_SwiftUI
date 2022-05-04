@@ -402,26 +402,26 @@ struct RequestView: View{
                         
                     }
                     
-                    VStack(alignment: .leading, spacing: 0){
-                        Text("รูปภาพ (หากมี)")
-                            .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
-                        Button(action: {
-                            withAnimation(.easeInOut) {
-                                //                                self.isPresented = false
-                            }
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 27, weight: .regular))
-                                .foregroundColor(Color.darkred.opacity(0.5))
-                                .padding(25)
-                            
-                        }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
-                        )
-                        
-                        
-                    }
+//                    VStack(alignment: .leading, spacing: 0){
+//                        Text("รูปภาพ (หากมี)")
+//                            .font(Font.custom("SukhumvitSet-Bold", size: 17).weight(.bold))
+//                        Button(action: {
+//                            withAnimation(.easeInOut) {
+//                                //                                self.isPresented = false
+//                            }
+//                        }) {
+//                            Image(systemName: "plus")
+//                                .font(.system(size: 27, weight: .regular))
+//                                .foregroundColor(Color.darkred.opacity(0.5))
+//                                .padding(25)
+//                            
+//                        }
+//                        .overlay(
+//                            RoundedRectangle(cornerRadius: 10).stroke(Color.darkred.opacity(0.5), lineWidth: 2)
+//                        )
+//                        
+//                        
+//                    }
                     
                     Text(errMsg)
                         .foregroundColor(Color.darkred)

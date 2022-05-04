@@ -57,11 +57,13 @@ struct SettingView: View{
                         .padding()
                     
                     HStack(spacing:20){
-                        Image("TestPic1")
+                        Image("profile-pic")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: UIScreen.main.bounds.width*0.26,height:UIScreen.main.bounds.width*0.26)
                             .cornerRadius(98)
+                            .padding(.leading,20)
+
                         
 //                        Spacer()
                         
@@ -79,12 +81,12 @@ struct SettingView: View{
                                 .background(Color.grey.opacity(0.15))
                                 .cornerRadius(5)
 
-                            Text("เปลี่ยนรหัสผ่าน")
-                                .underline()
+//                            Text("เปลี่ยนรหัสผ่าน")
+//                                .underline()
                         }                        .font(Font.custom("SukhumvitSet-Bold", size: 12).weight(.regular))
                             .foregroundColor(Color.grey)
-
-                    }
+                        Spacer()
+                    }.padding(.bottom,20)
                     Divider()
                     HStack(spacing: 8){
                         NavigationLink(destination: SettingReportRequest()){
@@ -100,9 +102,7 @@ struct SettingView: View{
                     }.padding(10)
                     Divider()
                     HStack(spacing: 8){
-                        Button(action: {
-                            
-                        }){
+                        NavigationLink(destination: AboutPage()){
                             Image(systemName: "info.circle")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(Color.darkred)

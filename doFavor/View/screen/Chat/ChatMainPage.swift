@@ -97,10 +97,10 @@ struct ChatTitle: View{
             Spacer()
             VStack{
                 Text(messageData.data?.petitioner?.id == AppUtils.getUsrId() ? ("\(messageData.data?.applicant?.firstname ?? "") \(messageData.data?.applicant?.lastname ?? "")") : ("\(messageData.data?.petitioner?.firstname ?? "") \(messageData.data?.petitioner?.lastname ?? "")"))
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(Font.custom("SukhumvitSet-Bold", size: 17))
                     .multilineTextAlignment(.center)
                 Text(messageData.data?.petitioner?.id == AppUtils.getUsrId() ? "ผู้รับฝาก":"ผู้ฝาก")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(Font.custom("SukhumvitSet-Medium", size: 13))
                     .foregroundColor(Color.darkred)
             }
             

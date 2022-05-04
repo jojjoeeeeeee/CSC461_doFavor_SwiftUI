@@ -427,7 +427,7 @@ struct giverListCard: View{
     
     var body: some View{
         HStack(){
-            Image("TestPic1")
+            Image(category)
                 .resizable()
                 .scaledToFill()
                 .frame(width: UIScreen.main.bounds.width*0.255, height:UIScreen.main.bounds.width*0.255)
