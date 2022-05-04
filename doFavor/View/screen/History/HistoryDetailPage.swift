@@ -170,7 +170,7 @@ struct HistoryDetailPage: View {
                     title: Text("กรุณายืนยัน"),
                     message: Text("ท่านต้องการยืนยันรายการรับฝากสำเร็จหรือไม่"),
                     primaryButton: .default(Text("ยืนยัน")) {
-                        fetchCancelTSCT()
+                        fetchSuccessTSCT()
                         isSuccess = false
                     },
                     secondaryButton: .cancel() {
