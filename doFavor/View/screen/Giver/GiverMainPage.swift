@@ -26,10 +26,12 @@ struct GiverMainPage: View {
                     .gesture(
                         DragGesture()
                             .onChanged{ gesture in
-                                offset = gesture.translation
+                                if gesture.translation.height > 0 {
+                                    offset = gesture.translation
+                                }
                             }
                             .onEnded{ _ in
-                                if abs(offset.height) > 80 {
+                                if offset.height > 80 {
                                     offset = .zero
                                     isPresented = false
                                 } else {
@@ -49,10 +51,12 @@ struct GiverMainPage: View {
                 .gesture(
                     DragGesture()
                         .onChanged{ gesture in
-                            offset = gesture.translation
+                            if gesture.translation.height > 0 {
+                                offset = gesture.translation
+                            }
                         }
                         .onEnded{ _ in
-                            if abs(offset.height) > 40 {
+                            if offset.height > 40 {
                                 offset = .zero
                                 isPresented = false
                             } else {
