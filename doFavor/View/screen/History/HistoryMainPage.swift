@@ -371,9 +371,10 @@ struct transactionHistory: View{
             fetchDetail(type: historyData.history?[index].role ?? "")
         }
         
-        NavigationLink(destination: HistoryDetailPage(transactionData: data), isActive: $isActive){
+        NavigationLink(destination: HistoryDetailPage(transactionData: $data), isActive: $isActive){
             EmptyView()
         }
+        
         Divider()
     }
 }

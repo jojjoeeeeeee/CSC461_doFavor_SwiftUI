@@ -10,6 +10,31 @@ import CoreLocation
 
 struct GiverMainPage: View {
     
+    @State var FilterType: [String] = ["food","grocery","drinks"] //use for creating ViewButton
+    @State var isPresented: Bool = false
+    @State var isLatest = true
+    
+    
+    var popOverFilter: some View {
+        Group {
+            ZStack(alignment: .bottom) {
+                Color.black.opacity(0.001).ignoresSafeArea(.all)
+                    .onTapGesture {
+                        isPresented.toggle()
+                    }
+                ZStack {
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(maxWidth: .infinity, maxHeight: 300.0)
+                        .cornerRadius(20, corners: [.topLeft, .topRight])
+//                        .edgesIgnoringSafeArea(.all)
+                    GiverFilterSheet(showingSheet: $isPresented, isLatest: $isLatest, FilterType: $FilterType)
+                        .padding(.bottom, 50)
+                }
+            }
+        }
+    }
+    
     var body: some View {
         NavigationView{
             GeometryReader{ geometry in
@@ -25,13 +50,23 @@ struct GiverMainPage: View {
                     
                     VStack(spacing:0){
                         addressSegment()
-                        GiverView()
+                        GiverView(isPresented: $isPresented, FilterType: $FilterType, isLatest: $isLatest)
                         TabbarView()
                         
                     }            .edgesIgnoringSafeArea(.bottom)
                     
+                }.overlay{
+                    if isPresented {
+                        popOverFilter
+                            .frame(alignment: .bottomTrailing)
+                            .transition(AnyTransition.move(edge: .bottom))
+                            .animation(.easeInOut(duration: 0.5))
+                            .edgesIgnoringSafeArea(.bottom)
+
+                    }
                 }
             }
+            
             .navigationBarHidden(true)
             
         }
@@ -39,13 +74,16 @@ struct GiverMainPage: View {
 }
 
 struct GiverView: View{
-    @State var FilterType: [String] = ["food","grocery","drinks"] //use for creating ViewButton
-    @State private var isLatest = true
+    @Binding var isPresented: Bool
+    @Binding var FilterType: [String]
+    @Binding var isLatest: Bool
     @State private var showingSheet = false
     @State private var transactionID = ""
     @State private var searchText = ""
     
     @StateObject public var TSCTData = AllDataObservedModel()
+    
+    @State var TSCTDataBackup = [getAllDataModel]()
     
     @State var data:TSCTDataModel?
     
@@ -58,8 +96,9 @@ struct GiverView: View{
     
     @State var isShowBtn: Bool = false
     @State var minScrollValue: CGFloat = 0.0
+    
     let dateFormatter = DateFormatter()
-
+    
     
     func fetchTransaction(){
         
@@ -73,11 +112,35 @@ struct GiverView: View{
                 TSCTData.transactions = response.transactions
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 
-                if isLatest{
-                    TSCTData.transactions?.sorted { dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! < dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! }
-                }else{
-                    
-                    
+//                    TSCTData.transactions = TSCTData.transactions?.sorted { dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! > dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! }
+                TSCTData.transactions = TSCTData.transactions?.map{ (val: getAllDataModel) -> getAllDataModel in
+                    var mutableVal = val
+                    let address = AppUtils.getUsrAddress()
+                    if let lat = address?.latitude, let lon = address?.longitude {
+                        let coordinateAddress = CLLocation(latitude: lat, longitude: lon)
+                        let coordinateTask = CLLocation(latitude: val.task_location?.latitude ?? 0.0, longitude: val.task_location?.longitude ?? 0.0)
+
+                        let distanceInMeters = coordinateAddress.distance(from: coordinateTask)
+                        mutableVal.distance = distanceInMeters
+                        
+                        if distanceInMeters >= 1000 {
+                            let distanceInKm:Double = distanceInMeters/1000
+                            mutableVal.distanceString = String(format:"%.2f km",distanceInKm)
+                        } else {
+                            mutableVal.distanceString = String(format:"%.0f m",distanceInMeters)
+                        }
+                    } else {
+                        mutableVal.distanceString = "กรุณาใส่ที่อยู่ปัจจุบัน"
+                    }
+                    return mutableVal
+                }
+                
+                TSCTDataBackup = TSCTData.transactions!
+                
+                if isLatest {
+                    TSCTData.transactions = TSCTData.transactions?.sorted { dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! > dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! }
+                } else {
+                    TSCTData.transactions = TSCTData.transactions?.sorted{$0.distance ?? 0.0 < $1.distance ?? 0.0}
                 }
                 
             case .failure(let error):
@@ -133,20 +196,26 @@ struct GiverView: View{
     }
     
     var TSCTDataTwo:[getAllDataModel]?{
-                        
+        
         if searchText.isEmpty{
             return TSCTData.transactions?.filter{FilterType.contains($0.type ?? "") as Bool}
-        }else{
-            return (TSCTData.transactions?.filter{
-                ($0.title?.contains(searchText) as! Bool || $0.task_location?.name?.contains(searchText) as! Bool) && FilterType.contains($0.type ?? "") as Bool
-            })!
+        } else{
+            if isLatest {
+                return (TSCTData.transactions?.filter{
+                    ($0.title?.contains(searchText) as! Bool || $0.task_location?.name?.contains(searchText) as! Bool) && FilterType.contains($0.type ?? "") as Bool
+                })
+            } else {
+                return (TSCTData.transactions?.sorted{$0.distance ?? 0.0 < $1.distance ?? 0.0})?.filter{
+                    ($0.title?.contains(searchText) as! Bool || $0.task_location?.name?.contains(searchText) as! Bool) && FilterType.contains($0.type ?? "") as Bool
+                }
+            }
         }
         
     }
     
     var body: some View{
         VStack{
-            searchSegment(FilterType: $FilterType, searchText: $searchText, TSCTDataTwo: TSCTDataTwo, isLatest: $isLatest).padding(.horizontal).padding(.top)
+            searchSegment(isPresented: $isPresented, searchText: $searchText, TSCTDataTwo: TSCTDataTwo, isLatest: $isLatest).padding(.horizontal).padding(.top)
             doFavorActivityIndicatorView(isLoading: isLoading, isPage: false){
                 ScrollViewReader { proxy in
                     RefreshableScrollView(isLoading: $isRefreshing, isPaddingTop: _isPaddingTop,onRefresh: {
@@ -159,7 +228,7 @@ struct GiverView: View{
                             
                             if (TSCTDataTwo?.count ?? 0 > 0) {
                                 ForEach((0..<(TSCTDataTwo?.count ?? 0)), id:\.self){ index in
-                                    giverListCard(category: (TSCTDataTwo?[index].type)!, shopName:( TSCTDataTwo?[index].title)!, landMark: ( TSCTDataTwo?[index].task_location?.name)!, tasklocation: (TSCTDataTwo?[index].task_location)!, note: (TSCTDataTwo?[index].detail)!)
+                                    giverListCard(category: (TSCTDataTwo?[index].type)!, shopName:( TSCTDataTwo?[index].title)!, landMark: ( TSCTDataTwo?[index].task_location?.name)!, tasklocation: (TSCTDataTwo?[index].task_location)!, note: (TSCTDataTwo?[index].detail)!, distance: (TSCTDataTwo?[index].distanceString)!)
                                         .onTapGesture {
                                             transactionID = (TSCTDataTwo?[index].id!)!
                                             fetchDetail()
@@ -188,41 +257,60 @@ struct GiverView: View{
                         }
                         
                     })
-                        .onTapGesture {
-                            UIApplication.shared.endEditing()
-                        }.onAppear{
-                            minScrollValue = UIScreen.main.bounds.height-100
-                            UIScrollView.appearance().keyboardDismissMode = .interactive
-                        }
-                        .overlay(alignment: .bottomTrailing){
-                            if isShowBtn && (TSCTDataTwo?.count ?? 0 > 0) {
-                                Image(systemName: "arrow.up")
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 15, height: 15)
-                                    .padding(10)
-                                    .background(Color.black.opacity(0.1))
-                                    .cornerRadius(2)
-                                    .padding(.bottom, 20)
-                                    .padding(.horizontal,20)
-                                    .onTapGesture {
-                                        withAnimation{
-                                            proxy.scrollTo(-1, anchor: .top)
-                                        }
+                    .onTapGesture {
+                        UIApplication.shared.endEditing()
+                    }.onAppear{
+                        minScrollValue = UIScreen.main.bounds.height-100
+                        UIScrollView.appearance().keyboardDismissMode = .interactive
+                    }
+                    .overlay(alignment: .bottomTrailing){
+                        if isShowBtn && (TSCTDataTwo?.count ?? 0 > 3) {
+                            Image(systemName: "arrow.up")
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 15, height: 15)
+                                .padding(10)
+                                .background(Color.black.opacity(0.1))
+                                .cornerRadius(2)
+                                .padding(.bottom, 20)
+                                .padding(.horizontal,20)
+                                .onTapGesture {
+                                    withAnimation{
+                                        proxy.scrollTo(-1, anchor: .top)
                                     }
-                            }
+                                }
                         }
-                        .coordinateSpace(name: "scroll")
-                        .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                            if value < minScrollValue {
-                                isShowBtn = true
-                            }
-                            else {
-                                isShowBtn = false
-                            }
+                    }
+                    .coordinateSpace(name: "scroll")
+                    .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                        if value < minScrollValue {
+                            isShowBtn = true
                         }
+                        else {
+                            isShowBtn = false
+                        }
+                    }
                 }
             }
-        }.alert(isPresented:$isAlert) {
+        }
+        .onChange(of: isLatest) { latest in
+            TSCTData.transactions = TSCTDataBackup
+            if latest {
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                TSCTData.transactions = (TSCTData.transactions?.sorted{ dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! > dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! })?.filter{FilterType.contains($0.type ?? "") as Bool}
+            } else {
+                TSCTData.transactions = (TSCTData.transactions?.sorted{$0.distance ?? 0.0 < $1.distance ?? 0.0})?.filter{FilterType.contains($0.type ?? "") as Bool}
+            }
+        }
+        .onChange(of: FilterType) { filter in
+            TSCTData.transactions = TSCTDataBackup
+            if isLatest {
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                TSCTData.transactions = (TSCTData.transactions?.sorted{ dateFormatter.date(from: $0.created ?? "2011-11-11'T'11:11:11.111Z")! > dateFormatter.date(from: $1.created ?? "2011-11-11'T'11:11:11.111Z")! })?.filter{FilterType.contains($0.type ?? "") as Bool}
+            } else {
+                TSCTData.transactions = (TSCTData.transactions?.sorted{$0.distance ?? 0.0 < $1.distance ?? 0.0})?.filter{FilterType.contains($0.type ?? "") as Bool}
+            }
+        }
+        .alert(isPresented:$isAlert) {
             if isExpired {
                 return Alert(
                     title: Text("Session Expired"),
@@ -249,8 +337,8 @@ struct GiverView: View{
 }
 
 struct searchSegment: View{
-    @Binding var FilterType: [String]
-    @State var isPresented:Bool = false
+    
+    @Binding var isPresented:Bool
     @Binding var searchText: String
     var TSCTDataTwo:[getAllDataModel]?
     @Binding var isLatest: Bool
@@ -261,6 +349,7 @@ struct searchSegment: View{
                 .textFieldStyle(doFavTextFieldStyle(icon: "magnifyingglass", color: Color.darkest))
             
             Button(action: {
+                UIApplication.shared.endEditing()
                 isPresented.toggle()
             }){
                 Image(systemName: "slider.vertical.3")
@@ -270,13 +359,17 @@ struct searchSegment: View{
                     .background(Color.white, alignment: .center)
                     .cornerRadius(46)
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-            }.sheet(isPresented: $isPresented){
-                GiverFilterSheet(showingSheet: $isPresented, isLatest: $isLatest, FilterType: $FilterType)
             }
+            
+            
+            //            .sheet(isPresented: $isPresented){
+            //                GiverFilterSheet(showingSheet: $isPresented, isLatest: $isLatest, FilterType: $FilterType)
+            //            }
             
         }
         
     }
+    
 }
 
 //}
@@ -291,7 +384,7 @@ struct giverListCard: View{
     var landMark: String
     var tasklocation: landmarkDataModel
     var note: String
-    @State var distance: String = ""
+    var distance: String
     
     var body: some View{
         HStack(){
@@ -327,26 +420,6 @@ struct giverListCard: View{
                     Text(note)
                         .font(Font.custom("SukhumvitSet-Bold", size: 10))
                         .fontWeight(.medium)
-                }
-                
-            }
-            .onAppear{
-                let address = AppUtils.getUsrAddress()
-                if let lat = address?.latitude, let lon = address?.longitude {
-                    let coordinateAddress = CLLocation(latitude: lat, longitude: lon)
-                    let coordinateTask = CLLocation(latitude: tasklocation.latitude ?? 0.0, longitude: tasklocation.longitude ?? 0.0)
-                    
-                    let distanceInMeters = coordinateAddress.distance(from: coordinateTask)
-                    if distanceInMeters >= 1000 {
-                        let distanceInKm:Double = distanceInMeters/1000
-                        distance = String(format:"%.2f km",distanceInKm)
-                    } else {
-//                        print("ระยะ",distanceInMeters)
-                        distance = String(format:"%.0f m",distanceInMeters)
-                    }
-                    
-                } else {
-                    distance = "กรุณาใส่ที่อยู่ปัจจุบัน"
                 }
                 
             }

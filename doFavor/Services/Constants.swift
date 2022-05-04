@@ -17,6 +17,8 @@ struct Constants {
     static let AUTH_VERIFY = "/auth/verify"
     static let AUTH_VERIFY_RESEND = "/auth/verify/resend"
     
+    static let USER_REPORT = "/user/report"
+    
     static let TSCT_FORM_DATA = "/transaction/data"
     static let TSCT_CREATE = "/transaction/create"
     static let TSCT_GET_HISTORY = "/transaction/history"

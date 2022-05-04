@@ -9,10 +9,18 @@ import SwiftUI
 
 struct HistoryDetailPage: View {
     
-    public var transactionData:TSCTDataModel?
+    @Binding var transactionData:TSCTDataModel?
     
     @State var dateData = ""
     @State var statusData = ""
+    
+    @State var isLoading: Bool = false
+    @State var isAlert: Bool = false
+    @State var isExpired: Bool = false
+    @State var isNoNetwork: Bool = false
+    @State var isCancel: Bool = false
+    @State var isSuccess: Bool = false
+    let userId = AppUtils.getUsrId()
     
     func getDetail() {
         let dateFormatter = DateFormatter()
@@ -39,32 +47,151 @@ struct HistoryDetailPage: View {
         }
         
     }
+    
+    func fetchCancelTSCT() {
+        isLoading.toggle()
+        var path = ""
+        if transactionData?.petitioner?.id == userId {
+            path = Constants.TSCT_CANCEL_PETITIONER
+        }
+        else if transactionData?.applicant?.id == userId {
+            path = Constants.TSCT_CANCEL_APPLICANT
+        }
+        
+        
+        TransactionViewModel().cancelTSCT(reqObj: RequestGetTSCTModel(transaction_id: transactionData?.id), type: path){ result in
+            isLoading.toggle()
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                transactionData = response
+                getDetail()
 
+            case .failure(let error):
+                switch error{
+                case .BackEndError(let msg):
+                    if msg == "session expired" {
+                        isAlert = true
+                        isExpired.toggle()
+                    }
+                    print(msg)
+                case .Non200StatusCodeError(let val):
+                    print("Error Code: \(val.status) - \(val.message)")
+                case .UnParsableError:
+                    print("Error \(error)")
+                case .NoNetworkError:
+                    isAlert = true
+                    isNoNetwork.toggle()
+                }
+            }
+        }
+    }
+    
+    func fetchSuccessTSCT() {
+        isLoading.toggle()
+        
+        TransactionViewModel().successTSCT(reqObj: RequestGetTSCTModel(transaction_id: transactionData?.id)){ result in
+            isLoading.toggle()
+            switch result {
+            case .success(let response):
+                print("Success",response)
+                transactionData = response
+                getDetail()
+
+            case .failure(let error):
+                switch error{
+                case .BackEndError(let msg):
+                    if msg == "session expired" {
+                        isAlert = true
+                        isExpired.toggle()
+                    }
+                    print(msg)
+                case .Non200StatusCodeError(let val):
+                    print("Error Code: \(val.status) - \(val.message)")
+                case .UnParsableError:
+                    print("Error \(error)")
+                case .NoNetworkError:
+                    isAlert = true
+                    isNoNetwork.toggle()
+                }
+            }
+        }
+    }
+    
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack{
-                Image("App-BG")
-                    .resizable()
-                    .aspectRatio(geometry.size, contentMode: .fill)
-                    .edgesIgnoringSafeArea(.all)
-                Image("NavBar-BG")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .position(x:UIScreen.main.bounds.width/2)
-                
-                VStack(spacing:0){
+        doFavorMainLoadingIndicatorView(isLoading: isLoading) {
+            GeometryReader { geometry in
+                ZStack{
+                    Image("App-BG")
+                        .resizable()
+                        .aspectRatio(geometry.size, contentMode: .fill)
+                        .edgesIgnoringSafeArea(.all)
+                    Image("NavBar-BG")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .position(x:UIScreen.main.bounds.width/2)
                     
-                    HistoryDetail(transactionData: transactionData, dateData: $dateData, statusData: $statusData)
-                    TabbarView()
-                }.onAppear{ getDetail() }
-                .edgesIgnoringSafeArea(.bottom)
+                    VStack(spacing:0){
+                        
+                        HistoryDetail(transactionData: $transactionData, dateData: $dateData, statusData: $statusData, isAlert: $isAlert, isCancel: $isCancel, isSuccess: $isSuccess)
+                        TabbarView()
+                    }.onAppear{ getDetail() }
+                        .edgesIgnoringSafeArea(.bottom)
+                    
+                }
                 
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             }
-            
-            
+            .navigationBarHidden(true)
+        }.alert(isPresented:$isAlert) {
+            if isExpired {
+                return Alert(
+                    title: Text("Session Expired"),
+                    message: Text("this account is signed-in from another location please sign-in again"),
+                    dismissButton: .destructive(Text("Ok")) {
+                        AppUtils.eraseAllUsrData()
+                        doFavorApp(rootView: .LoginView)
+                    }
+                )
+            }
+            else if isNoNetwork {
+                return Alert(
+                    title: Text("Error"),
+                    message: Text("No network connection please try again"),
+                    dismissButton: .default(Text("Ok")) {
+                        isLoading = false
+                        isNoNetwork = false
+                    }
+                )
+            }
+            else if isSuccess {
+                return Alert(
+                    title: Text("กรุณายืนยัน"),
+                    message: Text("ท่านต้องการยืนยันรายการรับฝากสำเร็จหรือไม่"),
+                    primaryButton: .default(Text("ยืนยัน")) {
+                        fetchCancelTSCT()
+                        isSuccess = false
+                    },
+                    secondaryButton: .cancel() {
+                        isSuccess = false
+                    }
+                )
+            }
+            else {
+                return Alert(
+                    title: Text("กรุณายืนยัน"),
+                    message: Text("ท่านต้องการยกเลิกรายการนี้หรือไม่"),
+                    primaryButton: .destructive(Text("ยืนยัน")) {
+                        fetchCancelTSCT()
+                        isCancel = false
+                    },
+                    secondaryButton: .cancel() {
+                        isCancel = false
+                    }
+                )
+            }
         }
-        .navigationBarHidden(true)
     }
 }
 
@@ -78,11 +205,14 @@ struct HistoryDetail: View{
     
     @Environment(\.presentationMode) var presentationMode
     @State var isLinkActive = false
-    @State var transactionData:TSCTDataModel?
+    @Binding var transactionData:TSCTDataModel?
     @Binding var dateData:String
     @Binding var statusData:String
+    @Binding var isAlert: Bool
+    @Binding var isCancel: Bool
+    @Binding var isSuccess: Bool
     let userId = AppUtils.getUsrId()
-
+    
     var body: some View{
         VStack{
             HStack{
@@ -98,6 +228,20 @@ struct HistoryDetail: View{
                     
                 }
                 Spacer()
+                
+                if statusData == "รอการตอบรับ" || statusData == "กำลังดำเนินการ" {
+                    Text("ยกเลิก")
+                        .font(Font.custom("SukhumvitSet-Bold", size: 14).weight(.bold))
+                        .foregroundColor(Color.darkred)
+                        .underline()
+                        .padding(.top,40)
+                        .padding(.trailing,20)
+                        .padding(.bottom,10)
+                        .onTapGesture {
+                            isAlert = true
+                            isCancel = true
+                        }
+                }
             }
             
             ScrollView(){
@@ -110,7 +254,7 @@ struct HistoryDetail: View{
                             .padding(.horizontal,15)
                             .background(transactionData?.petitioner?.id == userId ? Color.darkred:Color.grey)
                             .cornerRadius(5)
-//                        รายการ #A1293B23
+                        //                        รายการ #A1293B23
                         Text("รายการ #\(transactionData?.id ?? "")")
                             .font(Font.custom("SukhumvitSet-Bold", size: 18).weight(.bold))
                             .lineLimit(1)
@@ -149,7 +293,7 @@ struct HistoryDetail: View{
                                     .foregroundColor(Color.black)
                             }
                         }
-
+                        
                     }
                     Divider()
                     
@@ -177,7 +321,7 @@ struct HistoryDetail: View{
                                 .foregroundColor(Color.grey)
                                 .underline()
                         }
-
+                        
                         
                     }
                     
@@ -198,7 +342,7 @@ struct HistoryDetail: View{
                                 .padding(.bottom,9)
                             Spacer()
                         }
-
+                        
                         Spacer()
                     }
                     .frame(width:UIScreen.main.bounds.width-40)
@@ -216,29 +360,64 @@ struct HistoryDetail: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .foregroundColor(Color.darkred)
                             .fontWeight(.bold)
-
+                        
                     }
                 }
                 .padding(.horizontal,20)
             }
-            NavigationLink(destination: PaymentPage(), isActive: $isLinkActive){
-            Button(action: {
-                // ยกเลิก/ได้รับของแล้ว
-                if (statusData=="กำลังดำเนินการ") {
-                    self.isLinkActive = true
+            
+            if statusData == "กำลังดำเนินการ" {
+                if transactionData?.petitioner?.id == userId {
+                    NavigationLink(destination: PaymentPage(), isActive: $isLinkActive){
+                        Button(action: {
+                            self.isLinkActive = true
+                            
+                        }){
+                            Text("ชำระเงิน")
+                                .foregroundColor(Color.white)
+                                .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                            
+                        }
+                        .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                        .background(Color.darkred)
+                        .cornerRadius(15)
+                        .padding(.bottom)
+                    }
+                } else if transactionData?.applicant?.id == userId {
+                    Button(action: {
+                        isAlert = true
+                        isSuccess = true
+                        
+                    }){
+                        Text("สำเร็จ")
+                            .foregroundColor(Color.white)
+                            .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+                        
+                    }
+                    .frame(width:UIScreen.main.bounds.width-40, height: 50)
+                    .background(Color.darkred)
+                    .cornerRadius(15)
+                    .padding(.bottom)
                 }
-                
-            }){
-                Text(statusData=="รอการตอบรับ" ? "ยกเลิก" :  statusData=="กำลังดำเนินการ" ? "ได้รับสิ่งของ" : "")
-                    .foregroundColor(Color.white)
-                    .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
-
             }
-            .frame(width:UIScreen.main.bounds.width-40, height: 50)
-            .background(statusData=="รอการตอบรับ" ? Color.grey : statusData=="กำลังดำเนินการ" ? Color.darkred : Color.clear)
-            .cornerRadius(15)
-            .padding(.bottom)
-        }
+            //            NavigationLink(destination: PaymentPage(), isActive: $isLinkActive){
+            //                Button(action: {
+            //                    // ยกเลิก/ได้รับของแล้ว
+            //                    if (statusData=="กำลังดำเนินการ") {
+            //                        self.isLinkActive = true
+            //                    }
+            //
+            //                }){
+            //                    Text(statusData=="รอการตอบรับ" ? "ยกเลิก" :  statusData=="กำลังดำเนินการ" ? "ได้รับสิ่งของ" : "")
+            //                        .foregroundColor(Color.white)
+            //                        .font(Font.custom("SukhumvitSet-Bold", size: 20).weight(.bold))
+            //
+            //                }
+            //                .frame(width:UIScreen.main.bounds.width-40, height: 50)
+            //                .background(statusData=="รอการตอบรับ" ? Color.grey : statusData=="กำลังดำเนินการ" ? Color.darkred : Color.clear)
+            //                .cornerRadius(15)
+            //                .padding(.bottom)
+            //            }
             
         }
         .frame(width: UIScreen.main.bounds.width)

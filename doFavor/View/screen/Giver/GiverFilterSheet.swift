@@ -67,7 +67,7 @@ struct GiverFilterSheet: View {
             HStack{
                     Button(action: {
                         if isLatest{
-                            isLatest
+                            print("isLatest",isLatest)
                         }else{
                             isLatest.toggle()
                         }
@@ -83,23 +83,25 @@ struct GiverFilterSheet: View {
                                 RoundedRectangle(cornerRadius: 33).stroke(isLatest ? Color.darkred : Color.grey, lineWidth: 1)
                             )
                     }
-                Button(action: {
-                    if isLatest{
-                        isLatest.toggle()
-                    }else{
-                        isLatest
+                if AppUtils.getUsrAddress() != nil {
+                    Button(action: {
+                        if isLatest{
+                            isLatest.toggle()
+                        }else{
+                            print("isLatest",isLatest)
+                        }
+                    }){
+                        Text("ใกล้ฉัน")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(!isLatest ? Color.darkred : Color.grey)
+                            .padding(.horizontal, 21)
+                            .frame(height: 33)
+                            .background(!isLatest ? Color.darkred.opacity(0.15) : Color.clear, alignment: .center)
+                            .cornerRadius(33)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 33).stroke(!isLatest ? Color.darkred : Color.grey, lineWidth: 1)
+                            )
                     }
-                }){
-                    Text("ใกล้ฉัน")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(!isLatest ? Color.darkred : Color.grey)
-                        .padding(.horizontal, 21)
-                        .frame(height: 33)
-                        .background(!isLatest ? Color.darkred.opacity(0.15) : Color.clear, alignment: .center)
-                        .cornerRadius(33)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 33).stroke(!isLatest ? Color.darkred : Color.grey, lineWidth: 1)
-                        )
                 }
 
             }

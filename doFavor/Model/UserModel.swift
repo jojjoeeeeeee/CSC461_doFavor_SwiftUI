@@ -54,6 +54,23 @@ struct NameModel: Codable {
     var lastname: String?
 }
 
+struct RequestReportModel: Encodable {
+    var email: String?
+    var detail: String?
+}
+
+struct ResponseReportDataModel: Codable {
+    let result: String
+    let message: String
+    let data: ReportDataModel
+}
+
+struct ReportDataModel: Codable {
+    let email: String?
+    let detail: String?
+    let report_owner: String?
+}
+
 
 class UserObservedModel: ObservableObject {
     @Published var username: String?

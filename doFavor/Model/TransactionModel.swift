@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct ResponseTSCTFormDataModel: Codable {
     let result: String
@@ -88,6 +89,23 @@ struct ResponseGetTSCTDataModel: Codable {
     let data: TSCTDataModel
 }
 
+struct RequestReportTSCTModel: Encodable {
+    var transaction_id: String?
+    var detail: String?
+}
+
+struct ResponseReportTSCTDataModel: Codable {
+    let result: String
+    let message: String
+    let data: ReportTSCTDataModel
+}
+
+struct ReportTSCTDataModel: Codable {
+    let transaction_id: String?
+    let detail: String?
+    let report_owner: String?
+}
+
 struct TSCTDataModel: Codable {
     let id: String?
     let title: String?
@@ -162,6 +180,8 @@ struct getAllDataModel: Codable {
     let status: String?
     let location: userLocationDataModel?
     let task_location: landmarkDataModel?
+    var distance: CLLocationDistance?
+    var distanceString: String?
     let created: String?
 }
 
