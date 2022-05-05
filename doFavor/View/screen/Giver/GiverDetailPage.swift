@@ -35,6 +35,8 @@ struct GiverDetailPage: View {
                 applicant.firstname = usrName?[0]
                 applicant.lastname = usrName?[1]
                 
+                showingSheet = false
+
                 MessageViewModel().updateApplicantInConversation(conversation_id: data?.conversation_id ?? "", publicKey: AppUtils.E2EE.getBase64PublicKey(), by: applicant) { success in
                     if success {
                         print("success create new conversation")
@@ -206,6 +208,7 @@ struct GiverDetailPage: View {
                     //Submit button
                     Button(action: {
                         fetchAcceptTSCT()
+
                     }){
                         Text(data?.isAccepted == false ? "รับมอบหมาย" : "ไม่สามารถรับมอบหมาย")
                         //                Text("รับมอบหมาย")
