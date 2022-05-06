@@ -360,6 +360,7 @@ struct HistoryDetail: View{
                             .font(Font.custom("SukhumvitSet-Bold", size: 14))
                             .foregroundColor(Color.darkred)
                             .fontWeight(.bold)
+                            
                         
                     }
                 }

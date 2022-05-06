@@ -496,7 +496,17 @@ struct pickerSheet: View{
                 }
                 
             }.onAppear{
-                selectionIndex = 0
+                if selection == "เลือกอาคาร" {
+                    selectionIndex = 0
+                } else {
+                    for i in 0..<data.count {
+                        if data[i].name == selection {
+                            selectionIndex = i
+                        }
+                    }
+                }
+                
+                
             }
         .pickerStyle(WheelPickerStyle())
             .foregroundColor(.white)
