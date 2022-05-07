@@ -94,6 +94,7 @@
 		8451745927FE5028005A7DD0 /* TransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionViewModel.swift; sourceTree = "<group>"; };
 		8451745B27FE5039005A7DD0 /* TransactionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionModel.swift; sourceTree = "<group>"; };
 		8451745D27FF3172005A7DD0 /* doFavorMainLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = doFavorMainLoadingIndicator.swift; sourceTree = "<group>"; };
+		845A44042826D93100889A1A /* doFavorRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = doFavorRelease.entitlements; sourceTree = "<group>"; };
 		8471D4F1281378AA00115022 /* KeyboardInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInfo.swift; sourceTree = "<group>"; };
 		8477F83827E1667200DAEBD9 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
 		8477F83E27E167D300DAEBD9 /* ExtensionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsHelper.swift; sourceTree = "<group>"; };
@@ -303,6 +304,7 @@
 		84EDF74B27E15D8A0052022B /* doFavor */ = {
 			isa = PBXGroup;
 			children = (
+				845A44042826D93100889A1A /* doFavorRelease.entitlements */,
 				84AAF7FC2818C20600C719D0 /* Info.plist */,
 				84EDF74C27E15D8B0052022B /* doFavorApp.swift */,
 				8416921827EA2A0500CBFF7B /* AppViews.swift */,
@@ -675,11 +677,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = doFavor/doFavorRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"doFavor/Preview Content\"";
-				DEVELOPMENT_TEAM = 8348YNSNZ6;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = doFavor/Info.plist;

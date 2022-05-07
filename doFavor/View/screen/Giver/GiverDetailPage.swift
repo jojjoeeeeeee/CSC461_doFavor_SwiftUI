@@ -94,7 +94,7 @@ struct GiverDetailPage: View {
                     
                     //Detail
                     HStack(){
-                        Image("TestPic1")
+                        Image(data?.type ?? "")
                             .resizable()
                             .scaledToFill()
                             .frame(width: UIScreen.main.bounds.width*0.42, height:UIScreen.main.bounds.width*0.42)
