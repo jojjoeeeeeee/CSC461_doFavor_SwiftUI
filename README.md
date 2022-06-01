@@ -1,6 +1,11 @@
 # CSC461_doFavor_SwiftUI
 **SWU CSC461 Mobile Application Development Project "doFavor" frontend**
 
+Installation:
+1. sudo gem install cocoapods
+2. pod install
+3. build & run
+
 _Final project COSCI Computer For Communicaton 2021 doFavor Application (SwiftUI repository)_
 
 **Member :**
